@@ -2,7 +2,7 @@
 
 ![Release](https://img.shields.io/github/v/tag/stevapple/swiftenv?label=release&logo=github) ![CI Status](https://github.com/stevapple/swiftenv/workflows/CI/badge.svg)
 
-Inspired by [pyenv](https://github.com/pyenv/pyenv) and [rbenv](https://github.com/rbenv/rbenv). 
+Inspired by [pyenv](https://github.com/pyenv/pyenv) and [rbenv](https://github.com/rbenv/rbenv), while having different APIs. 
 
 ## Installation
 
@@ -49,7 +49,7 @@ $ swiftenv version
 0.3.5
 ```
 
-### Lookup installable Swift versions
+### Check installable Swift versions
 
 ```shell
 $ swiftenv find 5.1
@@ -79,7 +79,7 @@ $ swiftenv versions
 * 5.1.5
 ```
 
-### Attach/Detach Swift to system
+### Attach/Detach Swift to/from system
 
 ```shell
 $ swiftenv attach 5.1
