@@ -8,7 +8,7 @@ else
     exit 255
 fi
 
-SWIFTENV_VERSION="0.3.1"
+SWIFTENV_VERSION="0.3.2"
 
 init-env() {
     mkdir $WORKING_DIR
@@ -312,7 +312,7 @@ update)
         echo "Error: Please check your wget config. "
         exit $WGET_RESULT
     fi
-    sh -c $INSTALL_SCRIPT
+    echo $INSTALL_SCRIPT | sh
     exit $?
 ;;
 versions)
