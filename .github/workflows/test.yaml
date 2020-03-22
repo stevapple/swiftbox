@@ -1,0 +1,40 @@
+name: CI
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Test swiftenv version
+      run: |
+        chmod +x swiftenv.sh
+        ./swiftenv.sh version
+
+    - name: Test swiftenv find
+      run: ./swiftenv.sh find 5.1.5
+
+    - name: Test swiftenv install
+      run: |
+        ./swiftenv.sh install 5.1.5
+        sudo ./swiftenv.sh install 5.1.2
+
+    - name: Test swiftenv versions
+      run: |
+        ./swiftenv.sh versions
+        sudo ./swiftenv.sh versions
+
+    - name: Test swiftenv detach
+      run: |
+        ./swiftenv.sh detach
+        ./swiftenv.sh versions
+        ./swiftenv.sh attach 5.1.5
+        sudo ./swiftenv.sh versions
+
+    - name: Test swiftenv clean
+      run: |
+        ./swiftenv.sh clean
+        sudo ./swiftenv.sh clean

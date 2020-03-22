@@ -1,5 +1,9 @@
 # swiftenv: The environment manager for Swift on Ubuntu
 
+![CI Status](https://github.com/stevapple/swiftenv/workflows/CI/badge.svg) 
+
+Inspired by [pyenv](https://github.com/pyenv/pyenv) and [rbenv](https://github.com/rbenv/rbenv). 
+
 ## Installation
 
 By default, `swiftenv` will be installed at `/usr/bin`. The working directory will be set to `/opt/swift` for `root` and `~/.swiftenv` for other users. 
