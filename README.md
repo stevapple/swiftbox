@@ -1,0 +1,1 @@
+# swiftenv: The environment manager for Swift on Ubuntu

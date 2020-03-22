@@ -1,0 +1,43 @@
+name: Tag Version
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Config tools
+      run: apt-get install jq -y
+      shell: bash
+    - name: Test swiftenv and update VERSION
+      run: |
+        chmod +x swiftenv
+        export VERSION=`./swiftenv version`
+        if [ $? -eq 0 ]
+        then
+          if [ $VERSION = `cat VERSION` ]
+          then
+            exit 0
+          else
+            echo $VERSION > VERSION
+          fi
+        else
+          exit 1
+        fi
+      shell: bash
+    - name: Update repo
+      run: |
+        USER_JSON = `curl --request GET \
+        --url https://api.github.com/users/${{ github.actor }} \
+        --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'`
+        git config --global user.name  "`echo USER_JSON | jq .name`"
+        git config --global user.email "`echo USER_JSON | jq .email`"
+        git commit -m "Release $VERSION" -a
+    - name: Push to GitHub
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
