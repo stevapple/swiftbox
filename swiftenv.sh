@@ -8,10 +8,13 @@ else
     exit 255
 fi
 
-SWIFTENV_VERSION="0.3.3"
+SWIFTENV_VERSION="0.3.4"
 
 init-env() {
     mkdir $WORKING_DIR
+    mkdir $WORKING_DIR/temp
+    mkdir $WORKING_DIR/toolchain
+    mkdir $WORKING_DIR/download
     echo "Created swiftenv working directory at $WORKING_DIR. "
     echo -e "if [ -e $WORKING_DIR/.swift-version ]\nthen\n\texport PATH=$WORKING_DIR/toolchain/swift-\`cat $WORKING_DIR/.swift-version\`/usr/bin:\$PATH\nfi" > $WORKING_DIR/env.sh
     if [ $IS_SUDO -eq 0 ]
@@ -136,8 +139,8 @@ install-swift() {
         fi
         wget -t 5 -P download "$DOWNLOAD_URL.sig"
     fi
-    gpg --keyserver hkp://pool.sks-keyservers.net --refresh-keys Swift
-    gpg --verify "download/$FILE_NAME.tar.gz.sig"
+    sudo gpg --keyserver hkp://pool.sks-keyservers.net --refresh-keys Swift
+    sudo gpg --verify "download/$FILE_NAME.tar.gz.sig"
     tar -xzf "download/$FILE_NAME.tar.gz" -C "temp"
     mv "temp/$FILE_NAME" "toolchain/swift-$NEW_VERSION"
     if [ ! -e .swift-version ]
