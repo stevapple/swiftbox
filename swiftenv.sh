@@ -8,7 +8,7 @@ else
     exit 255
 fi
 
-SWIFTENV_VERSION="0.3"
+SWIFTENV_VERSION="0.3.1"
 
 init-env() {
     mkdir $WORKING_DIR
@@ -301,7 +301,18 @@ find)
     echo "Version $FORMAT_VERSION is available for Ubuntu $UBUNTU_VERSION. "
 ;;
 update)
-    sh -c "$(wget -q -O- https://raw.githubusercontent.com/stevapple/swiftenv/master/install.sh)"
+    INSTALL_SCRIPT=`wget -q -O- https://raw.githubusercontent.com/stevapple/swiftenv/master/install.sh`
+    WGET_RESULT=$?
+    if [ $WGET_RESULT -ge 4 ]
+    then
+        echo "Error: Please check your Internet connection and proxy settings. "
+        exit $WGET_RESULT
+    elif [ $WGET_RESULT -ge 1 ]
+    then
+        echo "Error: Please check your wget config. "
+        exit $WGET_RESULT
+    fi
+    sh -c $INSTALL_SCRIPT
     exit $?
 ;;
 versions)

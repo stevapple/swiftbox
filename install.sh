@@ -13,16 +13,6 @@ fi
 
 $SUDO_FLAG apt-get install wget -q -y
 
-INSTALL_DIR="/usr/bin"
-SWIFTENV_VERSION=`$INSTALL_DIR/swiftenv version`
-
-if [ $? -eq 0 ]
-then
-    SUCCESS_MESSAGE="Successfully upgraded swiftenv from $SWIFTENV_VERSION to $LATEST_VERSION. "
-else
-    SUCCESS_MESSAGE="Successfully installed swiftenv $LATEST_VERSION at $INSTALL_DIR. "
-fi
-
 LATEST_VERSION=`wget -q -O- "https://raw.githubusercontent.com/stevapple/swiftenv/master/VERSION"`
 WGET_RESULT=$?
 if [ $WGET_RESULT -ge 4 ]
@@ -33,6 +23,15 @@ elif [ $WGET_RESULT -ge 1 ]
 then
     echo "Error: Please check your wget config. "
     exit $WGET_RESULT
+fi
+
+INSTALL_DIR="/usr/bin"
+SWIFTENV_VERSION=`$INSTALL_DIR/swiftenv version`
+if [ $? -eq 0 ]
+then
+    SUCCESS_MESSAGE="Successfully upgraded swiftenv from $SWIFTENV_VERSION to $LATEST_VERSION. "
+else
+    SUCCESS_MESSAGE="Successfully installed swiftenv $LATEST_VERSION at $INSTALL_DIR. "
 fi
 
 if [ E$SWIFTENV_VERSION = E$LATEST_VERSION ]
