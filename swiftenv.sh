@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# if [ "E`lsb_release -i --short`" = "EUbuntu" ]
-# then
-#     UBUNTU_VERSION=`lsb_release -i --short`
-# else
-#     echo "This program only support Ubuntu. "
-#     exit 255
-# fi
-UBUNTU_VERSION="18.04"
+if [ "E`lsb_release -i --short`" = "EUbuntu" ]
+then
+    UBUNTU_VERSION=`lsb_release -i --short`
+else
+    echo "This program only support Ubuntu. "
+    exit 255
+fi
 
-SWIFTENV_VERSION="0.2"
+SWIFTENV_VERSION="0.3"
 
 init-env() {
     mkdir $WORKING_DIR

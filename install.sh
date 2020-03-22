@@ -6,37 +6,55 @@ then
     exit 255
 fi
 
-if [ `id -u` -eq 0 ]
+if [ ! `id -u` -eq 0 ]
 then
-    IS_SUDO=1
-    WORKING_DIR="/opt/swift"
-    INSTALL_DIR="/usr/bin"
-    apt-get install wget -q -y
-else
-    IS_SUDO=0
-    WORKING_DIR="$HOME/.swiftenv"
-    INSTALL_DIR="/usr/local/bin"
-    sudo apt-get install wget -q -y
+    SUDO_FLAG="sudo"
 fi
 
+$SUDO_FLAG apt-get install wget -q -y
+
+INSTALL_DIR="/usr/bin"
 SWIFTENV_VERSION=`$INSTALL_DIR/swiftenv version`
 
 if [ $? -eq 0 ]
 then
     SUCCESS_MESSAGE="Successfully upgraded swiftenv from $SWIFTENV_VERSION to $LATEST_VERSION. "
 else
-    SUCCESS_MESSAGE="Successfully installed swiftenv $SWIFTENV_VERSION at $INSTALL_DIR. "
+    SUCCESS_MESSAGE="Successfully installed swiftenv $LATEST_VERSION at $INSTALL_DIR. "
 fi
+
 LATEST_VERSION=`wget -q -O- "https://raw.githubusercontent.com/stevapple/swiftenv/master/VERSION"`
-if [ ! $? -eq 0 ]
+WGET_RESULT=$?
+if [ $WGET_RESULT -ge 4 ]
 then
-    echo "Error fetching the latest version. "
-    exit 1
-elif [ E$SWIFTENV_VERSION = E$LATEST_VERSION ]
+    echo "Error: Please check your Internet connection and proxy settings. "
+    exit $WGET_RESULT
+elif [ $WGET_RESULT -ge 1 ]
+then
+    echo "Error: Please check your wget config. "
+    exit $WGET_RESULT
+fi
+
+if [ E$SWIFTENV_VERSION = E$LATEST_VERSION ]
 then
     echo "Already installed the latest version $SWIFTENV_VERSION at $INSTALL_DIR. "
     exit
 fi
-wget -O "$INSTALL_DIR/swiftenv" "https://raw.githubusercontent.com/stevapple/swiftenv/$LATEST_VERSION/swiftenv.sh"
-chmod +x "$INSTALL_DIR/swiftenv"
+
+$SUDO_FLAG wget -O "$INSTALL_DIR/swiftenv" "https://raw.githubusercontent.com/stevapple/swiftenv/v$LATEST_VERSION/swiftenv.sh"
+WGET_RESULT=$?
+if [ $WGET_RESULT -eq 8 ]
+then
+    echo "Error: It seems the release isn't created yet. "
+    exit $WGET_RESULT
+elif [ $WGET_RESULT -ge 4 ]
+then
+    echo "Error: Please check your Internet connection and proxy settings. "
+    exit $WGET_RESULT
+elif [ $WGET_RESULT -ge 1 ]
+then
+    echo "Error: Please check your wget config. "
+    exit $WGET_RESULT
+fi
+$SUDO_FLAG chmod +x "$INSTALL_DIR/swiftenv"
 echo $SUCCESS_MESSAGE

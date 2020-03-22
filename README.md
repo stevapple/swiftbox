@@ -2,9 +2,9 @@
 
 ## Installation
 
-By default, the `root` user will install `swiftenv` at `/usr/bin`, and other users at `/usr/local/bin`. The working directory will be set to `/opt/swift` for `root` and `~/.swiftenv` for other users. 
+By default, `swiftenv` will be installed at `/usr/bin`. The working directory will be set to `/opt/swift` for `root` and `~/.swiftenv` for other users. 
 
-Remember: There will be two sets of Swift environments if you use both (unrecommended). The local one will be in favor by default if you don't access it with `sudo`. 
+There will be two sets of Swift environments if you use both. The local one is in favor by default unless you don't access `swiftenv` with `sudo`. Toolchains installed by `root` can be used by all users. 
 
 ```bash
 # With wget
