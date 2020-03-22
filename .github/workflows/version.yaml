@@ -3,7 +3,7 @@ name: Tag Version
 on: [push]
 
 jobs:
-  build:
+  tag:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -23,6 +23,7 @@ jobs:
             git config --global user.name  "${{ github.actor }}"
             git config --global user.email "`curl https://api.github.com/users/${{ github.actor }} | jq .email`"
             git commit -m "Release $VERSION" -a
+            git tag -a "v$VERSION" -m "Release $VERSION"
           fi
         else
           exit 1

@@ -1,12 +1,13 @@
 #!/bin/bash
 
-if [ "E`lsb_release -i --short`" = "EUbuntu" ]
-then
-    UBUNTU_VERSION=`lsb_release -i --short`
-else
-    echo "This program only support Ubuntu. "
-    exit 255
-fi
+# if [ "E`lsb_release -i --short`" = "EUbuntu" ]
+# then
+#     UBUNTU_VERSION=`lsb_release -i --short`
+# else
+#     echo "This program only support Ubuntu. "
+#     exit 255
+# fi
+UBUNTU_VERSION="18.04"
 
 SWIFTENV_VERSION="0.2"
 
@@ -37,12 +38,17 @@ init-env() {
 }
 
 format-version() {
+    if [ "E$1" = E ]
+    then
+        echo "Please specify Swift version. "
+        return 12
+    fi
     local VERSION_ARRAY=(${1//./ })
     for var in ${VERSION_ARRAY[@]}
     do
         if [ `echo $var | sed 's/[0-9]//g'` ]
         then
-            echo "Invalid Swift version, try format x.x.x or x.x"
+            echo "Invalid Swift version, try x.x.x or x.x"
             return 1
         fi
     done
@@ -59,23 +65,24 @@ format-version() {
         fi
     ;;
     *)
-        echo "Invalid Swift version, try format x.x.x or x.x"
+        echo "Invalid Swift version, try x.x.x or x.x"
         return 1
     ;;
     esac
 }
 
 uninstall-swift() {
-    if [ ! -d $WORKING_DIR/toolchain/swift-$FORMAT_VERSION ]
+    if [ ! -d $WORKING_DIR/toolchain/swift-$1 ]
     then
-        echo "This version has not been installed, you can install it with: $0 install $FORMAT_VERSION"
+        echo "This version has not been installed, you can install it with: $0 install $1"
         return 4
     else
-        rm -rf toolchain/swift-$FORMAT_VERSION
-        if [ E`default-version` = E$FORMAT_VERSION ]
+        rm -rf $WORKING_DIR/toolchain/swift-$1
+        if [ E`default-version` = E$1 ]
         then
-            rm $WORKING_DIR/.swift-version
+            detach-swift
         fi
+        echo "Successfully uninstalled Swift $1. "
     fi
 }
 
@@ -88,24 +95,35 @@ default-version() {
     fi
 }
 
+check-version() {
+    local DOWNLOAD_URL="https://swift.org/builds/swift-$1-release/ubuntu${UBUNTU_VERSION//./}/swift-$1-RELEASE/swift-$1-RELEASE-ubuntu$UBUNTU_VERSION.tar.gz"
+    wget --no-check-certificate -q --spider $DOWNLOAD_URL
+    WGET_RESULT=$?
+    if [ $WGET_RESULT -eq 8 ]
+    then
+        echo "The Swift version does not exist or does not support your Ubuntu version. "
+        return 2
+    elif [ $WGET_RESULT -ge 4 ]
+    then
+        echo "Network error. Please check your Internet connection and proxy settings. "
+        return 5
+    elif [ $WGET_RESULT -ge 1 ]
+    then
+        echo "Please check your wget config. "
+        return 255
+    fi
+}
+
 install-swift() {
     cd $WORKING_DIR
     local NEW_VERSION=$1
     local FILE_NAME="swift-$NEW_VERSION-RELEASE-ubuntu$UBUNTU_VERSION"
     local DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/ubuntu${UBUNTU_VERSION//./}/swift-$NEW_VERSION-RELEASE/$FILE_NAME.tar.gz"
-    wget --no-check-certificate -q --spider $DOWNLOAD_URL
-    if [ $? -eq 8 ]
+    check-version $NEW_VERSION
+    VERSION_AVAILABILITY=$?
+    if [ ! $VERSION_AVAILABILITY -eq 0 ]
     then
-        echo "The Swift version does not exist or does not support your Ubuntu version. "
-        exit 2
-    elif [ $? -ge 4]
-    then
-        echo "Network error. Please check your Internet connection and proxy settings. "
-        exit 5
-    elif [ $? -ge 1]
-    then
-        echo "Please check your wget config. "
-        exit 255
+        return $VERSION_AVAILABILITY
     fi
     if [ -e "download/$FILE_NAME.tar.gz.sig" ]
     then
@@ -131,16 +149,24 @@ install-swift() {
 }
 
 attach-version() {
-    echo $1 > $WORKING_DIR/.swift-version
-    source $WORKING_DIR/env.sh
+    is-installed $1
+    if [ $? -eq 0 ]
+    then
+        echo $1 > $WORKING_DIR/.swift-version
+        source $WORKING_DIR/env.sh
+        echo "Successfully attached Swift version $1. "
+    else
+        echo "Attach error: This version has not been installed yet. "
+        return 20
+    fi
 }
 
 is-installed() {
     if [ -d $WORKING_DIR/toolchain/swift-$1 ]
     then
-        return 1
-    else
         return 0
+    else
+        return 1
     fi
 }
 
@@ -151,6 +177,18 @@ ensure-env() {
         init-env
     else
         rm -rf $WORKING_DIR/temp/*
+    fi
+}
+
+detach-swift() {
+    local SWIFT_VERSION=`default-version`
+    if [ E$SWIFT_VERSION = "E" ]
+    then
+        echo "No Swift version is attached yet. "
+        return 10
+    else
+        rm -f $WORKING_DIR/.swift-version
+        echo "Successfully detached Swift version $SWIFT_VERSION. "
     fi
 }
 
@@ -166,20 +204,22 @@ fi
 
 if [ $# -eq 0 ]
 then
-    exit
+    echo "Please specify a command. "
+    exit 240
 fi
 
 case $1 in
 install)
     ensure-env
     FORMAT_VERSION=`format-version $2`
-    if [ ! $? -eq 0 ]
+    FORMAT_RESULT=$?
+    if [ ! $FORMAT_RESULT -eq 0 ]
     then
         echo $FORMAT_VERSION
-        exit 1
+        exit $FORMAT_RESULT
     fi
     is-installed $FORMAT_VERSION
-    if [ ! $? -eq 0 ]
+    if [ $? -eq 0 ]
     then
         echo "This version is already installed, you can reinstall it with: $0 reinstall $FORMAT_VERSION"
         exit 4
@@ -190,61 +230,80 @@ install)
 reinstall)
     ensure-env
     FORMAT_VERSION=`format-version $2`
-    if [ ! $? -eq 0 ]
+    FORMAT_RESULT=$?
+    if [ ! $FORMAT_RESULT -eq 0 ]
     then
         echo $FORMAT_VERSION
-        exit 1
+        exit $FORMAT_RESULT
     else
         UNINSTALL_MESSAGE=`uninstall-swift $FORMAT_VERSION`
-        if [ ! $? -eq 0 ]
+        UNINSTALL_RESULT=$?
+        if [ ! $UNINSTALL_RESULT -eq 0 ]
         then
             echo $UNINSTALL_MESSAGE
-            exit $?
+            exit $UNINSTALL_RESULT
         else
             install-swift $FORMAT_VERSION
+            exit $?
         fi
     fi
 ;;
 uninstall)
     ensure-env
     FORMAT_VERSION=`format-version $2`
-    if [ ! $? -eq 0 ]
+    FORMAT_RESULT=$?
+    if [ ! $FORMAT_RESULT -eq 0 ]
     then
         echo $FORMAT_VERSION
-        exit 1
+        exit $FORMAT_RESULT
     else
-        UNINSTALL_MESSAGE=`uninstall-swift $FORMAT_VERSION`
-        if [ ! $? -eq 0 ]
-        then
-            echo $UNINSTALL_MESSAGE
-            exit $?
-        else
-            echo "Successfully uninstalled Swift $FORMAT_VERSION. "
-        fi
+        uninstall-swift $FORMAT_VERSION
+        exit $?
     fi
 ;;
 attach)
     FORMAT_VERSION=`format-version $2`
-    if [ ! $? -eq 0 ]
+    FORMAT_RESULT=$?
+    if [ ! $FORMAT_RESULT -eq 0 ]
     then
         echo $FORMAT_VERSION
-        exit 1
+        exit $FORMAT_RESULT
     else
         attach-version $FORMAT_VERSION
+        exit $?
     fi
 ;;
 clean)
     ensure-env
     rm -rf $WORKING_DIR/temp/*
+    rm -rf $WORKING_DIR/download/*
 ;;
 detach)
-    rm -f $WORKING_DIR/.swift-version
+    detach-swift
+    exit $?
 ;;
 version)
     echo $SWIFTENV_VERSION
 ;;
+find)
+    FORMAT_VERSION=`format-version $2`
+    FORMAT_RESULT=$?
+    if [ ! $FORMAT_RESULT -eq 0 ]
+    then
+        echo $FORMAT_VERSION
+        exit $FORMAT_RESULT
+    fi
+    check-version $FORMAT_VERSION
+    VERSION_AVAILABILITY=$?
+    if [ ! $VERSION_AVAILABILITY -eq 0 ]
+    then
+        exit $VERSION_AVAILABILITY
+    fi
+    echo "Version $FORMAT_VERSION is available for Ubuntu $UBUNTU_VERSION. "
+;;
 update)
-    bash < `wget -q -O- "https://raw.githubusercontent.com/stevapple/swiftenv/blob/master/install.sh"`
+    sh -c "$(wget -q -O- https://raw.githubusercontent.com/stevapple/swiftenv/master/install.sh)"
+    exit $?
 ;;
 versions)
     ensure-env

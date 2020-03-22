@@ -27,7 +27,7 @@ then
 else
     SUCCESS_MESSAGE="Successfully installed swiftenv $SWIFTENV_VERSION at $INSTALL_DIR. "
 fi
-LATEST_VERSION=`wget -q -O- "https://raw.githubusercontent.com/stevapple/swiftenv/blob/master/VERSION"`
+LATEST_VERSION=`wget -q -O- "https://raw.githubusercontent.com/stevapple/swiftenv/master/VERSION"`
 if [ ! $? -eq 0 ]
 then
     echo "Error fetching the latest version. "
@@ -37,6 +37,6 @@ then
     echo "Already installed the latest version $SWIFTENV_VERSION at $INSTALL_DIR. "
     exit
 fi
-wget -O "$INSTALL_DIR/swiftenv" "https://raw.githubusercontent.com/stevapple/swiftenv/blob/$LATEST_VERSION/swiftenv.sh"
+wget -O "$INSTALL_DIR/swiftenv" "https://raw.githubusercontent.com/stevapple/swiftenv/$LATEST_VERSION/swiftenv.sh"
 chmod +x "$INSTALL_DIR/swiftenv"
 echo $SUCCESS_MESSAGE
