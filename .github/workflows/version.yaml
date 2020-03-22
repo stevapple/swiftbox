@@ -1,8 +1,6 @@
 name: Tag Version
 
-on:
-  release:
-    types: [created]
+on: [push]
 
 jobs:
   build:
@@ -11,12 +9,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Config tools
-      run: apt-get install jq -y
+      run: sudo apt-get install jq -y
       shell: bash
     - name: Test swiftenv and update VERSION
       run: |
-        chmod +x swiftenv
-        export VERSION=`./swiftenv version`
+        chmod +x swiftenv.sh
+        export VERSION=`./swiftenv.sh version`
         if [ $? -eq 0 ]
         then
           if [ $VERSION = `cat VERSION` ]
