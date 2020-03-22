@@ -1,6 +1,6 @@
 # swiftenv: The environment manager for Swift on Ubuntu
 
-![CI Status](https://github.com/stevapple/swiftenv/workflows/CI/badge.svg) 
+![Release](https://img.shields.io/github/v/release/stevapple/swiftenv) ![CI Status](https://github.com/stevapple/swiftenv/workflows/CI/badge.svg)
 
 Inspired by [pyenv](https://github.com/pyenv/pyenv) and [rbenv](https://github.com/rbenv/rbenv). 
 
@@ -63,7 +63,7 @@ Successfully detached Swift version 5.1.
 
 ### Lookup installed Swift versions
 
-Attached version is marked with `*`. 
+The attached version is marked with `*`. 
 
 ```shell
 $ swiftenv versions
@@ -85,7 +85,7 @@ The Swift version does not exist or does not support your Ubuntu version.
 
 ```shell
 $ swiftenv version
-0.2
+0.3.5
 ```
 
 ### Clean downloaded files

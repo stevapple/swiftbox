@@ -8,7 +8,7 @@ else
     exit 255
 fi
 
-SWIFTENV_VERSION="0.3.4"
+SWIFTENV_VERSION="0.3.5"
 
 init-env() {
     mkdir $WORKING_DIR
