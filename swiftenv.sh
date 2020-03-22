@@ -8,7 +8,7 @@ else
     exit 255
 fi
 
-SWIFTENV_VERSION="0.3.1"
+SWIFTENV_VERSION="0.3.2"
 
 init-env() {
     mkdir $WORKING_DIR
@@ -32,7 +32,7 @@ init-env() {
     fi
     $SUDO_FLAG apt-get update
     $SUDO_FLAG apt-get install clang libicu-dev wget -y
-    wget -q -O https://swift.org/keys/all-keys.asc | gpg --import -
+    wget -q -O - https://swift.org/keys/all-keys.asc | gpg --import -
     echo "swiftenv has been successfully set up. "
 }
 
@@ -137,7 +137,7 @@ install-swift() {
         wget -t 5 -P download "$DOWNLOAD_URL.sig"
     fi
     gpg --keyserver hkp://pool.sks-keyservers.net --refresh-keys Swift
-    gpg --verify $FILE_NAME.tar.gz.sig
+    gpg --verify "download/$FILE_NAME.tar.gz.sig"
     tar -xzf "download/$FILE_NAME.tar.gz" -C "temp"
     mv "temp/$FILE_NAME" "toolchain/swift-$NEW_VERSION"
     if [ ! -e .swift-version ]
@@ -312,7 +312,7 @@ update)
         echo "Error: Please check your wget config. "
         exit $WGET_RESULT
     fi
-    sh -c $INSTALL_SCRIPT
+    echo $INSTALL_SCRIPT | sh
     exit $?
 ;;
 versions)
