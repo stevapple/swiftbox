@@ -144,6 +144,16 @@ is-installed() {
     fi
 }
 
+ensure-env() {
+    if [ ! -e $WORKING_DIR ]
+    then
+        echo "It seems you're using swiftenv for the very first time. Let's set up the supporting environment. "
+        init-env
+    else
+        rm -rf $WORKING_DIR/temp/*
+    fi
+}
+
 if [ `id -u` -eq 0 ]
 then
     IS_SUDO=1
@@ -159,16 +169,9 @@ then
     exit
 fi
 
-if [ ! -e $WORKING_DIR ]
-then
-    echo "It seems you're using swiftenv for the very first time. Let's set up the supporting environment. "
-    init-env
-else
-    rm -rf $WORKING_DIR/temp/*
-fi
-
 case $1 in
 install)
+    ensure-env
     FORMAT_VERSION=`format-version $2`
     if [ ! $? -eq 0 ]
     then
@@ -185,6 +188,7 @@ install)
     fi
 ;;
 reinstall)
+    ensure-env
     FORMAT_VERSION=`format-version $2`
     if [ ! $? -eq 0 ]
     then
@@ -202,6 +206,7 @@ reinstall)
     fi
 ;;
 uninstall)
+    ensure-env
     FORMAT_VERSION=`format-version $2`
     if [ ! $? -eq 0 ]
     then
@@ -229,6 +234,7 @@ attach)
     fi
 ;;
 clean)
+    ensure-env
     rm -rf $WORKING_DIR/temp/*
 ;;
 detach)
@@ -241,6 +247,7 @@ update)
     bash < `wget -q -O- "https://raw.githubusercontent.com/stevapple/swiftenv/blob/master/install.sh"`
 ;;
 versions)
+    ensure-env
     for file in `ls -1 $WORKING_DIR/toolchain`
     do
         if [ -d "$WORKING_DIR/toolchain/$file" ]

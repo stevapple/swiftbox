@@ -8,13 +8,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Config tools
-      run: sudo apt-get install jq -y
-      shell: bash
     - name: Test swiftenv and update VERSION
       run: |
         chmod +x swiftenv.sh
-        export VERSION=`./swiftenv.sh version`
+        VERSION=`./swiftenv.sh version`
         if [ $? -eq 0 ]
         then
           if [ $VERSION = `cat VERSION` ]
@@ -29,12 +26,9 @@ jobs:
       shell: bash
     - name: Update repo
       run: |
-        USER_JSON = `curl --request GET \
-        --url https://api.github.com/users/${{ github.actor }} \
-        --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'`
-        git config --global user.name  "`echo USER_JSON | jq .name`"
-        git config --global user.email "`echo USER_JSON | jq .email`"
-        git commit -m "Release $VERSION" -a
+        git config --global user.name  "${{ github.actor }}"
+        git config --global user.email "`curl https://api.github.com/users/${{ github.actor }} | jq .email`"
+        git commit -m "Release `./swiftenv.sh version`" -a
     - name: Push to GitHub
       uses: ad-m/github-push-action@master
       with:
