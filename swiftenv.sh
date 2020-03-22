@@ -2,13 +2,13 @@
 
 if [ "E`lsb_release -i --short`" = "EUbuntu" ]
 then
-    UBUNTU_VERSION=`lsb_release -i --short`
+    UBUNTU_VERSION=`lsb_release -r --short`
 else
     echo "This program only support Ubuntu. "
     exit 255
 fi
 
-SWIFTENV_VERSION="0.3.2"
+SWIFTENV_VERSION="0.3.3"
 
 init-env() {
     mkdir $WORKING_DIR
@@ -32,7 +32,7 @@ init-env() {
     fi
     $SUDO_FLAG apt-get update
     $SUDO_FLAG apt-get install clang libicu-dev wget -y
-    wget -q -O - https://swift.org/keys/all-keys.asc | gpg --import -
+    wget -q -O - https://swift.org/keys/all-keys.asc | sudo gpg --import -
     echo "swiftenv has been successfully set up. "
 }
 
