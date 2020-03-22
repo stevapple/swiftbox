@@ -38,3 +38,18 @@ jobs:
       run: |
         ./swiftenv.sh clean
         sudo ./swiftenv.sh clean
+
+    - name: Test Swift status
+      run: |
+        source $HOME/.swiftenv/env.sh
+        hash -r
+        echo "\$PATH=$PATH"
+        which swift
+        swiftc -v
+
+    - name: Test Swift compiler
+      run: |
+        source $HOME/.swiftenv/env.sh
+        hash -r
+        swift test.swift
+        swiftc test.swift -o test && ./test
