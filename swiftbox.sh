@@ -116,7 +116,7 @@ disable-swift() {
     local SWIFT_VERSION=`default-version`
     rm -f $WORKING_DIR/.swift-version
     ensure-env
-    if [ E$SWIFT_VERSION = E ]
+    if [ ! E$SWIFT_VERSION = E ]
     then
         echo "Swift $SWIFT_VERSION is now disabled. "
     fi
