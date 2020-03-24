@@ -13,7 +13,7 @@ fi
 
 $SUDO_FLAG apt-get install wget -q -y
 
-LATEST_VERSION=`wget -q -O- "https://raw.githubusercontent.com/stevapple/swiftenv/master/VERSION"`
+LATEST_VERSION=`wget -q -O- "https://raw.githubusercontent.com/stevapple/swiftbox/master/VERSION"`
 WGET_RESULT=$?
 if [ $WGET_RESULT -ge 4 ]
 then
@@ -26,21 +26,21 @@ then
 fi
 
 INSTALL_DIR="/usr/bin"
-SWIFTENV_VERSION=`$INSTALL_DIR/swiftenv version`
+SWIFTBOX_VERSION=`$INSTALL_DIR/swiftbox version`
 if [ $? -eq 0 ]
 then
-    SUCCESS_MESSAGE="Successfully upgraded swiftenv from $SWIFTENV_VERSION to $LATEST_VERSION. "
+    SUCCESS_MESSAGE="Successfully upgraded swiftbox from $SWIFTBOX_VERSION to $LATEST_VERSION. "
 else
-    SUCCESS_MESSAGE="Successfully installed swiftenv $LATEST_VERSION at $INSTALL_DIR. "
+    SUCCESS_MESSAGE="Successfully installed swiftbox $LATEST_VERSION at $INSTALL_DIR. "
 fi
 
-if [ E$SWIFTENV_VERSION = E$LATEST_VERSION ]
+if [ E$SWIFTBOX_VERSION = E$LATEST_VERSION ]
 then
-    echo "Already installed the latest version $SWIFTENV_VERSION at $INSTALL_DIR. "
+    echo "Already installed the latest version $SWIFTBOX_VERSION at $INSTALL_DIR. "
     exit
 fi
 
-$SUDO_FLAG wget -O "$INSTALL_DIR/swiftenv" "https://raw.githubusercontent.com/stevapple/swiftenv/v$LATEST_VERSION/swiftenv.sh"
+$SUDO_FLAG wget -O "$INSTALL_DIR/swiftbox" "https://raw.githubusercontent.com/stevapple/swiftbox/v$LATEST_VERSION/swiftbox.sh"
 WGET_RESULT=$?
 if [ $WGET_RESULT -eq 8 ]
 then
@@ -55,5 +55,6 @@ then
     echo "Error: Please check your wget config. "
     exit $WGET_RESULT
 fi
-$SUDO_FLAG chmod +x "$INSTALL_DIR/swiftenv"
+$SUDO_FLAG chmod +x "$INSTALL_DIR/swiftbox"
+hash -r
 echo $SUCCESS_MESSAGE

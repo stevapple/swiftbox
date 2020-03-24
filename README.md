@@ -1,43 +1,43 @@
-# swiftenv: The environment manager for Swift on Ubuntu
+# swiftbox: Use Swift out of the Box on Ubuntu
 
-![Release](https://img.shields.io/github/v/tag/stevapple/swiftenv?label=release&logo=github) ![CI Status](https://github.com/stevapple/swiftenv/workflows/CI/badge.svg)
+![Release](https://img.shields.io/github/v/tag/stevapple/swiftbox?label=release&logo=github) ![CI Status](https://github.com/stevapple/swiftbox/workflows/CI/badge.svg)
 
 Inspired by [pyenv](https://github.com/pyenv/pyenv) and [rbenv](https://github.com/rbenv/rbenv), while having different APIs. 
 
 ## Installation
 
-By default, `swiftenv` will be installed at `/usr/bin`. The working directory will be set to `/opt/swift` for `root` and `~/.swiftenv` for other users. 
+By default, `swiftbox` will be installed at `/usr/bin`. The working directory will be set to `/opt/swiftbox` for `root` and `~/.swiftbox` for other users. 
 
-There will be two sets of Swift environments if you use both. The local one is in favor by default unless you access `swiftenv` with `sudo`. Toolchains installed by `root` can be used by all users. 
+There will be two sets of Swift environments if you use both. The local one is in favor by default unless you access `swiftbox` with `sudo`. Toolchains installed by `root` can be used by all users. 
 
 ```bash
 # With wget
-sh -c "$(wget -q -O- https://raw.githubusercontent.com/stevapple/swiftenv/master/install.sh)"
-swiftenv version
+sh -c "$(wget -q -O- https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
+swiftbox version
 
 # With curl
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftenv/master/install.sh)"
-swiftenv version
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
+swiftbox version
 ```
 
 Or if you'd like to use it as a script (do not support `update` yet):
 
 ```bash
 # With wget
-wget https://raw.githubusercontent.com/stevapple/swiftenv/master/swiftenv.sh
-chmod +x swiftenv.sh
-./swiftenv.sh version
+wget https://raw.githubusercontent.com/stevapple/swiftbox/master/swiftbox.sh
+chmod +x swiftbox.sh
+./swiftbox.sh version
 
 # With curl
-curl -o swiftenv.sh https://raw.githubusercontent.com/stevapple/swiftenv/master/install.sh
-chmod +x swiftenv.sh
-./swiftenv.sh version
+curl -o swiftbox.sh https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh
+chmod +x swiftbox.sh
+./swiftbox.sh version
 
 # With git
-git clone https://github.com/stevapple/swiftenv
-cd swiftenv
-chmod +x swiftenv.sh
-./swiftenv.sh version
+git clone https://github.com/stevapple/swiftbox
+cd swiftbox
+chmod +x swiftbox.sh
+./swiftbox.sh version
 ```
 
 ## Example Usage
@@ -63,41 +63,61 @@ The Swift version does not exist or does not support your Ubuntu version.
 Currently only stable builds are available. 
 
 ```shell
-$ swiftenv install 5.1
-$ swiftenv uninstall 5.0
-$ swiftenv reinstall 5.1
+$ swiftbox get 5.1
+$ swiftbox remove 5.0
+```
+
+### Switch to a Swift version
+
+```shell
+$ swiftbox use 5.1
+Now using Swift version 5.1. 
+```
+
+### Disable Swift
+
+```shell
+$ swiftbox disable
+Swift 5.1 is now diabled. 
 ```
 
 ### Lookup installed Swift versions
 
-The attached version is marked with `*`. 
+Current version is marked with `*`. 
 
 ```shell
-$ swiftenv versions
+$ swiftbox list
 - 4.2.1
 - 5.1
 * 5.1.5
 ```
 
-### Attach/Detach Swift to/from system
+### Check availability Swift versions
 
 ```shell
-$ swiftenv attach 5.1
-Successfully attached Swift version 5.1. 
-$ swiftenv detach
-Successfully detached Swift version 5.1. 
+$ swiftbox lookup 5.1
+Version 5.1 is available for Ubuntu 18.04. 
+$ swiftbox lookup 2.1
+The Swift version does not exist or does not support your Ubuntu version. 
+```
+
+### Lookup `swiftbox` version
+
+```shell
+$ swiftbox version
+0.4
 ```
 
 ### Clear download cache
 
 ```shell
-$ swiftenv clean
+$ swiftbox clean
 ```
 
-### Update `swiftenv` (Unstable)
+### Update `swiftbox`
 
 Will install the new version to the default location, not always self-update. 
 
 ```shell
-$ swiftenv update
+$ swiftbox update
 ```

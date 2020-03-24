@@ -9,39 +9,41 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Test swiftenv version
+    - name: Test swiftbox version
       run: |
-        chmod +x swiftenv.sh
-        ./swiftenv.sh version
+        chmod +x swiftbox.sh
+        ./swiftbox.sh version
 
-    - name: Test swiftenv find
-      run: ./swiftenv.sh find 5.1.5
+    - name: Test swiftbox lookup
+      run: ./swiftbox.sh lookup 5.1.5
 
-    - name: Test swiftenv install
+    - name: Test swiftbox get
       run: |
-        ./swiftenv.sh install 5.1.5
-        sudo ./swiftenv.sh install 5.1.2
+        ./swiftbox.sh get 5.1.5
+        ./swiftbox.sh get 5.0
+        sudo ./swiftbox.sh get 5.1.2
 
-    - name: Test swiftenv versions
+    - name: Test swiftbox list and use
       run: |
-        ./swiftenv.sh versions
-        sudo ./swiftenv.sh versions
+        ./swiftbox.sh list
+        sudo ./swiftbox.sh list
+        ./swiftbox.sh use 5.0
+        ./swiftbox.sh list
 
-    - name: Test swiftenv detach
+    - name: Test swiftbox clean
       run: |
-        ./swiftenv.sh detach
-        ./swiftenv.sh versions
-        ./swiftenv.sh attach 5.1.5
-        sudo ./swiftenv.sh versions
+        ./swiftbox.sh clean
+        sudo ./swiftbox.sh clean
 
-    - name: Test swiftenv clean
+    - name: Test swiftbox remove
       run: |
-        ./swiftenv.sh clean
-        sudo ./swiftenv.sh clean
+        sudo ./swiftbox.sh remove 5.1.2
+        ./swiftbox.sh remove 5.0
+        ./swiftbox.sh use 5.1.2
 
     - name: Test Swift status
       run: |
-        source $HOME/.swiftenv/env.sh
+        source $HOME/.swiftbox/env.sh
         hash -r
         echo "\$PATH=$PATH"
         which swift
@@ -49,7 +51,24 @@ jobs:
 
     - name: Test Swift compiler
       run: |
-        source $HOME/.swiftenv/env.sh
+        source $HOME/.swiftbox/env.sh
         hash -r
         swift test.swift
         swiftc test.swift -o test && ./test
+
+    - name: Test swiftbox disable
+      run: |
+        source $HOME/.swiftbox/env.sh
+        hash -r
+        ./swiftbox.sh disable
+        hash swift 2>/dev/null
+        if [ $? -eq 0 ]
+        then
+          exit 1
+        fi
+
+    - name: Test swiftbox install and update
+      run: |
+        sh -c "$(wget -q -O- https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
+        swiftbox version
+        swiftbox update

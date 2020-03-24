@@ -8,17 +8,29 @@ else
     exit 255
 fi
 
-SWIFTENV_VERSION="0.3.5"
+SWIFTBOX_VERSION="0.4"
 
-init-env() {
-    mkdir $WORKING_DIR
-    mkdir $WORKING_DIR/temp
-    mkdir $WORKING_DIR/toolchain
-    mkdir $WORKING_DIR/download
-    echo "Created swiftenv working directory at $WORKING_DIR. "
-    echo -e "if [ -e $WORKING_DIR/.swift-version ]\nthen\n\texport PATH=$WORKING_DIR/toolchain/swift-\`cat $WORKING_DIR/.swift-version\`/usr/bin:\$PATH\nfi" > $WORKING_DIR/env.sh
-    if [ $IS_SUDO -eq 0 ]
+enable-swiftbox() {
+    if [ -e $ANOTHER_DIR/env.sh ]
+    then
+        if [ -e $HOME/.zshrc ]
         then
+            sed "/$WORKING_DIR\/env.sh/d;/$ANOTHER_DIR\/env.sh/d" $HOME/.zshrc > $HOME/.zshrc
+            echo "source /opt/swiftbox/env.sh" >> $HOME/.zshrc
+            echo "source $HOME/.swiftbox/env.sh" >> $HOME/.zshrc
+        fi
+        if [ -e $HOME/.bashrc ]
+        then
+            sed "/$WORKING_DIR\/env.sh/d;/$ANOTHER_DIR\/env.sh/d" $HOME/.bashrc > $HOME/.bashrc
+            echo "source /opt/swiftbox/env.sh" >> $HOME/.bashrc
+            echo "source $HOME/.swiftbox/env.sh" >> $HOME/.bashrc
+        elif [ -e $HOME/.bash_profile ]
+        then
+            sed "/$WORKING_DIR\/env.sh/d;/$ANOTHER_DIR\/env.sh/d" $HOME/.bash_profile > $HOME/.bash_profile
+            echo "source /opt/swiftbox/env.sh" >> $HOME/.bash_profile
+            echo "source $HOME/.swiftbox/env.sh" >> $HOME/.bash_profile
+        fi
+    else
         if [ -e $HOME/.zshrc ]
         then
             echo "source $WORKING_DIR/env.sh" >> $HOME/.zshrc
@@ -30,13 +42,25 @@ init-env() {
         then
             echo "source $WORKING_DIR/env.sh" >> $HOME/.bash_profile
         fi
-    else
-        ln -s $WORKING_DIR/env.sh /etc/profile.d/swiftenv.sh
     fi
+}
+
+init-env() {
+    mkdir $WORKING_DIR
+    mkdir $WORKING_DIR/temp
+    mkdir $WORKING_DIR/toolchain
+    mkdir $WORKING_DIR/download
+    echo "Created swiftbox working directory at $WORKING_DIR. "
+    echo -e "if [ -e $WORKING_DIR/.swift-version ]\nthen\n\texport PATH=$WORKING_DIR/toolchain/swift-\`cat $WORKING_DIR/.swift-version\`/usr/bin:\$PATH\nfi" > $WORKING_DIR/env.sh
+    if [ `id -u` -eq 0 ]
+    then
+        ln -s $WORKING_DIR/env.sh /etc/profile.d/swiftbox.sh
+    fi
+    enable-swiftbox
     $SUDO_FLAG apt-get update
     $SUDO_FLAG apt-get install clang libicu-dev wget -y
-    wget -q -O - https://swift.org/keys/all-keys.asc | sudo gpg --import -
-    echo "swiftenv has been successfully set up. "
+    wget -q -O - https://swift.org/keys/all-keys.asc | $SUDO_FLAG gpg --import -
+    echo "swiftbox has been successfully set up. "
 }
 
 format-version() {
@@ -73,18 +97,28 @@ format-version() {
     esac
 }
 
-uninstall-swift() {
+remove-swift() {
     if [ ! -d $WORKING_DIR/toolchain/swift-$1 ]
     then
-        echo "This version has not been installed, you can install it with: $0 install $1"
+        echo "This version has not been kept, you can get it with: $0 get $1"
         return 4
     else
         rm -rf $WORKING_DIR/toolchain/swift-$1
         if [ E`default-version` = E$1 ]
         then
-            detach-swift
+            disable-swift
         fi
-        echo "Successfully uninstalled Swift $1. "
+        echo "Successfully removed Swift $1. "
+    fi
+}
+
+disable-swift() {
+    local SWIFT_VERSION=`default-version`
+    rm -f $WORKING_DIR/.swift-version
+    ensure-env
+    if [ E$SWIFT_VERSION = E ]
+    then
+        echo "Swift $SWIFT_VERSION is now disabled. "
     fi
 }
 
@@ -116,7 +150,7 @@ check-version() {
     fi
 }
 
-install-swift() {
+get-swift() {
     cd $WORKING_DIR
     local NEW_VERSION=$1
     local FILE_NAME="swift-$NEW_VERSION-RELEASE-ubuntu$UBUNTU_VERSION"
@@ -139,31 +173,33 @@ install-swift() {
         fi
         wget -t 5 -P download "$DOWNLOAD_URL.sig"
     fi
-    sudo gpg --keyserver hkp://pool.sks-keyservers.net --refresh-keys Swift
-    sudo gpg --verify "download/$FILE_NAME.tar.gz.sig"
+    $SUDO_FLAG gpg --keyserver hkp://pool.sks-keyservers.net --refresh-keys Swift
+    $SUDO_FLAG gpg --verify "download/$FILE_NAME.tar.gz.sig"
     tar -xzf "download/$FILE_NAME.tar.gz" -C "temp"
     mv "temp/$FILE_NAME" "toolchain/swift-$NEW_VERSION"
     if [ ! -e .swift-version ]
     then
         echo "Automatically set Swift $NEW_VERSION as default. "
-        attach-version $NEW_VERSION
+        use-version $NEW_VERSION
     fi
 }
 
-attach-version() {
-    is-installed $1
+use-version() {
+    is-kept $1
     if [ $? -eq 0 ]
     then
         echo $1 > $WORKING_DIR/.swift-version
+        ensure-env
         source $WORKING_DIR/env.sh
-        echo "Successfully attached Swift version $1. "
+        hash -r
+        echo "Now using Swift version $1. "
     else
-        echo "Attach error: This version has not been installed yet. "
+        echo "Error: This version has not been installed yet. "
         return 20
     fi
 }
 
-is-installed() {
+is-kept() {
     if [ -d $WORKING_DIR/toolchain/swift-$1 ]
     then
         return 0
@@ -175,32 +211,25 @@ is-installed() {
 ensure-env() {
     if [ ! -e $WORKING_DIR ]
     then
-        echo "It seems you're using swiftenv for the very first time. Let's set up the supporting environment. "
+        echo "It seems you're using swiftbox for the very first time. Let's set up the supporting environment. "
         init-env
     else
+        if [ ! E`default-version` = E ]
+        then
+            hash swift 2>/dev/null || enable-swiftbox
+        fi
+        hash -r
         rm -rf $WORKING_DIR/temp/*
-    fi
-}
-
-detach-swift() {
-    local SWIFT_VERSION=`default-version`
-    if [ E$SWIFT_VERSION = "E" ]
-    then
-        echo "No Swift version is attached yet. "
-        return 10
-    else
-        rm -f $WORKING_DIR/.swift-version
-        echo "Successfully detached Swift version $SWIFT_VERSION. "
     fi
 }
 
 if [ `id -u` -eq 0 ]
 then
-    IS_SUDO=1
-    WORKING_DIR="/opt/swift"
+    WORKING_DIR="/opt/swiftbox"
+    ANOTHER_DIR="$HOME/.swiftbox"
 else
-    IS_SUDO=0
-    WORKING_DIR="$HOME/.swiftenv"
+    WORKING_DIR="$HOME/.swiftbox"
+    ANOTHER_DIR="/opt/swiftbox"
     SUDO_FLAG="sudo"
 fi
 
@@ -211,7 +240,7 @@ then
 fi
 
 case $1 in
-install)
+get)
     ensure-env
     FORMAT_VERSION=`format-version $2`
     FORMAT_RESULT=$?
@@ -220,16 +249,21 @@ install)
         echo $FORMAT_VERSION
         exit $FORMAT_RESULT
     fi
-    is-installed $FORMAT_VERSION
+    if [ E$FORMAT_VERSION = E`default-version`]
+    then
+        echo "This version is already kept locally and set to default. "
+        exit 34
+    fi
+    is-kept $FORMAT_VERSION
     if [ $? -eq 0 ]
     then
-        echo "This version is already installed, you can reinstall it with: $0 reinstall $FORMAT_VERSION"
-        exit 4
+        echo "This version is already kept locally, you can enable it with: $0 use $FORMAT_VERSION"
+        exit 33
     else
-        install-swift $FORMAT_VERSION
+        get-swift $FORMAT_VERSION
     fi
 ;;
-reinstall)
+remove)
     ensure-env
     FORMAT_VERSION=`format-version $2`
     FORMAT_RESULT=$?
@@ -238,32 +272,11 @@ reinstall)
         echo $FORMAT_VERSION
         exit $FORMAT_RESULT
     else
-        UNINSTALL_MESSAGE=`uninstall-swift $FORMAT_VERSION`
-        UNINSTALL_RESULT=$?
-        if [ ! $UNINSTALL_RESULT -eq 0 ]
-        then
-            echo $UNINSTALL_MESSAGE
-            exit $UNINSTALL_RESULT
-        else
-            install-swift $FORMAT_VERSION
-            exit $?
-        fi
-    fi
-;;
-uninstall)
-    ensure-env
-    FORMAT_VERSION=`format-version $2`
-    FORMAT_RESULT=$?
-    if [ ! $FORMAT_RESULT -eq 0 ]
-    then
-        echo $FORMAT_VERSION
-        exit $FORMAT_RESULT
-    else
-        uninstall-swift $FORMAT_VERSION
+        remove-swift $FORMAT_VERSION
         exit $?
     fi
 ;;
-attach)
+use)
     FORMAT_VERSION=`format-version $2`
     FORMAT_RESULT=$?
     if [ ! $FORMAT_RESULT -eq 0 ]
@@ -271,7 +284,7 @@ attach)
         echo $FORMAT_VERSION
         exit $FORMAT_RESULT
     else
-        attach-version $FORMAT_VERSION
+        use-version $FORMAT_VERSION
         exit $?
     fi
 ;;
@@ -280,14 +293,10 @@ clean)
     rm -rf $WORKING_DIR/temp/*
     rm -rf $WORKING_DIR/download/*
 ;;
-detach)
-    detach-swift
-    exit $?
-;;
 version)
-    echo $SWIFTENV_VERSION
+    echo $SWIFTBOX_VERSION
 ;;
-find)
+lookup)
     FORMAT_VERSION=`format-version $2`
     FORMAT_RESULT=$?
     if [ ! $FORMAT_RESULT -eq 0 ]
@@ -304,7 +313,12 @@ find)
     echo "Version $FORMAT_VERSION is available for Ubuntu $UBUNTU_VERSION. "
 ;;
 update)
-    INSTALL_SCRIPT=`wget -q -O- https://raw.githubusercontent.com/stevapple/swiftenv/master/install.sh`
+    if [ ! $(cd `dirname $0`; pwd) = "/usr/bin" ]
+    then
+        echo "swiftbox is not installed to system, update unavailable. "
+        exit 254
+    fi
+    INSTALL_SCRIPT=`wget -q -O- https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh`
     WGET_RESULT=$?
     if [ $WGET_RESULT -ge 4 ]
     then
@@ -318,7 +332,7 @@ update)
     echo $INSTALL_SCRIPT | sh
     exit $?
 ;;
-versions)
+list)
     ensure-env
     for file in `ls -1 $WORKING_DIR/toolchain`
     do
