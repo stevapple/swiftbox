@@ -17,11 +17,19 @@ jobs:
     - name: Test swiftbox lookup
       run: ./swiftbox.sh lookup 5.1.5
 
+    - name: Test swiftbox get with sudo
+      run: |
+        sudo ./swiftbox.sh get 5.1.2
+        source /etc/profile.d/swiftbox.sh
+        which swift
+        swiftc -v
+
     - name: Test swiftbox get
       run: |
         ./swiftbox.sh get 5.1.5
         ./swiftbox.sh get 5.0
-        sudo ./swiftbox.sh get 5.1.2
+        source $HOME/.swiftbox/env.sh
+        swiftc -v
 
     - name: Test swiftbox list and use
       run: |
@@ -29,6 +37,8 @@ jobs:
         sudo ./swiftbox.sh list
         ./swiftbox.sh use 5.0
         ./swiftbox.sh list
+        source $HOME/.swiftbox/env.sh
+        swiftc -v
 
     - name: Test swiftbox clean
       run: |
@@ -57,10 +67,12 @@ jobs:
         swiftc test.swift -o test && ./test
 
     - name: Test swiftbox disable
+      run: ./swiftbox.sh disable
+
+    - name: Test swiftbox disabled
       run: |
-        source $HOME/.swiftbox/env.sh
         hash -r
-        ./swiftbox.sh disable
+        source $HOME/.swiftbox/env.sh
         hash swift 2>/dev/null
         if [ $? -eq 0 ]
         then
