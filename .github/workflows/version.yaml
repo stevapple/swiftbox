@@ -9,10 +9,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    - name: Test swiftenv and update VERSION
+    - name: Test swiftbox and update VERSION
       run: |
-        chmod +x swiftenv.sh
-        VERSION=`./swiftenv.sh version`
+        chmod +x swiftbox.sh
+        VERSION=`./swiftbox.sh version`
         if [ $? -eq 0 ]
         then
           if [ $VERSION = `cat VERSION` ]
