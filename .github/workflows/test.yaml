@@ -39,7 +39,7 @@ jobs:
       run: |
         sudo ./swiftbox.sh remove 5.1.2
         ./swiftbox.sh remove 5.0
-        ./swiftbox.sh use 5.1.2
+        ./swiftbox.sh use 5.1.5
 
     - name: Test Swift status
       run: |
