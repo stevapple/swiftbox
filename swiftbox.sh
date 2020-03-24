@@ -8,7 +8,8 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.4.2"
+SWIFTBOX_VERSION="0.4.3"
+INSTALL_DIR="/usr/bin"
 
 enable-swiftbox() {
     if [ -e $ANOTHER_DIR/env.sh ]
@@ -100,7 +101,7 @@ format-version() {
 remove-swift() {
     if [ ! -d $WORKING_DIR/toolchain/swift-$1 ]
     then
-        echo "This version has not been kept, you can get it with: $0 get $1"
+        echo "Swift $1 has not been kept, you can get it with: $0 get $1"
         return 4
     else
         rm -rf $WORKING_DIR/toolchain/swift-$1
@@ -137,7 +138,7 @@ check-version() {
     WGET_RESULT=$?
     if [ $WGET_RESULT -eq 8 ]
     then
-        echo "The Swift version does not exist or does not support your Ubuntu version. "
+        echo "Swift $1 does not exist or does not support your Ubuntu version. "
         return 2
     elif [ $WGET_RESULT -ge 4 ]
     then
@@ -192,9 +193,9 @@ use-version() {
         ensure-env
         source $WORKING_DIR/env.sh
         hash -r
-        echo "Now using Swift version $1. "
+        echo "Now using Swift $1. "
     else
-        echo "Error: This version has not been installed yet. "
+        echo "Error: Swift $1 has not been installed yet. "
         return 20
     fi
 }
@@ -251,13 +252,13 @@ get)
     fi
     if [ E$FORMAT_VERSION = E`default-version`]
     then
-        echo "This version is already kept locally and set to default. "
+        echo "Swift $FORMAT_VERSION is kept locally and set to default. "
         exit 34
     fi
     is-kept $FORMAT_VERSION
     if [ $? -eq 0 ]
     then
-        echo "This version is already kept locally, you can enable it with: $0 use $FORMAT_VERSION"
+        echo "Swift $FORMAT_VERSION is kept locally, you can enable it with: $0 use $FORMAT_VERSION"
         exit 33
     else
         get-swift $FORMAT_VERSION
@@ -314,12 +315,13 @@ lookup)
     then
         exit $VERSION_AVAILABILITY
     fi
-    echo "Version $FORMAT_VERSION is available for Ubuntu $UBUNTU_VERSION. "
+    echo "Swift $FORMAT_VERSION is available for Ubuntu $UBUNTU_VERSION. "
 ;;
 update)
-    if [ ! $(cd `dirname $0`; pwd) = "/usr/bin" ]
+    if [ ! $(cd `dirname $0`; pwd) = $INSTALL_DIR ]
     then
         echo "swiftbox is not installed to system, update unavailable. "
+        echo "You can install it with: $0 install"
         exit 254
     fi
     INSTALL_SCRIPT=`wget -q -O- https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh`
@@ -335,6 +337,15 @@ update)
     fi
     echo $INSTALL_SCRIPT | sh
     exit $?
+;;
+install)
+    if [ ! $(cd `dirname $0`; pwd) = $INSTALL_DIR ]
+    then
+        echo "swiftbox is already installed to system. "
+        exit 1
+    fi
+    $SUDO_FLAG cp $0 $INSTALL_DIR/swiftbox
+    echo "Successfully installed swiftbox to system. "
 ;;
 list)
     ensure-env

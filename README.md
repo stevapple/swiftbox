@@ -2,7 +2,7 @@
 
 ![Release](https://img.shields.io/github/v/tag/stevapple/swiftbox?label=release&logo=github) ![CI Status](https://github.com/stevapple/swiftbox/workflows/CI/badge.svg)
 
-Inspired by [pyenv](https://github.com/pyenv/pyenv) and [rbenv](https://github.com/rbenv/rbenv), while having different APIs. 
+Inspired by [pyenv](https://github.com/pyenv/pyenv) and [rbenv](https://github.com/rbenv/rbenv), and having different APIs. 
 
 ## Installation
 
@@ -40,6 +40,15 @@ chmod +x swiftbox.sh
 ./swiftbox.sh version
 ```
 
+You can later install it to `/usr/bin`:
+
+```shell
+$ ./swiftbox.sh install
+Successfully installed swiftbox to system.
+$ which swiftbox
+/usr/bin/swiftbox
+```
+
 ## Example Usage
 
 ### Lookup `swiftbox` version
@@ -49,13 +58,13 @@ $ swiftbox version
 0.4.2
 ```
 
-### Check availability of Swift versions
+### Check the availability of Swift versions
 
 ```shell
 $ swiftbox lookup 5.1
-Version 5.1 is available for Ubuntu 18.04. 
+Swift 5.1 is available for Ubuntu 18.04. 
 $ swiftbox lookup 2.1
-The Swift version does not exist or does not support your Ubuntu version. 
+Swift 2.1 does not exist or does not support your Ubuntu version. 
 ```
 
 ### Manage Swift versions
@@ -71,19 +80,19 @@ $ swiftbox remove 5.0
 
 ```shell
 $ swiftbox use 5.1
-Now using Swift version 5.1. 
+Now using Swift 5.1. 
 ```
 
 ### Disable Swift
 
 ```shell
 $ swiftbox disable
-Swift 5.1 is now diabled. 
+Swift 5.1 is now disabled. 
 ```
 
 ### Lookup installed Swift versions
 
-Current version is marked with `*`. 
+The active one is marked with `*`. 
 
 ```shell
 $ swiftbox list
