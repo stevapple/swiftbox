@@ -8,7 +8,7 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.4.1"
+SWIFTBOX_VERSION="0.4.2"
 
 enable-swiftbox() {
     if [ -e $ANOTHER_DIR/env.sh ]

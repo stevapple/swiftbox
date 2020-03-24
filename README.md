@@ -42,19 +42,19 @@ chmod +x swiftbox.sh
 
 ## Example Usage
 
-### Lookup `swiftenv` version
+### Lookup `swiftbox` version
 
 ```shell
-$ swiftenv version
-0.3.5
+$ swiftbox version
+0.4.2
 ```
 
-### Check installable Swift versions
+### Check availability of Swift versions
 
 ```shell
-$ swiftenv find 5.1
+$ swiftbox lookup 5.1
 Version 5.1 is available for Ubuntu 18.04. 
-$ swiftenv find 2.1
+$ swiftbox lookup 2.1
 The Swift version does not exist or does not support your Ubuntu version. 
 ```
 
@@ -92,22 +92,6 @@ $ swiftbox list
 * 5.1.5
 ```
 
-### Check availability Swift versions
-
-```shell
-$ swiftbox lookup 5.1
-Version 5.1 is available for Ubuntu 18.04. 
-$ swiftbox lookup 2.1
-The Swift version does not exist or does not support your Ubuntu version. 
-```
-
-### Lookup `swiftbox` version
-
-```shell
-$ swiftbox version
-0.4
-```
-
 ### Clear download cache
 
 ```shell
@@ -116,7 +100,7 @@ $ swiftbox clean
 
 ### Update `swiftbox`
 
-Will install the new version to the default location, not always self-update. 
+Update to the latest version if `swiftbox` is installed in `/usr/bin`. 
 
 ```shell
 $ swiftbox update
