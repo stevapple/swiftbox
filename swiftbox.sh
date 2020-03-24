@@ -8,7 +8,7 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.4"
+SWIFTBOX_VERSION="0.4.1"
 
 enable-swiftbox() {
     if [ -e $ANOTHER_DIR/env.sh ]
@@ -287,6 +287,10 @@ use)
         use-version $FORMAT_VERSION
         exit $?
     fi
+;;
+disable)
+    disable-swift
+    exit $?
 ;;
 clean)
     ensure-env

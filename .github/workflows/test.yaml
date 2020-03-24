@@ -17,11 +17,17 @@ jobs:
     - name: Test swiftbox lookup
       run: ./swiftbox.sh lookup 5.1.5
 
+    - name: Test swiftbox get with sudo
+      run: |
+        sudo ./swiftbox.sh get 5.1.2
+        which swift
+        swiftc -v
+
     - name: Test swiftbox get
       run: |
         ./swiftbox.sh get 5.1.5
         ./swiftbox.sh get 5.0
-        sudo ./swiftbox.sh get 5.1.2
+        swiftc -v
 
     - name: Test swiftbox list and use
       run: |
@@ -29,6 +35,7 @@ jobs:
         sudo ./swiftbox.sh list
         ./swiftbox.sh use 5.0
         ./swiftbox.sh list
+        swiftc -v
 
     - name: Test swiftbox clean
       run: |
