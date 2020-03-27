@@ -13,7 +13,7 @@ fi
 
 $SUDO_FLAG apt-get install wget -q -y
 
-LATEST_VERSION=`wget -q -O- "https://raw.githubusercontent.com/stevapple/swiftbox/master/VERSION"`
+LATEST_VERSION=`wget -q -O- "https://raw.githack.com/stevapple/swiftbox/master/VERSION"`
 WGET_RESULT=$?
 if [ $WGET_RESULT -ge 4 ]
 then
@@ -40,7 +40,7 @@ then
     exit
 fi
 
-$SUDO_FLAG wget -O "$INSTALL_DIR/swiftbox" "https://raw.githubusercontent.com/stevapple/swiftbox/v$LATEST_VERSION/swiftbox.sh"
+$SUDO_FLAG wget -O "$INSTALL_DIR/swiftbox" "https://rawcdn.githack.com/stevapple/swiftbox/v$LATEST_VERSION/swiftbox.sh"
 WGET_RESULT=$?
 if [ $WGET_RESULT -eq 8 ]
 then

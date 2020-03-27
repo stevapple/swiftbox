@@ -324,7 +324,7 @@ update)
         echo "You can install it with: $0 install"
         exit 254
     fi
-    INSTALL_SCRIPT=`wget -q -O- https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh`
+    INSTALL_SCRIPT=`wget -q -O- https://raw.githack.com/stevapple/swiftbox/master/install.sh`
     WGET_RESULT=$?
     if [ $WGET_RESULT -ge 4 ]
     then

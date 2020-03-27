@@ -12,11 +12,11 @@ There will be two sets of Swift environments if you use both. The local one is i
 
 ```bash
 # With wget
-sh -c "$(wget -q -O- https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
+sh -c "$(wget -q -O- https://raw.githack.com/stevapple/swiftbox/master/install.sh)"
 swiftbox version
 
 # With curl
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
+sh -c "$(curl -fsSL https://raw.githack.com/stevapple/swiftbox/master/install.sh)"
 swiftbox version
 ```
 
@@ -24,12 +24,12 @@ Or if you'd like to use it as a script (do not support `update` yet):
 
 ```bash
 # With wget
-wget https://raw.githubusercontent.com/stevapple/swiftbox/master/swiftbox.sh
+wget https://raw.githack.com/stevapple/swiftbox/master/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 
 # With curl
-curl -o swiftbox.sh https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh
+curl -o swiftbox.sh https://raw.githack.com/stevapple/swiftbox/master/install.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 

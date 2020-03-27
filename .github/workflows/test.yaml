@@ -27,8 +27,8 @@ jobs:
 
     - name: Test swiftbox get
       run: |
+        ./swiftbox.sh get 5.2
         ./swiftbox.sh get 5.1.5
-        ./swiftbox.sh get 5.0
         source /etc/environment
         source $HOME/.swiftbox/env.sh
         swiftc -v
@@ -37,7 +37,7 @@ jobs:
       run: |
         ./swiftbox.sh list
         sudo ./swiftbox.sh list
-        ./swiftbox.sh use 5.0
+        ./swiftbox.sh use 5.1.5
         ./swiftbox.sh list
         source /etc/environment
         source $HOME/.swiftbox/env.sh
@@ -51,14 +51,13 @@ jobs:
     - name: Test swiftbox remove
       run: |
         sudo ./swiftbox.sh remove 5.1.2
-        ./swiftbox.sh remove 5.0
-        ./swiftbox.sh use 5.1.5
+        ./swiftbox.sh remove 5.1.5
+        ./swiftbox.sh use 5.2
 
     - name: Test Swift status
       run: |
         source /etc/environment
         source $HOME/.swiftbox/env.sh
-        hash -r
         echo "\$PATH=$PATH"
         which swift
         swiftc -v
@@ -67,16 +66,14 @@ jobs:
       run: |
         source /etc/environment  
         source $HOME/.swiftbox/env.sh
-        hash -r
         swift test.swift
         swiftc test.swift -o test && ./test
 
     - name: Test swiftbox disable
       run: ./swiftbox.sh disable
 
-    - name: Test swiftbox disabled
+    - name: Test Swift disabled
       run: |
-        hash -r
         source /etc/environment
         source $HOME/.swiftbox/env.sh
         if hash swift 2>/dev/null
@@ -86,6 +83,6 @@ jobs:
 
     - name: Test swiftbox install and update
       run: |
-        sh -c "$(wget -q -O- https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
+        sh -c "$(wget -q -O- https://raw.githack.com/stevapple/swiftbox/master/install.sh)"
         swiftbox version
         swiftbox update
