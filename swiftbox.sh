@@ -8,28 +8,28 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.4.3"
+SWIFTBOX_VERSION="0.4.4"
 INSTALL_DIR="/usr/bin"
+
+full-reinit() {
+    sed -i "/$WORKING_DIR\/env.sh/d;/$ANOTHER_DIR\/env.sh/d" $1
+    echo "source /opt/swiftbox/env.sh" >> $1
+    echo "source $HOME/.swiftbox/env.sh" >> $1
+}
 
 enable-swiftbox() {
     if [ -e $ANOTHER_DIR/env.sh ]
     then
         if [ -e $HOME/.zshrc ]
         then
-            sed "/$WORKING_DIR\/env.sh/d;/$ANOTHER_DIR\/env.sh/d" $HOME/.zshrc > $HOME/.zshrc
-            echo "source /opt/swiftbox/env.sh" >> $HOME/.zshrc
-            echo "source $HOME/.swiftbox/env.sh" >> $HOME/.zshrc
+            full-reinit $HOME/.zshrc
         fi
         if [ -e $HOME/.bashrc ]
         then
-            sed "/$WORKING_DIR\/env.sh/d;/$ANOTHER_DIR\/env.sh/d" $HOME/.bashrc > $HOME/.bashrc
-            echo "source /opt/swiftbox/env.sh" >> $HOME/.bashrc
-            echo "source $HOME/.swiftbox/env.sh" >> $HOME/.bashrc
+            full-reinit $HOME/.bashrc
         elif [ -e $HOME/.bash_profile ]
         then
-            sed "/$WORKING_DIR\/env.sh/d;/$ANOTHER_DIR\/env.sh/d" $HOME/.bash_profile > $HOME/.bash_profile
-            echo "source /opt/swiftbox/env.sh" >> $HOME/.bash_profile
-            echo "source $HOME/.swiftbox/env.sh" >> $HOME/.bash_profile
+            full-reinit $HOME/.bash_profile
         fi
     else
         if [ -e $HOME/.zshrc ]
@@ -250,7 +250,7 @@ get)
         echo $FORMAT_VERSION
         exit $FORMAT_RESULT
     fi
-    if [ E$FORMAT_VERSION = E`default-version`]
+    if [ E$FORMAT_VERSION = E`default-version` ]
     then
         echo "Swift $FORMAT_VERSION is kept locally and set to default. "
         exit 34
