@@ -3,6 +3,10 @@
 if [ "E`lsb_release -i --short`" = "EUbuntu" ]
 then
     UBUNTU_VERSION=`lsb_release -r --short`
+    if [ ${UBUNTU_VERSION//./} -gt 1804 ] && [ ${UBUNTU_VERSION//./} -lt 2004 ]
+    then
+      UBUNTU_VERSION="18.04"
+    fi
 else
     echo "This program only support Ubuntu. "
     exit 255
