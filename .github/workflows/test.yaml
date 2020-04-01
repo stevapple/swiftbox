@@ -69,8 +69,8 @@ jobs:
         swift test.swift
         swiftc test.swift -o test && ./test
 
-    - name: Test swiftbox disable
-      run: ./swiftbox.sh disable
+    - name: Test swiftbox close
+      run: ./swiftbox.sh close
 
     - name: Test Swift disabled
       run: |
