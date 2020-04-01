@@ -86,7 +86,7 @@ Now using Swift 5.1.
 ### Disable Swift
 
 ```shell
-$ swiftbox disable
+$ swiftbox close
 Swift 5.1 is now disabled. 
 ```
 

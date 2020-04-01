@@ -8,10 +8,10 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.4.4"
+SWIFTBOX_VERSION="0.4.5"
 INSTALL_DIR="/usr/bin"
 
-full-reinit() {
+reinit-env() {
     sed -i "/$WORKING_DIR\/env.sh/d;/$ANOTHER_DIR\/env.sh/d" $1
     echo "source /opt/swiftbox/env.sh" >> $1
     echo "source $HOME/.swiftbox/env.sh" >> $1
@@ -22,14 +22,14 @@ enable-swiftbox() {
     then
         if [ -e $HOME/.zshrc ]
         then
-            full-reinit $HOME/.zshrc
+            reinit-env $HOME/.zshrc
         fi
         if [ -e $HOME/.bashrc ]
         then
-            full-reinit $HOME/.bashrc
+            reinit-env $HOME/.bashrc
         elif [ -e $HOME/.bash_profile ]
         then
-            full-reinit $HOME/.bash_profile
+            reinit-env $HOME/.bash_profile
         fi
     else
         if [ -e $HOME/.zshrc ]
@@ -243,53 +243,53 @@ fi
 case $1 in
 get)
     ensure-env
-    FORMAT_VERSION=`format-version $2`
+    FORMATTED_VERSION=`format-version $2`
     FORMAT_RESULT=$?
     if [ ! $FORMAT_RESULT -eq 0 ]
     then
-        echo $FORMAT_VERSION
+        echo $FORMATTED_VERSION
         exit $FORMAT_RESULT
     fi
-    if [ E$FORMAT_VERSION = E`default-version` ]
+    if [ E$FORMATTED_VERSION = E`default-version` ]
     then
-        echo "Swift $FORMAT_VERSION is kept locally and set to default. "
+        echo "Swift $FORMATTED_VERSION is kept locally and set to default. "
         exit 34
     fi
-    is-kept $FORMAT_VERSION
+    is-kept $FORMATTED_VERSION
     if [ $? -eq 0 ]
     then
-        echo "Swift $FORMAT_VERSION is kept locally, you can enable it with: $0 use $FORMAT_VERSION"
+        echo "Swift $FORMATTED_VERSION is kept locally, you can enable it with: $0 use $FORMATTED_VERSION"
         exit 33
     else
-        get-swift $FORMAT_VERSION
+        get-swift $FORMATTED_VERSION
     fi
 ;;
 remove)
     ensure-env
-    FORMAT_VERSION=`format-version $2`
+    FORMATTED_VERSION=`format-version $2`
     FORMAT_RESULT=$?
     if [ ! $FORMAT_RESULT -eq 0 ]
     then
-        echo $FORMAT_VERSION
+        echo $FORMATTED_VERSION
         exit $FORMAT_RESULT
     else
-        remove-swift $FORMAT_VERSION
+        remove-swift $FORMATTED_VERSION
         exit $?
     fi
 ;;
 use)
-    FORMAT_VERSION=`format-version $2`
+    FORMATTED_VERSION=`format-version $2`
     FORMAT_RESULT=$?
     if [ ! $FORMAT_RESULT -eq 0 ]
     then
-        echo $FORMAT_VERSION
+        echo $FORMATTED_VERSION
         exit $FORMAT_RESULT
     else
-        use-version $FORMAT_VERSION
+        use-version $FORMATTED_VERSION
         exit $?
     fi
 ;;
-disable)
+close)
     disable-swift
     exit $?
 ;;
@@ -302,20 +302,20 @@ version)
     echo $SWIFTBOX_VERSION
 ;;
 lookup)
-    FORMAT_VERSION=`format-version $2`
+    FORMATTED_VERSION=`format-version $2`
     FORMAT_RESULT=$?
     if [ ! $FORMAT_RESULT -eq 0 ]
     then
-        echo $FORMAT_VERSION
+        echo $FORMATTED_VERSION
         exit $FORMAT_RESULT
     fi
-    check-version $FORMAT_VERSION
+    check-version $FORMATTED_VERSION
     VERSION_AVAILABILITY=$?
     if [ ! $VERSION_AVAILABILITY -eq 0 ]
     then
         exit $VERSION_AVAILABILITY
     fi
-    echo "Swift $FORMAT_VERSION is available for Ubuntu $UBUNTU_VERSION. "
+    echo "Swift $FORMATTED_VERSION is available for Ubuntu $UBUNTU_VERSION. "
 ;;
 update)
     if [ ! $(cd `dirname $0`; pwd) = $INSTALL_DIR ]
