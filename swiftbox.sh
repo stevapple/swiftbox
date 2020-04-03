@@ -8,11 +8,11 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.4.5"
+SWIFTBOX_VERSION="0.4.6"
 INSTALL_DIR="/usr/bin"
 
 reinit-env() {
-    sed -i "/$WORKING_DIR\/env.sh/d;/$ANOTHER_DIR\/env.sh/d" $1
+    sed -i "#$WORKING_DIR\/env.sh#d;#$ANOTHER_DIR\/env.sh#d" $1
     echo "source /opt/swiftbox/env.sh" >> $1
     echo "source $HOME/.swiftbox/env.sh" >> $1
 }
