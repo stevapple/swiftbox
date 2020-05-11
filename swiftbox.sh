@@ -13,8 +13,12 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.5.4"
+SWIFTBOX_VERSION="0.5.5"
 INSTALL_DIR="/usr/bin"
+
+get-latest() {
+    curl https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/v//" | sed "s/\"//g"
+}
 
 reinit-env() {
     sed -i "#$WORKING_DIR\/env.sh#d;#$ANOTHER_WD\/env.sh#d" $1
@@ -336,7 +340,7 @@ update)
         echo "You can install it with: $0 install"
         exit 254
     fi
-    $SUDO_FLAG sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox/install.sh)"
+    $SUDO_FLAG sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@`get-latest`/install.sh)"
     exit $?
 ;;
 install)
