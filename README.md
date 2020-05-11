@@ -1,6 +1,6 @@
 # swiftbox: Use Swift out of the Box on Ubuntu and CentOS(RHEL)
 
-![Release](https://img.shields.io/github/v/tag/stevapple/swiftbox?label=release&logo=github) ![CI Status](https://github.com/stevapple/swiftbox/workflows/CI/badge.svg)
+![Release](https://img.shields.io/github/v/release/stevapple/swiftbox?logo=github) ![CI Status](https://github.com/stevapple/swiftbox/workflows/CI/badge.svg)
 
 Inspired by [pyenv](https://github.com/pyenv/pyenv) and [rbenv](https://github.com/rbenv/rbenv), and having different APIs. 
 
