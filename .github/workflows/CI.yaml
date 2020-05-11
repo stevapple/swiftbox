@@ -134,6 +134,9 @@ jobs:
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh version
+    
+    - name: Wait for CDN refreshment
+      run: sleep 1m
 
     - name: Test swiftbox install and update
       run: |

@@ -16,7 +16,7 @@ else
     exit 255
 fi
 
-LATEST_VERSION=`curl -fsSL - https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/v//" | sed "s/\"//g"`
+LATEST_VERSION=`curl -fsSL https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/v//" | sed "s/\"//g"`
 INSTALL_DIR="/usr/bin"
 SWIFTBOX_VERSION=`$INSTALL_DIR/swiftbox version`
 if [ $? -eq 0 ]

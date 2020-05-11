@@ -13,7 +13,7 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.6"
+SWIFTBOX_VERSION="0.6.1"
 INSTALL_DIR="/usr/bin"
 
 get-latest() {
