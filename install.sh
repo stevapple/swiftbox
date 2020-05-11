@@ -7,27 +7,16 @@ fi
 
 if [ "E`lsb_release -i --short`" = "EUbuntu" ]
 then
-    $SUDO_FLAG apt-get install wget -q=2
+    $SUDO_FLAG apt-get install wget jq -q=2
 elif [[ `cat /etc/redhat-release` =~ "CentOS" || `cat /etc/redhat-release` =~ "Red Hat Enterprise Linux" ]]
 then
-    $SUDO_FLAG yum install wget -q -y
+    $SUDO_FLAG yum install wget jq -q -y
 else
     echo "This program only supports Ubuntu and CentOS (RHEL). "
     exit 255
 fi
 
-LATEST_VERSION=`wget -q -O- "https://cdn.jsdelivr.net/gh/stevapple/swiftbox/VERSION"`
-WGET_RESULT=$?
-if [ $WGET_RESULT -ge 4 ]
-then
-    echo "Error: Please check your Internet connection and proxy settings. "
-    exit $WGET_RESULT
-elif [ $WGET_RESULT -ge 1 ]
-then
-    echo "Error: Please check your wget config. "
-    exit $WGET_RESULT
-fi
-
+LATEST_VERSION=`curl https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/v//" | sed "s/\"//g"`
 INSTALL_DIR="/usr/bin"
 SWIFTBOX_VERSION=`$INSTALL_DIR/swiftbox version`
 if [ $? -eq 0 ]
@@ -51,7 +40,7 @@ $SUDO_FLAG wget -O "$INSTALL_DIR/swiftbox" "https://cdn.jsdelivr.net/gh/stevappl
 WGET_RESULT=$?
 if [ $WGET_RESULT -eq 8 ]
 then
-    echo "Error: It seems the release isn't created yet. "
+    echo "Error: It seems this release isn't created yet. "
     exit $WGET_RESULT
 elif [ $WGET_RESULT -ge 4 ]
 then
