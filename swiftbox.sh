@@ -13,7 +13,7 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.5.1"
+SWIFTBOX_VERSION="0.5.2"
 INSTALL_DIR="/usr/bin"
 
 reinit-env() {

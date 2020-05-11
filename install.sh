@@ -8,7 +8,7 @@ fi
 if [ "E`lsb_release -i --short`" = "EUbuntu" ]
 then
     $SUDO_FLAG apt-get install wget -q=2
-elif [[ `cat /etc/redhat-release` ~= "CentOS" || `cat /etc/redhat-release` ~= "Red Hat Enterprise Linux" ]]
+elif [[ `cat /etc/redhat-release` =~ "CentOS" || `cat /etc/redhat-release` =~ "Red Hat Enterprise Linux" ]]
 then
     $SUDO_FLAG yum install wget -q -y
 else
