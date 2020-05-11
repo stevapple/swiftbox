@@ -11,13 +11,15 @@ By default, `swiftbox` will be installed at `/usr/bin`. The working directory wi
 There will be two sets of Swift environments if you use both. The local one is in favor by default unless you access `swiftbox` with `sudo`. Toolchains installed by `root` can be used by all users. 
 
 ```bash
-# With wget
-sh -c "$(wget -q -O- https://raw.githack.com/stevapple/swiftbox/master/install.sh)"
-swiftbox version
-
-# With curl
+# With curl (Recommended)
 sh -c "$(curl -fsSL https://raw.githack.com/stevapple/swiftbox/master/install.sh)"
 swiftbox version
+
+# With git
+git clone https://github.com/stevapple/swiftbox
+cd swiftbox
+chmod +x install.sh
+./install.sh
 ```
 
 Or if you'd like to use it as a script (do not support `update` yet):
