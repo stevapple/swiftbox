@@ -55,7 +55,7 @@ then
         echo "Already installed the latest version $SWIFTBOX_VERSION at $INSTALL_DIR. "
         exit
     fi
-    SUCCESS_MESSAGE="Successfully upgraded swiftbox from $SWIFTBOX_VERSION to $LATEST_VERSION. "
+    SUCCESS_MESSAGE="Successfully upgraded swiftbox from $SWIFTBOX_VERSION to $LATEST_VERSION"
 else
     SUCCESS_MESSAGE="Successfully installed swiftbox $LATEST_VERSION at $INSTALL_DIR. "
 fi

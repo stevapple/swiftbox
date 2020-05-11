@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.7"
+SWIFTBOX_VERSION="0.7.1"
 INSTALL_DIR="/usr/bin"
 
 if [ -f /etc/redhat-release ]
@@ -173,10 +173,10 @@ default-version() {
 check-version() {
     local DOWNLOAD_URL="https://swift.org/builds/swift-$1-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$1-RELEASE/swift-$1-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz"
     wget --no-check-certificate -q --spider $DOWNLOAD_URL
-    WGET_RESULT=$?
+    local WGET_RESULT=$?
     if [ $WGET_RESULT = 8 ]
     then
-        echo "Swift $1 does not exist or does not support your Ubuntu version. "
+        echo "Swift $1 does not exist or does not support your $SYSTEM_NICENAME version. "
         return 2
     elif [ $WGET_RESULT -ge 4 ]
     then
@@ -195,7 +195,7 @@ get-swift() {
     local FILE_NAME="swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION"
     local DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$NEW_VERSION-RELEASE/$FILE_NAME.tar.gz"
     check-version $NEW_VERSION
-    VERSION_AVAILABILITY=$?
+    local VERSION_AVAILABILITY=$?
     if [ $VERSION_AVAILABILITY != 0 ]
     then
         return $VERSION_AVAILABILITY
@@ -231,7 +231,7 @@ use-version() {
         ensure-env
         source $WORKING_DIR/env.sh
         hash -r
-        echo "Now using Swift $1. "
+        echo "Now using Swift $1"
     else
         echo "Error: Swift $1 has not been installed yet. "
         return 20
@@ -335,6 +335,7 @@ clean)
     ensure-env
     rm -rf $WORKING_DIR/temp/*
     rm -rf $WORKING_DIR/download/*
+    echo "Successfully cleaned the cache. "
 ;;
 version)
     echo $SWIFTBOX_VERSION
@@ -353,7 +354,7 @@ lookup)
     then
         exit $VERSION_AVAILABILITY
     fi
-    echo "Swift $FORMATTED_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION. "
+    echo "Swift $FORMATTED_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
 ;;
 update)
     if [ $(cd `dirname $0`; pwd) != $INSTALL_DIR ]

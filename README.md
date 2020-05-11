@@ -16,8 +16,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/
 swiftbox version
 
 # With git
-git clone https://github.com/stevapple/swiftbox
-cd swiftbox
+git clone https://github.com/stevapple/swiftbox && cd swiftbox
 chmod +x install.sh
 ./install.sh
 ```
@@ -36,8 +35,7 @@ chmod +x swiftbox.sh
 ./swiftbox.sh version
 
 # With git
-git clone https://github.com/stevapple/swiftbox
-cd swiftbox
+git clone https://github.com/stevapple/swiftbox && cd swiftbox
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 ```
@@ -46,19 +44,18 @@ You can designate a release version by using jsDelivr or git, which also has wid
 
 ```bash
 # With wget
-wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.6.1/swiftbox.sh
+wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.7/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 
 # With curl
-curl -o swiftbox.sh https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.6.1/swiftbox.sh
+curl -o swiftbox.sh https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.7/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 
 # With git
-git clone https://github.com/stevapple/swiftbox
-cd swiftbox
-git checkout v0.6.1
+git clone https://github.com/stevapple/swiftbox && cd swiftbox
+git checkout v0.7
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 ```
@@ -78,14 +75,14 @@ $ which swiftbox
 
 ```shell
 $ swiftbox version
-0.6.1
+0.7
 ```
 
 ### Check the availability of Swift versions
 
 ```shell
 $ swiftbox lookup 5.1
-Swift 5.1 is available for Ubuntu 18.04. 
+Swift 5.1 is available for Ubuntu 18.04
 $ swiftbox lookup 2.1
 Swift 2.1 does not exist or does not support your Ubuntu version. 
 ```
@@ -95,22 +92,22 @@ Swift 2.1 does not exist or does not support your Ubuntu version.
 Currently only stable builds are available. 
 
 ```shell
-$ swiftbox get 5.1
+$ swiftbox get 5.2.2
 $ swiftbox remove 5.0
 ```
 
 ### Switch to a Swift version
 
 ```shell
-$ swiftbox use 5.1
-Now using Swift 5.1. 
+$ swiftbox use 5.2.2
+Now using Swift 5.2.2 
 ```
 
 ### Disable Swift
 
 ```shell
 $ swiftbox close
-Swift 5.1 is now disabled. 
+Swift 5.2.2 is now disabled. 
 ```
 
 ### Lookup installed Swift versions
@@ -121,13 +118,14 @@ The active one is marked with `*`.
 $ swiftbox list
 - 4.2.1
 - 5.1
-* 5.1.5
+* 5.2.2
 ```
 
 ### Clear download cache
 
 ```shell
 $ swiftbox clean
+Successfully cleaned the cache. 
 ```
 
 ### Update `swiftbox`
@@ -136,4 +134,5 @@ Update to the latest version if `swiftbox` is installed in `/usr/bin`.
 
 ```shell
 $ swiftbox update
+Successfully upgraded swiftbox from 0.6.2 to 0.7.1
 ```
