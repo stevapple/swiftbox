@@ -1,8 +1,13 @@
 #!/bin/bash
 
-if [ ! "E`lsb_release -i --short`" = "EUbuntu" ]
+if [ "E`lsb_release -i --short`" = "EUbuntu" ]
 then
-    echo "This program only support Ubuntu. "
+    SYSTEM_NAME="ubuntu"
+elif [[ `cat /etc/redhat-release` ~= "CentOS" || `cat /etc/redhat-release` ~= "Red Hat Enterprise Linux" ]]
+then
+    SYSTEM_NAME="centos"
+else
+    echo "This program only supports Ubuntu and CentOS (RHEL). "
     exit 255
 fi
 
@@ -11,7 +16,14 @@ then
     SUDO_FLAG="sudo"
 fi
 
-$SUDO_FLAG apt-get install wget -q -y
+case $SYSTEM_NAME in
+ubuntu)
+    $SUDO_FLAG apt-get install wget -q=2
+;;
+centos)
+    $SUDO_FLAG yum install wget -q -y
+;;
+esac
 
 LATEST_VERSION=`wget -q -O- "https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/VERSION"`
 WGET_RESULT=$?

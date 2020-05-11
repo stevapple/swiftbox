@@ -46,6 +46,6 @@ Commits of pull requests will be asked to follow the coding (including naming, i
 
 ## About Operating System Supports
 
-This project is **temporarily** dedicated to Ubuntu. If you want to configure it for another platform, welcome to fork as a new one. 
+This project is **temporarily** dedicated to Ubuntu and CentOS. Amazon Linux 2 support is WIP. If you want to configure it for another platform, welcome to fork as a new one. 
 
 Once Swift.org releases installation packages for other distributions, you can support them by creating pull requests. 

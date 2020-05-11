@@ -3,7 +3,7 @@ name: CI
 on: [push]
 
 jobs:
-  test:
+  test-ubuntu:
     runs-on: ubuntu-18.04
     steps:
     - name: Checkout
@@ -80,6 +80,25 @@ jobs:
         then
           exit 1
         fi
+
+    - name: Test swiftbox install and update
+      run: |
+        sh -c "$(wget -q -O- https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/install.sh)"
+        swiftbox version
+        swiftbox update
+
+  test-centos:
+    container:
+      image: centos:8
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Test swiftbox version
+      run: |
+        chmod +x swiftbox.sh
+        ./swiftbox.sh version
 
     - name: Test swiftbox install and update
       run: |

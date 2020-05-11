@@ -2,13 +2,18 @@
 
 if [ "E`lsb_release -i --short`" = "EUbuntu" ]
 then
-    UBUNTU_VERSION=`lsb_release -r --short`
+    SYSTEM_NAME="ubuntu"
+    SYSTEM_VERSION=`lsb_release -r --short`
+elif [[ `cat /etc/redhat-release` =~ "CentOS" || `cat /etc/redhat-release` =~ "Red Hat Enterprise Linux" ]]
+then
+    SYSTEM_NAME="centos"
+    SYSTEM_VERSION=`cat /etc/redhat-release | grep -E "release \d+" -o | sed "s/release //"`
 else
-    echo "This program only support Ubuntu. "
+    echo "This program only supports Ubuntu and CentOS (RHEL). "
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.4.7"
+SWIFTBOX_VERSION="0.5"
 INSTALL_DIR="/usr/bin"
 
 reinit-env() {
@@ -55,11 +60,18 @@ init-env() {
     echo -e "if [ -e $WORKING_DIR/.swift-version ]\nthen\n\texport PATH=$WORKING_DIR/toolchain/swift-\`cat $WORKING_DIR/.swift-version\`/usr/bin:\$PATH\nfi" > $WORKING_DIR/env.sh
     if [ `id -u` -eq 0 ]
     then
-        ln -s $WORKING_DIR/env.sh /etc/profile.d/swiftbox.sh
+        $SUDO_FLAG ln -s $WORKING_DIR/env.sh /etc/profile.d/swiftbox.sh
     fi
     enable-swiftbox
-    $SUDO_FLAG apt-get update -q
-    $SUDO_FLAG apt-get install clang libicu-dev curl wget -y
+    case $SYSTEM_NAME in
+    ubuntu)
+        $SUDO_FLAG apt-get update -q=2
+        $SUDO_FLAG apt-get install clang libicu-dev curl wget -y
+    ;;
+    centos)
+        $SUDO_FLAG yum install curl wget binutils gcc git glibc-static libbsd-devel libedit libedit-devel libicu-devel libstdc++-static pkg-config python2 sqlite -y
+    ;;
+    esac
     wget -q -O - https://swift.org/keys/all-keys.asc | $SUDO_FLAG gpg --import -
     echo "swiftbox has been successfully set up. "
 }
@@ -133,7 +145,7 @@ default-version() {
 }
 
 check-version() {
-    local DOWNLOAD_URL="https://swift.org/builds/swift-$1-release/ubuntu${UBUNTU_VERSION//./}/swift-$1-RELEASE/swift-$1-RELEASE-ubuntu$UBUNTU_VERSION.tar.gz"
+    local DOWNLOAD_URL="https://swift.org/builds/swift-$1-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$1-RELEASE/swift-$1-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz"
     wget --no-check-certificate -q --spider $DOWNLOAD_URL
     WGET_RESULT=$?
     if [ $WGET_RESULT -eq 8 ]
@@ -154,8 +166,8 @@ check-version() {
 get-swift() {
     cd $WORKING_DIR
     local NEW_VERSION=$1
-    local FILE_NAME="swift-$NEW_VERSION-RELEASE-ubuntu$UBUNTU_VERSION"
-    local DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/ubuntu${UBUNTU_VERSION//./}/swift-$NEW_VERSION-RELEASE/$FILE_NAME.tar.gz"
+    local FILE_NAME="swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION"
+    local DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$NEW_VERSION-RELEASE/$FILE_NAME.tar.gz"
     check-version $NEW_VERSION
     VERSION_AVAILABILITY=$?
     if [ ! $VERSION_AVAILABILITY -eq 0 ]

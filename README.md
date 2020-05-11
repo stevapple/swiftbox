@@ -1,4 +1,4 @@
-# swiftbox: Use Swift out of the Box on Ubuntu
+# swiftbox: Use Swift out of the Box on Ubuntu and CentOS(RHEL)
 
 ![Release](https://img.shields.io/github/v/tag/stevapple/swiftbox?label=release&logo=github) ![CI Status](https://github.com/stevapple/swiftbox/workflows/CI/badge.svg)
 
