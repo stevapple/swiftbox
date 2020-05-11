@@ -13,11 +13,11 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.5.5"
+SWIFTBOX_VERSION="0.6"
 INSTALL_DIR="/usr/bin"
 
 get-latest() {
-    curl https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/v//" | sed "s/\"//g"
+    curl -fsSL https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/v//" | sed "s/\"//g"
 }
 
 reinit-env() {
