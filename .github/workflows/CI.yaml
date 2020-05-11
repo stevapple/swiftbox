@@ -14,7 +14,7 @@ jobs:
         chmod +x swiftbox.sh
         VERSION=`./swiftbox.sh version`
         echo "::set-env name=version::$VERSION"
-        if [ $? -eq 0 ]
+        if [ $? = 0 ]
         then
           if [ v$VERSION != `curl -fsSL https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/\"//g"` ]
           then
