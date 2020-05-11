@@ -3,7 +3,7 @@ name: CI
 on: [push]
 
 jobs:
-  tag:
+  release:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -13,6 +13,7 @@ jobs:
       run: |
         chmod +x swiftbox.sh
         VERSION=`./swiftbox.sh version`
+        echo "::set-env name=version::$VERSION"
         if [ $? -eq 0 ]
         then
           if [ $VERSION = `cat VERSION` ]
@@ -20,6 +21,7 @@ jobs:
             exit 0
           else
             echo $VERSION > VERSION
+            echo "::set-env name=updated::true"
             git config --global user.name  "${{ github.actor }}"
             git config --global user.email "`curl https://api.github.com/users/${{ github.actor }} | jq .email`"
             git commit -m "Release $VERSION" -a
@@ -32,12 +34,23 @@ jobs:
         
     - name: Push to GitHub
       uses: ad-m/github-push-action@master
+      if: ${{ env.updated }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: ${{ env.updated }}
+      with:
+        name: Release ${{ env.version }}
+        files: swiftbox.sh
+        tag_name: v${{ env.version }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
+
   test-ubuntu:
     runs-on: ubuntu-18.04
-    needs: tag
+    needs: release
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -121,7 +134,7 @@ jobs:
         swiftbox update
 
   test-centos:
-    needs: tag
+    needs: release
     container:
       image: centos:8
     runs-on: ubuntu-latest
