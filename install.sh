@@ -42,6 +42,7 @@ then
     echo "Already installed the latest version $SWIFTBOX_VERSION at $INSTALL_DIR. "
     exit
 elif [[ $SWIFTBOX_VERSION > $LATEST_VERSION ]]
+then
     echo "Already installed the latest version $SWIFTBOX_VERSION at $INSTALL_DIR. "
     exit
 fi
