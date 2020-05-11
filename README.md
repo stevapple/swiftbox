@@ -12,7 +12,7 @@ There will be two sets of Swift environments if you use both. The local one is i
 
 ```bash
 # With curl (Recommended)
-sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/install.sh)"
+sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox/install.sh)"
 swiftbox version
 
 # With git
@@ -26,12 +26,12 @@ Or if you'd like to use it as a script (do not support `update` yet):
 
 ```bash
 # With wget
-wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/swiftbox.sh
+wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 
 # With curl
-curl -o swiftbox.sh https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/swiftbox.sh
+curl -o swiftbox.sh https://cdn.jsdelivr.net/gh/stevapple/swiftbox/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 

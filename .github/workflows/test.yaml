@@ -83,7 +83,7 @@ jobs:
 
     - name: Test swiftbox install and update
       run: |
-        sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/install.sh)"
+        sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox/install.sh)"
         swiftbox version
         swiftbox update
 
@@ -105,6 +105,6 @@ jobs:
 
     - name: Test swiftbox install and update
       run: |
-        sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/install.sh)"
+        sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox/install.sh)"
         swiftbox version
         swiftbox update

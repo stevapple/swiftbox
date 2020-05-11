@@ -13,7 +13,7 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.5"
+SWIFTBOX_VERSION="0.5.1"
 INSTALL_DIR="/usr/bin"
 
 reinit-env() {
@@ -336,7 +336,7 @@ update)
         echo "You can install it with: $0 install"
         exit 254
     fi
-    $SUDO_FLAG sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/install.sh)"
+    $SUDO_FLAG sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox/install.sh)"
     exit $?
 ;;
 install)
