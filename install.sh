@@ -5,14 +5,29 @@ then
     SUDO_FLAG="sudo"
 fi
 
-if [[ `cat /etc/redhat-release` =~ "CentOS" || `cat /etc/redhat-release` =~ "Red Hat Enterprise Linux" ]]
+if [ -f "/etc/redhat-release" ]
 then
-    $SUDO_FLAG yum install curl jq -q -y
-elif [ "E`lsb_release -i --short`" = "EUbuntu" ]
+    REDHAT_RELEASE=`cat /etc/redhat-release`
+    if [[ $REDHAT_RELEASE =~ "CentOS" || $REDHAT_RELEASE =~ "Red Hat Enterprise Linux" ]]
+    then
+        $SUDO_FLAG yum install curl jq -q -y
+    else
+        UNSUPPORTED_SYSTEM=$REDHAT_RELEASE
+    fi
+elif hash lsb_release 2> /dev/null
 then
-    $SUDO_FLAG apt-get install curl jq -q=2
-else
+    if [ "E`lsb_release -i --short`" = "EUbuntu" ]
+    then
+        $SUDO_FLAG apt-get install curl jq -q=2
+    else
+        UNSUPPORTED_SYSTEM=`lsb_release -d -s`
+    fi
+fi
+
+if [ E$UNSUPPORTED_SYSTEM != "E" ]
+then
     echo "This program only supports Ubuntu and CentOS (RHEL). "
+    echo "$UNSUPPORTED_SYSTEM is unsupported. "
     exit 255
 fi
 

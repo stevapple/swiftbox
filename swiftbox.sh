@@ -1,19 +1,34 @@
 #!/bin/bash
 
-if [[ `cat /etc/redhat-release` =~ "CentOS" || `cat /etc/redhat-release` =~ "Red Hat Enterprise Linux" ]]
+if [ -f "/etc/redhat-release" ]
 then
-    SYSTEM_NAME="centos"
-    SYSTEM_VERSION=`cat /etc/redhat-release | grep -E "release \d+" -o | sed "s/release //"`
-elif [ "E`lsb_release -i --short`" = "EUbuntu" ]
+    REDHAT_RELEASE=`cat /etc/redhat-release`
+    if [[ $REDHAT_RELEASE =~ "CentOS" || $REDHAT_RELEASE =~ "Red Hat Enterprise Linux" ]]
+    then
+        SYSTEM_NAME="centos"
+        SYSTEM_VERSION=`cat /etc/redhat-release | grep -E "release \d+" -o | sed "s/release //"`
+    else
+        UNSUPPORTED_SYSTEM=$REDHAT_RELEASE
+    fi
+elif hash lsb_release 2> /dev/null
 then
-    SYSTEM_NAME="ubuntu"
-    SYSTEM_VERSION=`lsb_release -r --short`
-else
+    if [ "E`lsb_release -i --short`" = "EUbuntu" ]
+    then
+        SYSTEM_NAME="ubuntu"
+        SYSTEM_VERSION=`lsb_release -r --short`
+    else
+        UNSUPPORTED_SYSTEM=`lsb_release -d -s`
+    fi
+fi
+
+if [ "E$UNSUPPORTED_SYSTEM" != "E" ]
+then 
     echo "This program only supports Ubuntu and CentOS (RHEL). "
+    echo "$UNSUPPORTED_SYSTEM is unsupported. "
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.6.2"
+SWIFTBOX_VERSION="0.6.3"
 INSTALL_DIR="/usr/bin"
 
 get-latest() {
