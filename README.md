@@ -12,7 +12,7 @@ There will be two sets of Swift environments if you use both. The local one is i
 
 ```bash
 # With curl (Recommended)
-sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
 swiftbox version
 
 # With git
@@ -26,12 +26,12 @@ Or if you'd like to use it as a script (do not support `update` yet):
 
 ```bash
 # With wget
-wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox/swiftbox.sh
+wget https://raw.githubusercontent.com/stevapple/swiftbox/master/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 
 # With curl
-curl -o swiftbox.sh https://cdn.jsdelivr.net/gh/stevapple/swiftbox/swiftbox.sh
+curl -o swiftbox.sh https://raw.githubusercontent.com/stevapple/swiftbox/master/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 
@@ -42,10 +42,31 @@ chmod +x swiftbox.sh
 ./swiftbox.sh version
 ```
 
+You can designate a release version by using jsDelivr or git, which also has wider availability:
+
+```bash
+# With wget
+wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.6.1/swiftbox.sh
+chmod +x swiftbox.sh
+./swiftbox.sh version
+
+# With curl
+curl -o swiftbox.sh https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.6.1/swiftbox.sh
+chmod +x swiftbox.sh
+./swiftbox.sh version
+
+# With git
+git clone https://github.com/stevapple/swiftbox
+cd swiftbox
+git checkout v0.6.1
+chmod +x swiftbox.sh
+./swiftbox.sh version
+```
+
 You can later install it to `/usr/bin`:
 
 ```shell
-$ ./swiftbox.sh install
+$ sudo ./swiftbox.sh install
 Successfully installed swiftbox to system.
 $ which swiftbox
 /usr/bin/swiftbox
@@ -57,7 +78,7 @@ $ which swiftbox
 
 ```shell
 $ swiftbox version
-0.4.2
+0.6.1
 ```
 
 ### Check the availability of Swift versions

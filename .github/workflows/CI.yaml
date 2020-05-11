@@ -114,7 +114,7 @@ jobs:
 
     - name: Test swiftbox install and update
       run: |
-        sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@`./swiftbox.sh version`/install.sh)"
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
         swiftbox version
         swiftbox update
 
@@ -136,10 +136,10 @@ jobs:
         ./swiftbox.sh version
     
     - name: Wait for CDN refreshment
-      run: sleep 1m
+      run: sleep 30s
 
     - name: Test swiftbox install and update
       run: |
-        sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@`./swiftbox.sh version`/install.sh)"
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
         swiftbox version
         swiftbox update
