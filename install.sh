@@ -5,12 +5,12 @@ then
     SUDO_FLAG="sudo"
 fi
 
-if [ "E`lsb_release -i --short`" = "EUbuntu" ]
-then
-    $SUDO_FLAG apt-get install curl jq -q=2
-elif [[ `cat /etc/redhat-release` =~ "CentOS" || `cat /etc/redhat-release` =~ "Red Hat Enterprise Linux" ]]
+if [[ `cat /etc/redhat-release` =~ "CentOS" || `cat /etc/redhat-release` =~ "Red Hat Enterprise Linux" ]]
 then
     $SUDO_FLAG yum install curl jq -q -y
+elif [ "E`lsb_release -i --short`" = "EUbuntu" ]
+then
+    $SUDO_FLAG apt-get install curl jq -q=2
 else
     echo "This program only supports Ubuntu and CentOS (RHEL). "
     exit 255

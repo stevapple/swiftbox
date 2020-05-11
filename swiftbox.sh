@@ -1,19 +1,19 @@
 #!/bin/bash
 
-if [ "E`lsb_release -i --short`" = "EUbuntu" ]
-then
-    SYSTEM_NAME="ubuntu"
-    SYSTEM_VERSION=`lsb_release -r --short`
-elif [[ `cat /etc/redhat-release` =~ "CentOS" || `cat /etc/redhat-release` =~ "Red Hat Enterprise Linux" ]]
+if [[ `cat /etc/redhat-release` =~ "CentOS" || `cat /etc/redhat-release` =~ "Red Hat Enterprise Linux" ]]
 then
     SYSTEM_NAME="centos"
     SYSTEM_VERSION=`cat /etc/redhat-release | grep -E "release \d+" -o | sed "s/release //"`
+elif [ "E`lsb_release -i --short`" = "EUbuntu" ]
+then
+    SYSTEM_NAME="ubuntu"
+    SYSTEM_VERSION=`lsb_release -r --short`
 else
     echo "This program only supports Ubuntu and CentOS (RHEL). "
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.6.1"
+SWIFTBOX_VERSION="0.6.2"
 INSTALL_DIR="/usr/bin"
 
 get-latest() {
