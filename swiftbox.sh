@@ -8,17 +8,17 @@ else
     exit 255
 fi
 
-SWIFTBOX_VERSION="0.4.6"
+SWIFTBOX_VERSION="0.4.7"
 INSTALL_DIR="/usr/bin"
 
 reinit-env() {
-    sed -i "#$WORKING_DIR\/env.sh#d;#$ANOTHER_DIR\/env.sh#d" $1
+    sed -i "#$WORKING_DIR\/env.sh#d;#$ANOTHER_WD\/env.sh#d" $1
     echo "source /opt/swiftbox/env.sh" >> $1
     echo "source $HOME/.swiftbox/env.sh" >> $1
 }
 
 enable-swiftbox() {
-    if [ -e $ANOTHER_DIR/env.sh ]
+    if [ -e $ANOTHER_WD/env.sh ]
     then
         if [ -e $HOME/.zshrc ]
         then
@@ -58,8 +58,8 @@ init-env() {
         ln -s $WORKING_DIR/env.sh /etc/profile.d/swiftbox.sh
     fi
     enable-swiftbox
-    $SUDO_FLAG apt-get update
-    $SUDO_FLAG apt-get install clang libicu-dev wget -y
+    $SUDO_FLAG apt-get update -q
+    $SUDO_FLAG apt-get install clang libicu-dev curl wget -y
     wget -q -O - https://swift.org/keys/all-keys.asc | $SUDO_FLAG gpg --import -
     echo "swiftbox has been successfully set up. "
 }
@@ -227,10 +227,10 @@ ensure-env() {
 if [ `id -u` -eq 0 ]
 then
     WORKING_DIR="/opt/swiftbox"
-    ANOTHER_DIR="$HOME/.swiftbox"
+    ANOTHER_WD="$HOME/.swiftbox"
 else
     WORKING_DIR="$HOME/.swiftbox"
-    ANOTHER_DIR="/opt/swiftbox"
+    ANOTHER_WD="/opt/swiftbox"
     SUDO_FLAG="sudo"
 fi
 
@@ -320,22 +320,11 @@ lookup)
 update)
     if [ ! $(cd `dirname $0`; pwd) = $INSTALL_DIR ]
     then
-        echo "swiftbox is not installed to system, update unavailable. "
+        echo "swiftbox is not installed to system, update is unavailable. "
         echo "You can install it with: $0 install"
         exit 254
     fi
-    INSTALL_SCRIPT=`wget -q -O- https://raw.githack.com/stevapple/swiftbox/master/install.sh`
-    WGET_RESULT=$?
-    if [ $WGET_RESULT -ge 4 ]
-    then
-        echo "Error: Please check your Internet connection and proxy settings. "
-        exit $WGET_RESULT
-    elif [ $WGET_RESULT -ge 1 ]
-    then
-        echo "Error: Please check your wget config. "
-        exit $WGET_RESULT
-    fi
-    echo $INSTALL_SCRIPT | sh
+    $SUDO_FLAG sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/install.sh)"
     exit $?
 ;;
 install)

@@ -83,6 +83,6 @@ jobs:
 
     - name: Test swiftbox install and update
       run: |
-        sh -c "$(wget -q -O- https://raw.githack.com/stevapple/swiftbox/master/install.sh)"
+        sh -c "$(wget -q -O- https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/install.sh)"
         swiftbox version
         swiftbox update
