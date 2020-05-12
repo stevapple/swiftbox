@@ -63,6 +63,9 @@ jobs:
         sudo swiftbox update
 
     - name: Test swiftbox setup
+      env:
+        DEBIAN_FRONTEND: noninteractive
+        DEBCONF_NONINTERACTIVE_SEEN: true
       run: |
         swiftbox list
         sudo swiftbox list
