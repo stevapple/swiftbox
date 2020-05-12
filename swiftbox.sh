@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.7.1"
+SWIFTBOX_VERSION="0.7.2"
 INSTALL_DIR="/usr/bin"
 
 if [ -f /etc/redhat-release ]
@@ -31,7 +31,7 @@ else
     UNSUPPORTED_SYSTEM="This strange OS"
 fi
 
-if [ $UNSUPPORTED_SYSTEM ]
+if [ "$UNSUPPORTED_SYSTEM" ]
 then 
     echo "This program only supports Ubuntu and CentOS (RHEL). "
     echo "$UNSUPPORTED_SYSTEM is unsupported. "

@@ -60,7 +60,7 @@ else
     SUCCESS_MESSAGE="Successfully installed swiftbox $LATEST_VERSION at $INSTALL_DIR. "
 fi
 
-$SUDO_FLAG curl -o $INSTALL_DIR/swiftbox https://cdn.jsdelivr.net/gh/stevapple/swiftbox@$LATEST_VERSION/swiftbox.sh
+$SUDO_FLAG curl -o $INSTALL_DIR/swiftbox https://cdn.jsdelivr.net/gh/stevapple/swiftbox@$LATEST_VERSION/swiftbox.sh -#
 $SUDO_FLAG chmod +x $INSTALL_DIR/swiftbox
 hash -r
 echo $SUCCESS_MESSAGE
