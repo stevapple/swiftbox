@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.9"
+SWIFTBOX_VERSION="0.9.1"
 INSTALL_DIR="/usr/bin"
 
 if [ -f /etc/redhat-release ]
@@ -95,7 +95,7 @@ init-env() {
     enable-swiftbox
     case $SYSTEM_NAME in
     ubuntu)
-        $SUDO_FLAG apt-get install git libpython2.7 binutils tzdata libxml2 clang libicu-dev wget pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
+        $SUDO_FLAG apt-get install gnupg git libpython2.7 binutils tzdata libxml2 clang libicu-dev wget pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
     ;;
     centos)
         $SUDO_FLAG yum install epel-release -y
