@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.8.5"
+SWIFTBOX_VERSION="0.8.6"
 INSTALL_DIR="/usr/bin"
 
 if [ -f /etc/redhat-release ]
