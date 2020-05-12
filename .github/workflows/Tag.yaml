@@ -51,10 +51,10 @@ jobs:
       image: ubuntu:20.04
     runs-on: ubuntu-latest
     steps:
-    - name: Install curl
+    - name: Install sudo and curl
       run: |
         apt-get update
-        apt-get install curl -y
+        apt-get install sudo curl -y
 
     - name: Test swiftbox install and update
       run: |

@@ -121,6 +121,7 @@ jobs:
         swiftc -v
 
     - name: Test Swift compiler
+      shell: bash
       run: |
         source /etc/environment
         if [ -f $HOME/.swiftbox/env.sh ]
@@ -154,6 +155,7 @@ jobs:
       run: ./swiftbox.sh get nightly
 
     - name: Test Swift status
+      shell: bash
       run: |
         source /etc/environment
         if [ -f $HOME/.swiftbox/env.sh ]
@@ -170,6 +172,7 @@ jobs:
         swiftc -v
 
     - name: Test Swift compiler
+      shell: bash
       run: |
         source /etc/environment
         if [ -f $HOME/.swiftbox/env.sh ]
