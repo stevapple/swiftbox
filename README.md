@@ -44,18 +44,18 @@ You can designate a release version by using jsDelivr or git, which also has wid
 
 ```bash
 # With wget
-wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.7/swiftbox.sh
+wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.9/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 
 # With curl
-curl -o swiftbox.sh https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.7/swiftbox.sh
+curl -o swiftbox.sh https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.9/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 
 # With git
 git clone https://github.com/stevapple/swiftbox && cd swiftbox
-git checkout v0.7
+git checkout v0.9
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 ```
@@ -75,7 +75,7 @@ $ which swiftbox
 
 ```shell
 $ swiftbox version
-0.7
+0.9
 ```
 
 ### Check the availability of Swift versions
@@ -137,5 +137,5 @@ Update to the latest version if `swiftbox` is installed in `/usr/bin`.
 
 ```shell
 $ swiftbox update
-Successfully upgraded swiftbox from 0.6.2 to 0.7.1
+Successfully upgraded swiftbox from 0.6.2 to 0.9
 ```

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ `id -u` != 0 ]
+if [ `id -u` != 0 ] && hash sudo 2> /dev/null
 then
     SUDO_FLAG="sudo"
 fi
@@ -16,7 +16,7 @@ then
     fi
 elif [ -f /etc/os-release ]
 then
-    if [ `cat /etc/os-release | grep 'NAME="Ubuntu"'` ]
+    if [ `cat /etc/os-release | grep ID="ubuntu"` ]
     then
         $SUDO_FLAG apt-get install curl jq -q=2
     else

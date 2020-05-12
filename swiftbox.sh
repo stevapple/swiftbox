@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.8.6"
+SWIFTBOX_VERSION="0.9"
 INSTALL_DIR="/usr/bin"
 
 if [ -f /etc/redhat-release ]
@@ -11,17 +11,20 @@ then
         SYSTEM_NAME="centos"
         SYSTEM_NICENAME="CentOS/RHEL"
         SYSTEM_VERSION=`cat /etc/redhat-release | sed -r 's/.* ([0-9]+)\..*/\1/'`
+        $SUDO_FLAG yum install curl -q -y
     else
         UNSUPPORTED_SYSTEM=$REDHAT_RELEASE
     fi
 elif [ -f /etc/os-release ]
 then
     source /etc/os-release
-    if [ $NAME = "Ubuntu" ]
+    if [ $ID = "ubuntu" ]
     then
         SYSTEM_NAME="ubuntu"
         SYSTEM_NICENAME="Ubuntu"
         SYSTEM_VERSION=$VERSION_ID
+        $SUDO_FLAG apt-get update -q=2
+        $SUDO_FLAG apt-get install coreutils curl -q=2
     else
         UNSUPPORTED_SYSTEM="$NAME $VERSION"
     fi
@@ -92,11 +95,10 @@ init-env() {
     enable-swiftbox
     case $SYSTEM_NAME in
     ubuntu)
-        $SUDO_FLAG apt-get update -q=2
-        $SUDO_FLAG apt-get install coreutils git libpython2.7 binutils tzdata libcurl4 libxml2 clang libicu-dev curl wget pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
+        $SUDO_FLAG apt-get install git libpython2.7 binutils tzdata libxml2 clang libicu-dev wget pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
     ;;
     centos)
-        $SUDO_FLAG yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+        $SUDO_FLAG yum install epel-release -y
         $SUDO_FLAG yum install --enablerepo=PowerTools curl wget binutils gcc git glibc-static libbsd-devel libedit libedit-devel libicu-devel libstdc++-static pkg-config python2 sqlite -y
     ;;
     esac
@@ -280,7 +282,10 @@ then
 else
     WORKING_DIR="$HOME/.swiftbox"
     ANOTHER_WD="/opt/swiftbox"
-    SUDO_FLAG="sudo"
+    if hash sudo 2> /dev/null
+    then
+        SUDO_FLAG="sudo"
+    fi
 fi
 
 if [ $# = 0 ]
