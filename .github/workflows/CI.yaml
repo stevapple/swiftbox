@@ -3,39 +3,8 @@ name: CI
 on: [push]
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      
-    - name: Test swiftbox
-      run: |
-        chmod +x swiftbox.sh
-        VERSION=`./swiftbox.sh version`
-        echo "::set-env name=version::$VERSION"
-        if [ $? = 0 ]
-        then
-          if [ v$VERSION != `curl -fsSL https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/\"//g"` ]
-          then
-            echo "::set-env name=updated::true"
-          fi
-        else
-          exit 1
-        fi
-
-    - name: Tag and release
-      uses: avakar/tag-and-release@v1
-      if: ${{ env.updated }}
-      with:
-        release_name: Release ${{ env.version }}
-        tag_name: v${{ env.version }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
-
   test-ubuntu:
     runs-on: ubuntu-18.04
-    needs: release
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -45,12 +14,15 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh version
 
+    - name: Test swiftbox install
+      run: swiftbox install
+
     - name: Test swiftbox lookup
-      run: ./swiftbox.sh lookup 5.1.5
+      run: swiftbox lookup 5.1.5
 
     - name: Test swiftbox get with sudo
       run: |
-        sudo ./swiftbox.sh get 5.1.2
+        sudo swiftbox get 5.1.2
         source /etc/environment
         source /etc/profile.d/swiftbox.sh
         which swift
@@ -58,32 +30,32 @@ jobs:
 
     - name: Test swiftbox get
       run: |
-        ./swiftbox.sh get 5.2
-        ./swiftbox.sh get 5.1.5
+        swiftbox get 5.2
+        swiftbox get 5.1.5
         source /etc/environment
         source $HOME/.swiftbox/env.sh
         swiftc -v
 
     - name: Test swiftbox list and use
       run: |
-        ./swiftbox.sh list
-        sudo ./swiftbox.sh list
-        ./swiftbox.sh use 5.1.5
-        ./swiftbox.sh list
+        swiftbox list
+        sudo swiftbox list
+        swiftbox use 5.1.5
+        swiftbox list
         source /etc/environment
         source $HOME/.swiftbox/env.sh
         swiftc -v
 
     - name: Test swiftbox clean
       run: |
-        ./swiftbox.sh clean
-        sudo ./swiftbox.sh clean
+        swiftbox clean
+        sudo swiftbox clean
 
     - name: Test swiftbox remove
       run: |
-        sudo ./swiftbox.sh remove 5.1.2
-        ./swiftbox.sh remove 5.1.5
-        ./swiftbox.sh use 5.2
+        sudo swiftbox remove 5.1.2
+        swiftbox remove 5.1.5
+        swiftbox use 5.2
 
     - name: Test Swift status
       run: |
@@ -101,7 +73,7 @@ jobs:
         swiftc test.swift -o test && ./test
 
     - name: Test swiftbox close
-      run: ./swiftbox.sh close
+      run: swiftbox close
 
     - name: Test Swift disabled
       run: |
@@ -112,14 +84,39 @@ jobs:
           exit 1
         fi
 
-    - name: Test swiftbox install and update
-      run: |
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
-        swiftbox version
-        swiftbox update
+  test-ubuntu-nightly:
+    container:
+      image: ubuntu:20.04
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
 
-  test-centos:
-    needs: release
+    - name: Test swiftbox version
+      run: |
+        chmod +x swiftbox.sh
+        ./swiftbox.sh version
+
+    - name: Test swiftbox get nightly
+      run: ./swiftbox.sh get nightly
+
+    - name: Test Swift status
+      run: |
+        source /etc/environment
+        source $HOME/.swiftbox/env.sh
+        echo "\$PATH=$PATH"
+        ./swiftbox.sh list
+        which swift
+        swiftc -v
+
+    - name: Test Swift compiler
+      run: |
+        source /etc/environment  
+        source $HOME/.swiftbox/env.sh
+        swift test.swift
+        swiftc test.swift -o test && ./test
+
+  test-centos-nightly:
     container:
       image: centos:8
     runs-on: ubuntu-latest
@@ -131,12 +128,22 @@ jobs:
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh version
-    
-    - name: Wait for CDN refreshment
-      run: sleep 30s
 
-    - name: Test swiftbox install and update
+    - name: Test swiftbox get nightly
+      run: ./swiftbox.sh get nightly
+
+    - name: Test Swift status
       run: |
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
-        swiftbox version
-        swiftbox update
+        source /etc/environment
+        source $HOME/.swiftbox/env.sh
+        echo "\$PATH=$PATH"
+        ./swiftbox.sh list
+        which swift
+        swiftc -v
+
+    - name: Test Swift compiler
+      run: |
+        source /etc/environment  
+        source $HOME/.swiftbox/env.sh
+        swift test.swift
+        swiftc test.swift -o test && ./test

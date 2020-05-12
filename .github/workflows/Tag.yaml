@@ -1,0 +1,86 @@
+name: Tag
+
+on: [push]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      updated: ${{ steps.main.outputs.updated }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - id: main
+      name: Test swiftbox
+      run: |
+        chmod +x swiftbox.sh
+        VERSION=`./swiftbox.sh version`
+        echo "::set-env name=version::$VERSION"
+        if [ $? = 0 ]
+        then
+          if [ v$VERSION != `curl -fsSL https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/\"//g"` ]
+          then
+            echo "::set-env name=updated::true"
+            echo "::set-output name=updated::true"
+          fi
+        else
+          exit 1
+        fi
+
+    - name: Tag and release
+      uses: avakar/tag-and-release@v1
+      if: ${{ env.updated }}
+      with:
+        release_name: Release ${{ env.version }}
+        tag_name: v${{ env.version }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  wait-for-cdn:
+    runs-on: ubuntu-latest
+    needs: release
+    if: ${{ needs.release.outputs.updated }}
+    steps:
+      - name: Wait for CDN refreshment
+        run: sleep 30s
+
+  test-ubuntu-install:
+    needs: wait-for-cdn
+    container:
+      image: ubuntu:20.04
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install sudo
+      run: apt-get install sudo -y
+
+    - name: Test swiftbox install and update
+      run: |
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
+        swiftbox version
+        sudo swiftbox update
+
+    - name: Test swiftbox setup
+      run: |
+        swiftbox list
+        sudo swiftbox list
+
+  test-centos-install:
+    needs: wait-for-cdn
+    container:
+      image: centos:8
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install sudo
+      run: yum install sudo -y
+
+    - name: Test swiftbox install and update
+      run: |
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
+        swiftbox version
+        sudo swiftbox update
+
+    - name: Test swiftbox setup
+      run: |
+        swiftbox list
+        sudo swiftbox list
