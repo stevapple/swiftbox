@@ -43,7 +43,7 @@ jobs:
     if: ${{ needs.release.outputs.updated }}
     steps:
       - name: Wait for CDN refreshment
-        run: sleep 30s
+        run: sleep 1m
 
   test-ubuntu-install:
     needs: wait-for-cdn

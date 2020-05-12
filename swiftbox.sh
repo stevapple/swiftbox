@@ -1,7 +1,20 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.9.1"
+SWIFTBOX_VERSION="0.9.2"
 INSTALL_DIR="/usr/bin"
+
+if [ `id -u` = 0 ]
+then
+    WORKING_DIR="/opt/swiftbox"
+    ANOTHER_WD="$HOME/.swiftbox"
+else
+    WORKING_DIR="$HOME/.swiftbox"
+    ANOTHER_WD="/opt/swiftbox"
+    if hash sudo 2> /dev/null
+    then
+        SUDO_FLAG="sudo"
+    fi
+fi
 
 if [ -f /etc/redhat-release ]
 then
@@ -274,19 +287,6 @@ ensure-env() {
         rm -rf $WORKING_DIR/temp/*
     fi
 }
-
-if [ `id -u` = 0 ]
-then
-    WORKING_DIR="/opt/swiftbox"
-    ANOTHER_WD="$HOME/.swiftbox"
-else
-    WORKING_DIR="$HOME/.swiftbox"
-    ANOTHER_WD="/opt/swiftbox"
-    if hash sudo 2> /dev/null
-    then
-        SUDO_FLAG="sudo"
-    fi
-fi
 
 if [ $# = 0 ]
 then
