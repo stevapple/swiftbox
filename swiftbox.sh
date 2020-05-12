@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.9.4"
+SWIFTBOX_VERSION="0.9.5"
 INSTALL_DIR="/usr/bin"
 
 if [ `id -u` = 0 ]
@@ -24,9 +24,9 @@ then
         SYSTEM_NAME="centos"
         SYSTEM_NICENAME="CentOS/RHEL"
         SYSTEM_VERSION=`cat /etc/redhat-release | sed -r 's/.* ([0-9]+)\..*/\1/'`
-        if ! hash curl 2> /dev/null
+        if ! hash curl 2> /dev/null || ! hash wget 2> /dev/null
         then
-            $SUDO_FLAG yum install curl -q -y
+            $SUDO_FLAG yum install curl wget -q -y
         fi
     else
         UNSUPPORTED_SYSTEM=$REDHAT_RELEASE
@@ -39,10 +39,10 @@ then
         SYSTEM_NAME="ubuntu"
         SYSTEM_NICENAME="Ubuntu"
         SYSTEM_VERSION=$VERSION_ID
-        if ! hash curl 2> /dev/null || ! hash realpath 2> /dev/null
+        if ! hash curl 2> /dev/null || ! hash realpath 2> /dev/null || ! hash wget 2> /dev/null
         then
             $SUDO_FLAG apt-get update -q=2
-            $SUDO_FLAG apt-get install coreutils curl -q=2
+            $SUDO_FLAG apt-get install coreutils curl wget -q=2
         fi
     else
         UNSUPPORTED_SYSTEM="$NAME $VERSION"
@@ -114,11 +114,11 @@ init-env() {
     enable-swiftbox
     case $SYSTEM_NAME in
     ubuntu)
-        $SUDO_FLAG apt-get install gnupg git libpython2.7 binutils tzdata libxml2 clang libicu-dev wget pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
+        $SUDO_FLAG apt-get install gnupg git libpython2.7 binutils tzdata libxml2 clang libicu-dev pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
     ;;
     centos)
         $SUDO_FLAG yum install epel-release -y
-        $SUDO_FLAG yum install --enablerepo=PowerTools curl wget binutils gcc git glibc-static libbsd-devel libedit libedit-devel libicu-devel libstdc++-static pkg-config python2 sqlite -y
+        $SUDO_FLAG yum install --enablerepo=PowerTools binutils gcc git glibc-static libbsd-devel libedit libedit-devel libicu-devel libstdc++-static pkg-config python2 sqlite -y
     ;;
     esac
     wget -q -O - https://swift.org/keys/all-keys.asc | $SUDO_FLAG gpg --import -
