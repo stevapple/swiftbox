@@ -15,7 +15,7 @@ jobs:
         ./swiftbox.sh version
 
     - name: Test swiftbox install
-      run: swiftbox install
+      run: ./swiftbox.sh install
 
     - name: Test swiftbox lookup
       run: swiftbox lookup 5.1.5
