@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.9.2"
+SWIFTBOX_VERSION="0.9.3"
 INSTALL_DIR="/usr/bin"
 
 if [ `id -u` = 0 ]
@@ -24,7 +24,10 @@ then
         SYSTEM_NAME="centos"
         SYSTEM_NICENAME="CentOS/RHEL"
         SYSTEM_VERSION=`cat /etc/redhat-release | sed -r 's/.* ([0-9]+)\..*/\1/'`
-        $SUDO_FLAG yum install curl -q -y
+        if ! hash curl 2> /dev/null
+        then
+            $SUDO_FLAG yum install curl -q -y
+        fi
     else
         UNSUPPORTED_SYSTEM=$REDHAT_RELEASE
     fi
@@ -36,8 +39,11 @@ then
         SYSTEM_NAME="ubuntu"
         SYSTEM_NICENAME="Ubuntu"
         SYSTEM_VERSION=$VERSION_ID
-        $SUDO_FLAG apt-get update -q=2
-        $SUDO_FLAG apt-get install coreutils curl -q=2
+        if ! hash curl 2> /dev/null || ! hash realpath 2> /dev/null
+        then
+            $SUDO_FLAG apt-get update -q=2
+            $SUDO_FLAG apt-get install coreutils curl -q=2
+        fi
     else
         UNSUPPORTED_SYSTEM="$NAME $VERSION"
     fi
