@@ -16,12 +16,11 @@ then
     fi
 elif [ -f /etc/os-release ]
 then
-    source /etc/os-release
-    if [ $NAME -eq "Ubuntu" ]
+    if [ `cat /etc/os-release | grep 'NAME="Ubuntu"'` ]
     then
         $SUDO_FLAG apt-get install curl jq -q=2
     else
-        UNSUPPORTED_SYSTEM="$NAME $VERSION"
+        UNSUPPORTED_SYSTEM=`cat /etc/os-release | grep PRETTY_NAME | sed 's/PRETTY_NAME=//' | sed 's/"//g'`
     fi
 elif hash uname 2> /dev/null
 then
