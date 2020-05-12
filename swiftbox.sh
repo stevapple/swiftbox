@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.7.2"
+SWIFTBOX_VERSION="0.8"
 INSTALL_DIR="/usr/bin"
 
 if [ -f /etc/redhat-release ]
@@ -92,7 +92,7 @@ init-env() {
     case $SYSTEM_NAME in
     ubuntu)
         $SUDO_FLAG apt-get update -q=2
-        $SUDO_FLAG apt-get install clang libicu-dev curl wget -y
+        $SUDO_FLAG apt-get install git libpython2.7 binutils tzdata libcurl4 libxml2 clang libicu-dev curl wget pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
     ;;
     centos)
         $SUDO_FLAG yum install curl wget binutils gcc git glibc-static libbsd-devel libedit libedit-devel libicu-devel libstdc++-static pkg-config python2 sqlite -y
@@ -113,7 +113,7 @@ format-version() {
     do
         if [ `echo $var | sed 's/[0-9]//g'` ]
         then
-            echo "Invalid Swift version, try x.x.x or x.x"
+            echo "Invalid Swift version, try x.x.x, x.x or nightly. "
             return 1
         fi
     done
@@ -134,6 +134,10 @@ format-version() {
         return 1
     ;;
     esac
+}
+
+nightly-version() {
+    curl -s https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}/latest-build.yml | grep 'download:' | sed 's/download:[^:\/\/]//g' | sed 's/swift-DEVELOPMENT-SNAPSHOT-//' | sed "s/-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz//"
 }
 
 remove-swift() {
@@ -171,12 +175,12 @@ default-version() {
 }
 
 check-version() {
-    local DOWNLOAD_URL="https://swift.org/builds/swift-$1-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$1-RELEASE/swift-$1-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz"
+    local DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$NEW_VERSION-RELEASE/swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz"
     wget --no-check-certificate -q --spider $DOWNLOAD_URL
     local WGET_RESULT=$?
     if [ $WGET_RESULT = 8 ]
     then
-        echo "Swift $1 does not exist or does not support your $SYSTEM_NICENAME version. "
+        echo "Swift $NEW_VERSION does not exist or does not support your $SYSTEM_NICENAME version. "
         return 2
     elif [ $WGET_RESULT -ge 4 ]
     then
@@ -189,20 +193,30 @@ check-version() {
     fi
 }
 
-get-swift() {
+get-release() {
     cd $WORKING_DIR
-    local NEW_VERSION=$1
-    local FILE_NAME="swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION"
-    local DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$NEW_VERSION-RELEASE/$FILE_NAME.tar.gz"
-    check-version $NEW_VERSION
+    FILE_NAME="swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION"
+    DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$NEW_VERSION-RELEASE/$FILE_NAME.tar.gz"
+    check-version
     local VERSION_AVAILABILITY=$?
     if [ $VERSION_AVAILABILITY != 0 ]
     then
         return $VERSION_AVAILABILITY
     fi
+    install-toolchain
+}
+
+get-snapshot() {
+    cd $WORKING_DIR
+    FILE_NAME="swift-DEVELOPMENT-SNAPSHOT-$NEW_VERSION-$SYSTEM_NAME$SYSTEM_VERSION"
+    DOWNLOAD_URL="https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-DEVELOPMENT-SNAPSHOT-$NEW_VERSION/$FILE_NAME.tar.gz"
+    install-toolchain
+}
+
+install-toolchain() {
     if [ -f download/$FILE_NAME.tar.gz.sig ]
     then
-        wget -c -t 5 -P download "$DOWNLOAD_URL.sig"
+        wget -t 5 -P download $DOWNLOAD_URL.sig
     else
         if [ -f download/$FILE_NAME.tar.gz ]
         then
@@ -216,11 +230,6 @@ get-swift() {
     $SUDO_FLAG gpg --verify download/$FILE_NAME.tar.gz.sig
     tar -xzf download/$FILE_NAME.tar.gz -C temp
     mv temp/$FILE_NAME toolchain/swift-$NEW_VERSION
-    if [ ! -f .swift-version ]
-    then
-        echo "Automatically set Swift $NEW_VERSION as default. "
-        use-version $NEW_VERSION
-    fi
 }
 
 use-version() {
@@ -281,51 +290,49 @@ fi
 case $1 in
 get)
     ensure-env
-    FORMATTED_VERSION=`format-version $2`
-    FORMAT_RESULT=$?
-    if [ $FORMAT_RESULT != 0 ]
+    if [ E$2 = "Enightly" ]
     then
-        echo $FORMATTED_VERSION
-        exit $FORMAT_RESULT
+        NEW_VERSION=`nightly-version`
+        TOOLCHAIN_TYPE="snapshot"
+    else
+        NEW_VERSION=`format-version $2`
+        FORMAT_RESULT=$?
+        if [ $FORMAT_RESULT != 0 ]
+        then
+            echo $NEW_VERSION
+            exit $FORMAT_RESULT
+        fi
+        TOOLCHAIN_TYPE="release"
     fi
-    if [ E$FORMATTED_VERSION = E`default-version` ]
+    if [ E$NEW_VERSION = E`default-version` ]
     then
-        echo "Swift $FORMATTED_VERSION is kept locally and set to default. "
+        echo "Swift $NEW_VERSION is kept locally and set to default. "
         exit 34
-    fi
-    is-kept $FORMATTED_VERSION
-    if [ $? = 0 ]
+    elif [ `is-kept $NEW_VERSION` ]
     then
-        echo "Swift $FORMATTED_VERSION is kept locally, you can enable it with: $0 use $FORMATTED_VERSION"
+        echo "Swift $NEW_VERSION is kept locally, you can enable it with: $0 use $NEW_VERSION"
         exit 33
     else
-        get-swift $FORMATTED_VERSION
+        get-$TOOLCHAIN_TYPE $NEW_VERSION
+        GET_RESULT=$?
+        if [ $GET_RESULT != 0 ]
+        then
+            exit $GET_RESULT
+        elif [ ! -f .swift-version ]
+        then
+            echo "Automatically set Swift $NEW_VERSION as default. "
+            use-version $NEW_VERSION
+        fi
     fi
 ;;
 remove)
     ensure-env
-    FORMATTED_VERSION=`format-version $2`
-    FORMAT_RESULT=$?
-    if [ $FORMAT_RESULT != 0 ]
-    then
-        echo $FORMATTED_VERSION
-        exit $FORMAT_RESULT
-    else
-        remove-swift $FORMATTED_VERSION
-        exit $?
-    fi
+    remove-swift $2
+    exit $?
 ;;
 use)
-    FORMATTED_VERSION=`format-version $2`
-    FORMAT_RESULT=$?
-    if [ $FORMAT_RESULT != 0 ]
-    then
-        echo $FORMATTED_VERSION
-        exit $FORMAT_RESULT
-    else
-        use-version $FORMATTED_VERSION
-        exit $?
-    fi
+    use-version $NEW_VERSION
+    exit $?
 ;;
 close)
     disable-swift
@@ -341,33 +348,33 @@ version)
     echo $SWIFTBOX_VERSION
 ;;
 lookup)
-    FORMATTED_VERSION=`format-version $2`
+    NEW_VERSION=`format-version $2`
     FORMAT_RESULT=$?
     if [ $FORMAT_RESULT != 0 ]
     then
-        echo $FORMATTED_VERSION
+        echo $NEW_VERSION
         exit $FORMAT_RESULT
     fi
-    check-version $FORMATTED_VERSION
+    check-version
     VERSION_AVAILABILITY=$?
     if [ $VERSION_AVAILABILITY != 0 ]
     then
         exit $VERSION_AVAILABILITY
     fi
-    echo "Swift $FORMATTED_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
+    echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
 ;;
 update)
     if [ $(cd `dirname $0`; pwd) != $INSTALL_DIR ]
     then
         echo "swiftbox is not installed to system, update is unavailable. "
-        echo "You can install it with: $0 install"
+        echo "You can install it with: $SUDO_FLAG $0 install"
         exit 254
     fi
     $SUDO_FLAG sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@`get-latest`/install.sh)"
     exit $?
 ;;
 install)
-    if [ $(cd `dirname $0`; pwd) != $INSTALL_DIR ]
+    if [ $(cd `dirname $0`; pwd) = $INSTALL_DIR ]
     then
         echo "swiftbox is already installed to system. "
         exit 1

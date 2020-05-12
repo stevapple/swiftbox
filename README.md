@@ -89,10 +89,13 @@ Swift 2.1 does not exist or does not support your Ubuntu version.
 
 ### Manage Swift versions
 
-Currently only stable builds are available. 
+Both release builds and the latest nightly build are available. 
+
+CentOS (RHEL) users can now try out nightly builds.
 
 ```shell
 $ swiftbox get 5.2.2
+$ swiftbox get nightly
 $ swiftbox remove 5.0
 ```
 
@@ -116,8 +119,8 @@ The active one is marked with `*`.
 
 ```shell
 $ swiftbox list
+- 2020-05-10-a
 - 4.2.1
-- 5.1
 * 5.2.2
 ```
 
