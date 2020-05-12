@@ -99,8 +99,8 @@ jobs:
 
     - name: Set non-interactive
       run: |
-        export DEBIAN_FRONTEND=noninteractive
-        export DEBCONF_NONINTERACTIVE_SEEN=true
+        echo "::set-env name=DEBIAN_FRONTEND:noninteractive"
+        echo "::set-env name=DEBCONF_NONINTERACTIVE_SEEN:true"
 
     - name: Test swiftbox version
       run: |
@@ -121,8 +121,15 @@ jobs:
 
     - name: Test Swift compiler
       run: |
-        source /etc/environment  
-        source $HOME/.swiftbox/env.sh
+        source /etc/environment
+        if [ -f $HOME/.swiftbox/env.sh ]
+        then
+          source $HOME/.swiftbox/env.sh
+        fi
+        if [ -f /opt/swiftbox/env.sh ]
+        then
+          source /opt/swiftbox/env.sh
+        fi
         swift test.swift
         swiftc test.swift -o test && ./test
 
@@ -133,6 +140,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Install which
+      run: yum install which -y
 
     - name: Test swiftbox version
       run: |

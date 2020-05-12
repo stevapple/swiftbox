@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.8.2"
+SWIFTBOX_VERSION="0.8.3"
 INSTALL_DIR="/usr/bin"
 
 if [ -f /etc/redhat-release ]
@@ -366,7 +366,7 @@ lookup)
     echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
 ;;
 update)
-    if [ $(cd `dirname $0`; pwd) = $(cd $INSTALL_DIR; pwd) ]
+    if [ $(cd `dirname $0`; pwd) != $(cd $INSTALL_DIR; pwd) ]
     then
         echo "swiftbox is not installed to system, update is unavailable. "
         echo "You can install it with: $SUDO_FLAG $0 install"
