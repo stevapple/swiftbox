@@ -14,13 +14,14 @@ then
     else
         UNSUPPORTED_SYSTEM=$REDHAT_RELEASE
     fi
-elif hash lsb_release 2> /dev/null
+elif [ -f /etc/os-release ]
 then
-    if [ `lsb_release -i --short` = "Ubuntu" ]
+    source /etc/os-release
+    if [ $NAME = "Ubuntu" ]
     then
         $SUDO_FLAG apt-get install curl jq -q=2
     else
-        UNSUPPORTED_SYSTEM=`lsb_release -d -s`
+        UNSUPPORTED_SYSTEM="$NAME $VERSION"
     fi
 elif hash uname 2> /dev/null
 then

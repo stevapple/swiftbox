@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.8.1"
+SWIFTBOX_VERSION="0.8.2"
 INSTALL_DIR="/usr/bin"
 
 if [ -f /etc/redhat-release ]
@@ -10,19 +10,20 @@ then
     then
         SYSTEM_NAME="centos"
         SYSTEM_NICENAME="CentOS/RHEL"
-        SYSTEM_VERSION=`cat /etc/redhat-release | grep -E "release \d+" -o | sed "s/release //"`
+        SYSTEM_VERSION=`cat /etc/redhat-release | sed -r 's/.* ([0-9]+)\..*/\1/'`
     else
         UNSUPPORTED_SYSTEM=$REDHAT_RELEASE
     fi
-elif hash lsb_release 2> /dev/null
+elif [ -f /etc/os-release ]
 then
-    if [ `lsb_release -i --short` = "Ubuntu" ]
+    source /etc/os-release
+    if [ $NAME = "Ubuntu" ]
     then
         SYSTEM_NAME="ubuntu"
         SYSTEM_NICENAME="Ubuntu"
-        SYSTEM_VERSION=`lsb_release -r --short`
+        SYSTEM_VERSION=$VERSION_ID
     else
-        UNSUPPORTED_SYSTEM=`lsb_release -d -s`
+        UNSUPPORTED_SYSTEM="$NAME $VERSION"
     fi
 elif hash uname 2> /dev/null
 then
@@ -332,7 +333,7 @@ remove)
     exit $?
 ;;
 use)
-    use-version $NEW_VERSION
+    use-version $2
     exit $?
 ;;
 close)
