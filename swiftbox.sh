@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.8.3"
+SWIFTBOX_VERSION="0.8.4"
 INSTALL_DIR="/usr/bin"
 
 if [ -f /etc/redhat-release ]
@@ -93,11 +93,11 @@ init-env() {
     case $SYSTEM_NAME in
     ubuntu)
         $SUDO_FLAG apt-get update -q=2
-        $SUDO_FLAG apt-get install git libpython2.7 binutils tzdata libcurl4 libxml2 clang libicu-dev curl wget pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
+        $SUDO_FLAG apt-get install coreutils git libpython2.7 binutils tzdata libcurl4 libxml2 clang libicu-dev curl wget pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
     ;;
     centos)
         $SUDO_FLAG yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-        $SUDO_FLAG yum install --enablerepo=PowerTools curl wget binutils gcc git glibc-static libbsd-devel libedit libedit-devel libicu-devel libstdc++-static pkg-config python2 sqlite -y
+        $SUDO_FLAG yum install --enablerepo=PowerTools coreutils curl wget binutils gcc git glibc-static libbsd-devel libedit libedit-devel libicu-devel libstdc++-static pkg-config python2 sqlite -y
     ;;
     esac
     wget -q -O - https://swift.org/keys/all-keys.asc | $SUDO_FLAG gpg --import -
@@ -366,17 +366,17 @@ lookup)
     echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
 ;;
 update)
-    if [ $(cd `dirname $0`; pwd) != $(cd $INSTALL_DIR; pwd) ]
+    if [ $(realpath `dirname $0`) != $(realpath $INSTALL_DIR) ]
     then
         echo "swiftbox is not installed to system, update is unavailable. "
-        echo "You can install it with: $SUDO_FLAG $0 install"
+        echo "You can install it with: $0 install"
         exit 254
     fi
-    $SUDO_FLAG sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@`get-latest`/install.sh)"
+    sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@`get-latest`/install.sh)"
     exit $?
 ;;
 install)
-    if [ $(cd `dirname $0`; pwd) = $(cd $INSTALL_DIR; pwd) ]
+    if [ $(realpath `dirname $0`) = $(realpath $INSTALL_DIR) ]
     then
         echo "swiftbox is already installed to system. "
         exit 1

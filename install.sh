@@ -17,7 +17,7 @@ then
 elif [ -f /etc/os-release ]
 then
     source /etc/os-release
-    if [ $NAME = "Ubuntu" ]
+    if [ $NAME -eq "Ubuntu" ]
     then
         $SUDO_FLAG apt-get install curl jq -q=2
     else
@@ -51,7 +51,7 @@ then
         $SUDO_FLAG chmod +x $INSTALL_DIR/swiftbox
     fi
     SWIFTBOX_VERSION=`$INSTALL_DIR/swiftbox version`
-    if [ $SWIFTBOX_VERSION = $LATEST_VERSION ]
+    if [ $SWIFTBOX_VERSION -eq $LATEST_VERSION ]
     then
         echo "Already installed the latest version $SWIFTBOX_VERSION at $INSTALL_DIR. "
         exit
