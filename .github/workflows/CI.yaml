@@ -97,6 +97,9 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh version
 
+    - name: Test swiftbox lookup nightly
+      run: ./swiftbox.sh lookup nightly
+
     - name: Test swiftbox get nightly
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -150,6 +153,9 @@ jobs:
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh version
+    
+    - name: Test swiftbox lookup nightly
+      run: ./swiftbox.sh lookup nightly
 
     - name: Test swiftbox get nightly
       run: ./swiftbox.sh get nightly

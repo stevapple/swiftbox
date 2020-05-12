@@ -83,6 +83,8 @@ $ swiftbox version
 ```shell
 $ swiftbox lookup 5.1
 Swift 5.1 is available for Ubuntu 18.04
+$ swiftbox lookup nightly
+Swift nightly build 2020-05-11-a is available for Ubuntu 18.04
 $ swiftbox lookup 2.1
 Swift 2.1 does not exist or does not support your Ubuntu version. 
 ```

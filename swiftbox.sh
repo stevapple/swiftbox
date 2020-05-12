@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.9.3"
+SWIFTBOX_VERSION="0.9.4"
 INSTALL_DIR="/usr/bin"
 
 if [ `id -u` = 0 ]
@@ -153,13 +153,28 @@ format-version() {
         fi
     ;;
     *)
-        echo "Invalid Swift version, try x.x.x or x.x"
+        echo "Invalid Swift version, try x.x.x or x.x or nightly. "
         return 1
     ;;
     esac
 }
 
 nightly-version() {
+    wget --no-check-certificate -q --spider https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}/latest-build.yml
+    local WGET_RESULT=$?
+    if [ $WGET_RESULT = 8 ]
+    then
+        echo "Current nightly builds don't support your $SYSTEM_NICENAME version. "
+        return 2
+    elif [ $WGET_RESULT -ge 4 ]
+    then
+        echo "Network error. Please check your Internet connection and proxy settings. "
+        return 5
+    elif [ $WGET_RESULT -ge 1 ]
+    then
+        echo "Please check your wget config. "
+        return 255
+    fi
     curl -s https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}/latest-build.yml | grep 'download:' | sed 's/download:[^:\/\/]//g' | sed 's/swift-DEVELOPMENT-SNAPSHOT-//' | sed "s/-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz//"
 }
 
@@ -306,16 +321,17 @@ get)
     if [ E$2 = "Enightly" ]
     then
         NEW_VERSION=`nightly-version`
+        FORMAT_RESULT=$?
         TOOLCHAIN_TYPE="snapshot"
     else
         NEW_VERSION=`format-version $2`
         FORMAT_RESULT=$?
-        if [ $FORMAT_RESULT != 0 ]
-        then
-            echo $NEW_VERSION
-            exit $FORMAT_RESULT
-        fi
         TOOLCHAIN_TYPE="release"
+    fi
+    if [ $FORMAT_RESULT != 0 ]
+    then
+        echo $NEW_VERSION
+        exit $FORMAT_RESULT
     fi
     if [ E$NEW_VERSION = E`default-version` ]
     then
@@ -361,20 +377,30 @@ version)
     echo $SWIFTBOX_VERSION
 ;;
 lookup)
-    NEW_VERSION=`format-version $2`
+    if [ E$2 = "Enightly" ]
+    then
+        NEW_VERSION=`nightly-version`
+    else
+        NEW_VERSION=`format-version $2`
+    fi
     FORMAT_RESULT=$?
     if [ $FORMAT_RESULT != 0 ]
     then
         echo $NEW_VERSION
         exit $FORMAT_RESULT
     fi
-    check-version
-    VERSION_AVAILABILITY=$?
-    if [ $VERSION_AVAILABILITY != 0 ]
+    if [ E$2 = "Enightly" ]
     then
-        exit $VERSION_AVAILABILITY
+        echo "Swift nightly build $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
+    else
+        check-version
+        VERSION_AVAILABILITY=$?
+        if [ $VERSION_AVAILABILITY != 0 ]
+        then
+            exit $VERSION_AVAILABILITY
+        fi
+        echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
     fi
-    echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
 ;;
 update)
     if [ $(realpath `dirname $0`) != $(realpath $INSTALL_DIR) ]
