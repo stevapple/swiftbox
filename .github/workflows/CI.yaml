@@ -9,11 +9,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Set non-interactive
-      run: |
-        export DEBIAN_FRONTEND=noninteractive
-        export DEBCONF_NONINTERACTIVE_SEEN=true
-
     - name: Test swiftbox version
       run: |
         chmod +x swiftbox.sh
@@ -97,23 +92,29 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Set non-interactive
-      run: |
-        echo "::set-env name=DEBIAN_FRONTEND:noninteractive"
-        echo "::set-env name=DEBCONF_NONINTERACTIVE_SEEN:true"
-
     - name: Test swiftbox version
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh version
 
     - name: Test swiftbox get nightly
+      env:
+        DEBIAN_FRONTEND: noninteractive
+        DEBCONF_NONINTERACTIVE_SEEN: true
       run: ./swiftbox.sh get nightly
 
     - name: Test Swift status
+      shell: bash
       run: |
         source /etc/environment
-        source $HOME/.swiftbox/env.sh
+        if [ -f $HOME/.swiftbox/env.sh ]
+        then
+          source $HOME/.swiftbox/env.sh
+        fi
+        if [ -f /opt/swiftbox/env.sh ]
+        then
+          source /opt/swiftbox/env.sh
+        fi
         echo "\$PATH=$PATH"
         ./swiftbox.sh list
         which swift
@@ -170,7 +171,14 @@ jobs:
 
     - name: Test Swift compiler
       run: |
-        source /etc/environment  
-        source $HOME/.swiftbox/env.sh
+        source /etc/environment
+        if [ -f $HOME/.swiftbox/env.sh ]
+        then
+          source $HOME/.swiftbox/env.sh
+        fi
+        if [ -f /opt/swiftbox/env.sh ]
+        then
+          source /opt/swiftbox/env.sh
+        fi
         swift test.swift
         swiftc test.swift -o test && ./test

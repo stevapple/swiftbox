@@ -51,12 +51,6 @@ jobs:
       image: ubuntu:20.04
     runs-on: ubuntu-latest
     steps:
-
-    - name: Set non-interactive
-      run: |
-        export DEBIAN_FRONTEND=noninteractive
-        export DEBCONF_NONINTERACTIVE_SEEN=true
-
     - name: Install curl
       run: |
         apt-get update
