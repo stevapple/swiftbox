@@ -9,6 +9,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Set non-interactive
+      run: |
+        export DEBIAN_FRONTEND=noninteractive
+        export DEBCONF_NONINTERACTIVE_SEEN=true
+
     - name: Test swiftbox version
       run: |
         chmod +x swiftbox.sh
@@ -92,6 +97,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Set non-interactive
+      run: |
+        export DEBIAN_FRONTEND=noninteractive
+        export DEBCONF_NONINTERACTIVE_SEEN=true
+
     - name: Test swiftbox version
       run: |
         chmod +x swiftbox.sh
@@ -135,7 +145,14 @@ jobs:
     - name: Test Swift status
       run: |
         source /etc/environment
-        source $HOME/.swiftbox/env.sh
+        if [ -f $HOME/.swiftbox/env.sh ]
+        then
+          source $HOME/.swiftbox/env.sh
+        fi
+        if [ -f /opt/swiftbox/env.sh ]
+        then
+          source /opt/swiftbox/env.sh
+        fi
         echo "\$PATH=$PATH"
         ./swiftbox.sh list
         which swift
