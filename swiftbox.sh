@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.10"
+SWIFTBOX_VERSION="0.10.1"
 
 if [ `id -u` = 0 ]
 then
@@ -111,6 +111,7 @@ init-env() {
     enable-swiftbox
     case $SYSTEM_NAME in
     ubuntu)
+        $SUDO_FLAG apt-get update
         $SUDO_FLAG apt-get install gnupg git libpython2.7 binutils tzdata libxml2 clang libicu-dev pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
     ;;
     centos)
