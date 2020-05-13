@@ -191,3 +191,57 @@ jobs:
         fi
         swift test.swift
         swiftc test.swift -o test && ./test
+
+  test-amzn-nightly:
+    container:
+      image: amazonlinux:2
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install which
+      run: yum install which -y
+
+    - name: Test swiftbox version
+      run: |
+        chmod +x swiftbox.sh
+        ./swiftbox.sh version
+    
+    - name: Test swiftbox lookup nightly
+      run: ./swiftbox.sh lookup nightly
+
+    - name: Test swiftbox get nightly
+      run: ./swiftbox.sh get nightly
+
+    - name: Test Swift status
+      shell: bash
+      run: |
+        source /etc/environment
+        if [ -f $HOME/.swiftbox/env.sh ]
+        then
+          source $HOME/.swiftbox/env.sh
+        fi
+        if [ -f /opt/swiftbox/env.sh ]
+        then
+          source /opt/swiftbox/env.sh
+        fi
+        echo "\$PATH=$PATH"
+        ./swiftbox.sh list
+        which swift
+        swiftc -v
+
+    - name: Test Swift compiler
+      shell: bash
+      run: |
+        source /etc/environment
+        if [ -f $HOME/.swiftbox/env.sh ]
+        then
+          source $HOME/.swiftbox/env.sh
+        fi
+        if [ -f /opt/swiftbox/env.sh ]
+        then
+          source /opt/swiftbox/env.sh
+        fi
+        swift test.swift
+        swiftc test.swift -o test && ./test

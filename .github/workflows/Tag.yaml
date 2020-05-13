@@ -89,3 +89,23 @@ jobs:
       run: |
         swiftbox list
         sudo swiftbox list
+
+  test-amzn-install:
+    needs: wait-for-cdn
+    container:
+      image: amazonlinux:2
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install sudo
+      run: yum install sudo -y
+
+    - name: Test swiftbox install and update
+      run: |
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
+        swiftbox version
+        sudo swiftbox update
+
+    - name: Test swiftbox setup
+      run: |
+        swiftbox list
+        sudo swiftbox list

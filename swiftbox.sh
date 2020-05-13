@@ -1,7 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.9.5"
-INSTALL_DIR="/usr/bin"
+SWIFTBOX_VERSION="0.10"
 
 if [ `id -u` = 0 ]
 then
@@ -16,37 +15,37 @@ else
     fi
 fi
 
-if [ -f /etc/redhat-release ]
-then
-    REDHAT_RELEASE=`cat /etc/redhat-release`
-    if [[ $REDHAT_RELEASE =~ "CentOS" || $REDHAT_RELEASE =~ "Red Hat Enterprise Linux" ]]
-    then
-        SYSTEM_NAME="centos"
-        SYSTEM_NICENAME="CentOS/RHEL"
-        SYSTEM_VERSION=`cat /etc/redhat-release | sed -r 's/.* ([0-9]+)\..*/\1/'`
-        if ! hash curl 2> /dev/null || ! hash wget 2> /dev/null
-        then
-            $SUDO_FLAG yum install curl wget -q -y
-        fi
-    else
-        UNSUPPORTED_SYSTEM=$REDHAT_RELEASE
-    fi
-elif [ -f /etc/os-release ]
+if [ -f /etc/os-release ]
 then
     source /etc/os-release
-    if [ $ID = "ubuntu" ]
-    then
+    SYSTEM_NICENAME=$NAME
+    SYSTEM_VERSION=$VERSION_ID
+    case $ID in
+    ubuntu)
         SYSTEM_NAME="ubuntu"
-        SYSTEM_NICENAME="Ubuntu"
-        SYSTEM_VERSION=$VERSION_ID
-        if ! hash curl 2> /dev/null || ! hash realpath 2> /dev/null || ! hash wget 2> /dev/null
+        if ! hash curl 2> /dev/null || ! hash realpath 2> /dev/null || ! hash wget 2> /dev/null || ! hash jq 2> /dev/null
         then
             $SUDO_FLAG apt-get update -q=2
-            $SUDO_FLAG apt-get install coreutils curl wget -q=2
+            $SUDO_FLAG apt-get install coreutils curl wget jq -q=2
         fi
-    else
+    ;;
+    rhel | centos)
+        SYSTEM_NAME="centos"
+        if ! hash curl 2> /dev/null || ! hash wget 2> /dev/null || ! hash jq 2> /dev/null
+        then
+            $SUDO_FLAG yum install curl wget jq -q -y
+        fi
+    ;;
+    amzn)
+        SYSTEM_NAME="amazonlinux"
+        if ! hash curl 2> /dev/null || ! hash wget 2> /dev/null || ! hash jq 2> /dev/null
+        then
+            $SUDO_FLAG yum install curl wget jq -y > /dev/null
+        fi
+    ;;
+    *)
         UNSUPPORTED_SYSTEM="$NAME $VERSION"
-    fi
+    esac
 elif hash uname 2> /dev/null
 then
     UNSUPPORTED_SYSTEM=`uname -v`
@@ -56,14 +55,12 @@ fi
 
 if [ "$UNSUPPORTED_SYSTEM" ]
 then 
-    echo "This program only supports Ubuntu and CentOS (RHEL). "
+    echo "This program only supports Ubuntu, CentOS(RHEL) and Amazon Linux. "
     echo "$UNSUPPORTED_SYSTEM is unsupported. "
     exit 255
+else
+    INSTALL_DIR=`realpath /usr/bin`
 fi
-
-get-latest() {
-    curl -fsSL https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/v//" | sed "s/\"//g"
-}
 
 reinit-env() {
     sed -i "#$WORKING_DIR\/env.sh#d;#$ANOTHER_WD\/env.sh#d" $1
@@ -119,6 +116,9 @@ init-env() {
     centos)
         $SUDO_FLAG yum install epel-release -y
         $SUDO_FLAG yum install --enablerepo=PowerTools binutils gcc git glibc-static libbsd-devel libedit libedit-devel libicu-devel libstdc++-static pkg-config python2 sqlite -y
+    ;;
+    amazonlinux)
+        $SUDO_FLAG yum install binutils gcc git glibc-static gzip libbsd libcurl libedit libicu sqlite libstdc++-static libuuid libxml2 tar -y
     ;;
     esac
     wget -q -O - https://swift.org/keys/all-keys.asc | $SUDO_FLAG gpg --import -
@@ -403,23 +403,29 @@ lookup)
     fi
 ;;
 update)
-    if [ $(realpath `dirname $0`) != $(realpath $INSTALL_DIR) ]
+    if [ $(realpath `dirname $0`) != $INSTALL_DIR ]
     then
         echo "swiftbox is not installed to system, update is unavailable. "
         echo "You can install it with: $0 install"
         exit 254
     fi
-    sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@`get-latest`/install.sh)"
+    LATEST_VERSION=`curl -fsSL https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/v//" | sed "s/\"//g"`
+    if [ ! "$LATEST_VERSION" ]
+    then
+        echo "Please check your Internet connection, especially GitHub availability."
+        exit 4
+    fi
+    sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@$LATEST_VERSION/install.sh)"
     exit $?
 ;;
 install)
-    if [ $(realpath `dirname $0`) = $(realpath $INSTALL_DIR) ]
+    if [ $(realpath `dirname $0`) = $INSTALL_DIR ]
     then
-        echo "swiftbox is already installed to system. "
+        echo "swiftbox is already installed at $INSTALL_DIR"
         exit 1
     fi
     $SUDO_FLAG cp $0 $INSTALL_DIR/swiftbox
-    echo "Successfully installed swiftbox to system. "
+    echo "Successfully installed swiftbox at $INSTALL_DIR"
 ;;
 list)
     ensure-env

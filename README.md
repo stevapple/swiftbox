@@ -1,4 +1,4 @@
-# swiftbox: Use Swift out of the Box on Ubuntu and CentOS(RHEL)
+# swiftbox: Use Swift out of the Box on Ubuntu, CentOS(RHEL) and Amazon Linux
 
 ![Release](https://img.shields.io/github/v/release/stevapple/swiftbox?logo=github) ![CI Status](https://github.com/stevapple/swiftbox/workflows/CI/badge.svg)
 
@@ -44,18 +44,18 @@ You can designate a release version by using jsDelivr or git, which also has wid
 
 ```bash
 # With wget
-wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.9/swiftbox.sh
+wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.10/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 
 # With curl
-curl -o swiftbox.sh https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.9/swiftbox.sh
+curl -o swiftbox.sh https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.10/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 
 # With git
 git clone https://github.com/stevapple/swiftbox && cd swiftbox
-git checkout v0.9
+git checkout v0.10
 chmod +x swiftbox.sh
 ./swiftbox.sh version
 ```
@@ -64,7 +64,7 @@ You can later install it to `/usr/bin`:
 
 ```shell
 $ sudo ./swiftbox.sh install
-Successfully installed swiftbox to system.
+Successfully installed swiftbox at /usr/bin
 $ which swiftbox
 /usr/bin/swiftbox
 ```
@@ -93,7 +93,7 @@ Swift 2.1 does not exist or does not support your Ubuntu version.
 
 Both release builds and the latest nightly build are available. 
 
-CentOS (RHEL) users can now try out nightly builds.
+CentOS(RHEL) and Amazon Linux users can now try out nightly builds.
 
 ```shell
 $ swiftbox get 5.2.2
