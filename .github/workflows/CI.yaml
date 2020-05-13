@@ -146,9 +146,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Install which
-      run: yum install which -y
-
     - name: Test swiftbox version
       run: |
         chmod +x swiftbox.sh
@@ -159,6 +156,9 @@ jobs:
 
     - name: Test swiftbox get nightly
       run: ./swiftbox.sh get nightly
+
+    - name: Install which
+      run: yum install which -y
 
     - name: Test Swift status
       shell: bash
@@ -197,11 +197,11 @@ jobs:
       image: amazonlinux:2
     runs-on: ubuntu-latest
     steps:
+    - name: Install tar and gzip
+      run: yum install tar gzip -y
+
     - name: Checkout
       uses: actions/checkout@v2
-
-    - name: Install which
-      run: yum install which -y
 
     - name: Test swiftbox version
       run: |
@@ -213,6 +213,9 @@ jobs:
 
     - name: Test swiftbox get nightly
       run: ./swiftbox.sh get nightly
+
+    - name: Install which
+      run: yum install which -y
 
     - name: Test Swift status
       shell: bash
