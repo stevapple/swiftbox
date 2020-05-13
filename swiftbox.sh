@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.10.1"
+SWIFTBOX_VERSION="0.10.2"
 
 if [ `id -u` = 0 ]
 then
@@ -267,6 +267,12 @@ install-toolchain() {
     fi
     $SUDO_FLAG gpg --keyserver hkp://pool.sks-keyservers.net --refresh-keys Swift
     $SUDO_FLAG gpg --verify download/$FILE_NAME.tar.gz.sig
+    if [ $? != 0 ]
+    then
+        echo "Signature check failed, please try again. "
+        echo "If it always fails, clear the cache with: $0 clean"
+        exit 100
+    fi
     tar -xzf download/$FILE_NAME.tar.gz -C temp
     mv temp/$FILE_NAME toolchain/swift-$NEW_VERSION
 }
@@ -281,7 +287,7 @@ use-version() {
         hash -r
         echo "Now using Swift $1"
     else
-        echo "Error: Swift $1 has not been installed yet. "
+        echo "Swift $1 has not been installed yet. "
         return 20
     fi
 }
