@@ -33,7 +33,6 @@ jobs:
         if [ `which swift` != "/opt/swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
         then
           echo "::error::Swift $MAINVER is not installed correctly."
-          exit 2
         fi
         swiftc -v
 
@@ -59,7 +58,6 @@ jobs:
         if [ `which swift` != "$HOME/.swiftbox/toolchain/swift-$ALTVER/usr/bin/swift" ]
         then
           echo "::error::Swift $ALTVER is not selected correctly."
-          exit 2
         fi
         swiftc -v
 
@@ -80,7 +78,6 @@ jobs:
         if [ `which swift` != "$HOME/.swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
         then
           echo "::error::Swift $ALTVER is not removed correctly."
-          exit 2
         fi
         swiftc -v
 
