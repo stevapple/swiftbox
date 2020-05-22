@@ -93,8 +93,6 @@ Swift 2.1 does not exist or does not support your Ubuntu version.
 
 Both release builds and the latest nightly build are available. 
 
-CentOS(RHEL) and Amazon Linux users can now try out nightly builds.
-
 ```shell
 $ swiftbox get 5.2.2
 $ swiftbox get nightly
