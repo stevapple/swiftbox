@@ -78,7 +78,8 @@ enable-swiftbox() {
         if [ -f $HOME/.bashrc ]
         then
             reinit-env $HOME/.bashrc
-        elif [ -f $HOME/.bash_profile ]
+        fi
+        if [ -f $HOME/.bash_profile ]
         then
             reinit-env $HOME/.bash_profile
         fi
@@ -90,7 +91,8 @@ enable-swiftbox() {
         if [ -f $HOME/.bashrc ]
         then
             echo "source $WORKING_DIR/env.sh" >> $HOME/.bashrc
-        elif [ -f $HOME/.bash_profile ]
+        fi
+        if [ -f $HOME/.bash_profile ]
         then
             echo "source $WORKING_DIR/env.sh" >> $HOME/.bash_profile
         fi
@@ -283,8 +285,6 @@ use-version() {
     then
         echo $1 > $WORKING_DIR/.swift-version
         ensure-env
-        source $WORKING_DIR/env.sh
-        hash -r
         echo "Now using Swift $1"
     else
         echo "Swift $1 has not been installed yet. "
