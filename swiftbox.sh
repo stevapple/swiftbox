@@ -1,16 +1,16 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.10.3"
+SWIFTBOX_VERSION="0.10.4"
 
 if [ `id -u` = 0 ]
 then
     WORKING_DIR="/opt/swiftbox"
     ANOTHER_WD="$HOME/.swiftbox"
-    SCHEME="[`whoami`]"
+    SCHEME="[global]"
 else
     WORKING_DIR="$HOME/.swiftbox"
     ANOTHER_WD="/opt/swiftbox"
-    SCHEME="[global]"
+    SCHEME="[`whoami`]"
     if hash sudo 2> /dev/null
     then
         SUDO_FLAG="sudo"
