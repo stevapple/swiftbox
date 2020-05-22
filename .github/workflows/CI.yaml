@@ -38,8 +38,7 @@ jobs:
         sudo swiftbox list
         swiftbox use $ALTVER
         swiftbox list
-        source /etc/environment
-        source ~/.bashrc
+        source /etc/environment && source /opt/swiftbox/env.sh && source $HOME/.swiftbox/env.sh
         swiftc -v
 
     - name: Test swiftbox clean
@@ -55,8 +54,7 @@ jobs:
 
     - name: Test Swift status
       run: |
-        source /etc/environment
-        source ~/.bashrc
+        source /etc/environment && source /opt/swiftbox/env.sh && source $HOME/.swiftbox/env.sh
         echo "\$PATH=$PATH"
         if [ `which swift` != "$HOME/.swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
         then
@@ -67,6 +65,7 @@ jobs:
 
     - name: Test Swift compiler
       run: |
+        source /etc/environment && source /opt/swiftbox/env.sh && source $HOME/.swiftbox/env.sh
         swift test.swift
         swiftc test.swift -o test && ./test
 
@@ -75,8 +74,7 @@ jobs:
 
     - name: Test Swift disabled
       run: |
-        source /etc/environment
-        source ~/.bashrc
+        source /etc/environment && source /opt/swiftbox/env.sh && source $HOME/.swiftbox/env.sh
         if [ `which swift` != /usr/* ]
         then
           echo "::error::swiftbox is not closed correctly."
