@@ -105,11 +105,9 @@ jobs:
     defaults:
       run:
         shell: su - swifter -c "/bin/bash --login -eo pipefail {0}"
-        working-directory: /home/swifter
     steps:
     - name: Create a new user
       shell: bash
-      working-directory: /
       run: |
         yum install sudo usermode -y
         useradd swifter
@@ -117,6 +115,12 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Move repo
+      shell: bash
+      run: |
+        mv ./* /home/swifter
+        chown -R swifter /home/swifter
 
     - name: Test swiftbox version
       run: |
@@ -198,11 +202,9 @@ jobs:
     defaults:
       run:
         shell: su - swifter -c "/bin/bash --login -eo pipefail {0}"
-        working-directory: /home/swifter
     steps:
     - name: Create a new user
       shell: bash
-      working-directory: /
       run: |
         yum install sudo usermode -y
         useradd swifter
@@ -214,6 +216,12 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Move repo
+      shell: bash
+      run: |
+        mv ./* /home/swifter
+        chown -R swifter /home/swifter
 
     - name: Test swiftbox version
       run: |
