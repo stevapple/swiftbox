@@ -94,7 +94,194 @@ jobs:
         if [ `which swift` != /usr/* ]
         then
           echo "::error::swiftbox is not closed correctly."
-          exit 1
+        fi
+
+  test-centos:
+    container:
+      image: centos:8
+    runs-on: ubuntu-latest
+    env:
+      MAINVER: "5.2.4"
+    defaults:
+      run:
+        shell: su - swifter -c "/bin/bash --login -eo pipefail {0}"
+        working-directory: /home/swifter
+    steps:
+    - name: Create a new user
+      shell: bash
+      run: |
+        yum install sudo usermode -y
+        useradd swifter
+        echo "swifter ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Test swiftbox version
+      run: |
+        chmod +x swiftbox.sh
+        ./swiftbox.sh version
+
+    - name: Test swiftbox install
+      run: ./swiftbox.sh install
+
+    - name: Test swiftbox lookup
+      run: swiftbox lookup $MAINVER
+
+    - name: Install which
+      run: sudo yum install which -y
+
+    - name: Test swiftbox get with sudo
+      run: |
+        sudo swiftbox get $MAINVER
+        source /etc/environment && source /opt/swiftbox/env.sh
+        if [ `which swift` != "/opt/swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
+        then
+          echo "::error::Swift $MAINVER is not installed correctly."
+        fi
+        swiftc -v
+
+    - name: Test swiftbox get
+      run: |
+        swiftbox get $MAINVER
+        source /etc/environment && source /opt/swiftbox/env.sh && source $HOME/.swiftbox/env.sh
+        if [ `which swift` != "$HOME/.swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
+        then
+          echo "::error::Swift $ALTVER is not removed correctly."
+        fi
+        swiftc -v
+
+    - name: Test swiftbox list
+      run: |
+        swiftbox list
+        sudo swiftbox list
+
+    - name: Test swiftbox clean
+      run: |
+        swiftbox clean
+        sudo swiftbox clean
+
+    - name: Test swiftbox remove
+      run: sudo swiftbox remove $MAINVER
+
+    - name: Test Swift status
+      run: |
+        echo "\$PATH=$PATH"
+        if [ `which swift` != "$HOME/.swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
+        then
+          echo "::error::Swift $ALTVER is not removed correctly."
+        fi
+        swiftc -v
+
+    - name: Test Swift compiler
+      run: |
+        swift test.swift
+        swiftc test.swift -o test && ./test
+
+    - name: Test swiftbox close
+      run: swiftbox close
+
+    - name: Test Swift disabled
+      run: |
+        if hash swift 2> /dev/null
+        then
+          echo "::error::swiftbox is not closed correctly."
+        fi
+
+  test-amzn:
+    container:
+      image: amazonlinux:2
+    runs-on: ubuntu-latest
+    env:
+      MAINVER: "5.2.4"
+    defaults:
+      run:
+        shell: su - swifter -c "/bin/bash --login -eo pipefail {0}"
+        working-directory: /home/swifter
+    steps:
+    - name: Create a new user
+      shell: bash
+      run: |
+        yum install sudo usermode -y
+        useradd swifter
+        echo "swifter ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+    - name: Install tar and gzip
+      shell: bash
+      run: yum install tar gzip -y
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Test swiftbox version
+      run: |
+        chmod +x swiftbox.sh
+        ./swiftbox.sh version
+
+    - name: Test swiftbox install
+      run: ./swiftbox.sh install
+
+    - name: Test swiftbox lookup
+      run: swiftbox lookup $MAINVER
+
+    - name: Install which
+      run: sudo yum install which -y
+
+    - name: Test swiftbox get with sudo
+      run: |
+        sudo swiftbox get $MAINVER
+        source /etc/environment && source /opt/swiftbox/env.sh
+        if [ `which swift` != "/opt/swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
+        then
+          echo "::error::Swift $MAINVER is not installed correctly."
+        fi
+        swiftc -v
+
+    - name: Test swiftbox get
+      run: |
+        swiftbox get $MAINVER
+        source /etc/environment && source /opt/swiftbox/env.sh && source $HOME/.swiftbox/env.sh
+        if [ `which swift` != "$HOME/.swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
+        then
+          echo "::error::Swift $ALTVER is not removed correctly."
+        fi
+        swiftc -v
+
+    - name: Test swiftbox list
+      run: |
+        swiftbox list
+        sudo swiftbox list
+
+    - name: Test swiftbox clean
+      run: |
+        swiftbox clean
+        sudo swiftbox clean
+
+    - name: Test swiftbox remove
+      run: sudo swiftbox remove $MAINVER
+
+    - name: Test Swift status
+      run: |
+        echo "\$PATH=$PATH"
+        if [ `which swift` != "$HOME/.swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
+        then
+          echo "::error::Swift $ALTVER is not removed correctly."
+        fi
+        swiftc -v
+
+    - name: Test Swift compiler
+      run: |
+        swift test.swift
+        swiftc test.swift -o test && ./test
+
+    - name: Test swiftbox close
+      run: swiftbox close
+
+    - name: Test Swift disabled
+      run: |
+        if hash swift 2> /dev/null
+        then
+          echo "::error::swiftbox is not closed correctly."
         fi
 
   test-ubuntu-nightly:
