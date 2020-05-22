@@ -5,6 +5,10 @@ on: [push]
 jobs:
   test-ubuntu:
     runs-on: ubuntu-18.04
+    env:
+      MAINVER: "5.2.4"
+      ALTVER: "5.1.5"
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -18,32 +22,24 @@ jobs:
       run: ./swiftbox.sh install
 
     - name: Test swiftbox lookup
-      run: swiftbox lookup 5.1.5
+      run: swiftbox lookup $MAINVER
 
     - name: Test swiftbox get with sudo
-      run: |
-        sudo swiftbox get 5.1.2
-        source /etc/environment
-        source /etc/profile.d/swiftbox.sh
-        which swift
-        swiftc -v
+      run: sudo swiftbox get $MAINVER
 
     - name: Test swiftbox get
       run: |
-        swiftbox get 5.2
-        swiftbox get 5.1.5
-        source /etc/environment
-        source $HOME/.swiftbox/env.sh
-        swiftc -v
+        swiftbox get $MAINVER
+        swiftbox get $ALTVER
 
     - name: Test swiftbox list and use
       run: |
         swiftbox list
         sudo swiftbox list
-        swiftbox use 5.1.5
+        swiftbox use $ALTVER
         swiftbox list
         source /etc/environment
-        source $HOME/.swiftbox/env.sh
+        source ~/.bashrc
         swiftc -v
 
     - name: Test swiftbox clean
@@ -53,22 +49,23 @@ jobs:
 
     - name: Test swiftbox remove
       run: |
-        sudo swiftbox remove 5.1.2
-        swiftbox remove 5.1.5
-        swiftbox use 5.2
+        sudo swiftbox remove $MAINVER
+        swiftbox remove $ALTVER
+        swiftbox use $MAINVER
 
     - name: Test Swift status
       run: |
         source /etc/environment
-        source $HOME/.swiftbox/env.sh
+        source ~/.bashrc
         echo "\$PATH=$PATH"
-        which swift
+        if [ `which swift` != "$HOME/.swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
+        then
+          exit 2
+        fi
         swiftc -v
 
     - name: Test Swift compiler
       run: |
-        source /etc/environment  
-        source $HOME/.swiftbox/env.sh
         swift test.swift
         swiftc test.swift -o test && ./test
 
@@ -78,7 +75,7 @@ jobs:
     - name: Test Swift disabled
       run: |
         source /etc/environment
-        source $HOME/.swiftbox/env.sh
+        source ~/.bashrc
         if [ `which swift` != /usr/* ]
         then
           exit 1
@@ -110,14 +107,7 @@ jobs:
       shell: bash
       run: |
         source /etc/environment
-        if [ -f $HOME/.swiftbox/env.sh ]
-        then
-          source $HOME/.swiftbox/env.sh
-        fi
-        if [ -f /opt/swiftbox/env.sh ]
-        then
-          source /opt/swiftbox/env.sh
-        fi
+        source /opt/swiftbox/env.sh
         echo "\$PATH=$PATH"
         ./swiftbox.sh list
         which swift
@@ -127,14 +117,7 @@ jobs:
       shell: bash
       run: |
         source /etc/environment
-        if [ -f $HOME/.swiftbox/env.sh ]
-        then
-          source $HOME/.swiftbox/env.sh
-        fi
-        if [ -f /opt/swiftbox/env.sh ]
-        then
-          source /opt/swiftbox/env.sh
-        fi
+        source /opt/swiftbox/env.sh
         swift test.swift
         swiftc test.swift -o test && ./test
 
@@ -164,14 +147,7 @@ jobs:
       shell: bash
       run: |
         source /etc/environment
-        if [ -f $HOME/.swiftbox/env.sh ]
-        then
-          source $HOME/.swiftbox/env.sh
-        fi
-        if [ -f /opt/swiftbox/env.sh ]
-        then
-          source /opt/swiftbox/env.sh
-        fi
+        source /opt/swiftbox/env.sh
         echo "\$PATH=$PATH"
         ./swiftbox.sh list
         which swift
@@ -181,14 +157,7 @@ jobs:
       shell: bash
       run: |
         source /etc/environment
-        if [ -f $HOME/.swiftbox/env.sh ]
-        then
-          source $HOME/.swiftbox/env.sh
-        fi
-        if [ -f /opt/swiftbox/env.sh ]
-        then
-          source /opt/swiftbox/env.sh
-        fi
+        source /opt/swiftbox/env.sh
         swift test.swift
         swiftc test.swift -o test && ./test
 
@@ -221,14 +190,7 @@ jobs:
       shell: bash
       run: |
         source /etc/environment
-        if [ -f $HOME/.swiftbox/env.sh ]
-        then
-          source $HOME/.swiftbox/env.sh
-        fi
-        if [ -f /opt/swiftbox/env.sh ]
-        then
-          source /opt/swiftbox/env.sh
-        fi
+        source /opt/swiftbox/env.sh
         echo "\$PATH=$PATH"
         ./swiftbox.sh list
         which swift
@@ -238,13 +200,6 @@ jobs:
       shell: bash
       run: |
         source /etc/environment
-        if [ -f $HOME/.swiftbox/env.sh ]
-        then
-          source $HOME/.swiftbox/env.sh
-        fi
-        if [ -f /opt/swiftbox/env.sh ]
-        then
-          source /opt/swiftbox/env.sh
-        fi
+        source /opt/swiftbox/env.sh
         swift test.swift
         swiftc test.swift -o test && ./test
