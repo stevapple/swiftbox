@@ -1,14 +1,16 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.10.2"
+SWIFTBOX_VERSION="0.10.3"
 
 if [ `id -u` = 0 ]
 then
     WORKING_DIR="/opt/swiftbox"
     ANOTHER_WD="$HOME/.swiftbox"
+    SCHEME="[`whoami`]"
 else
     WORKING_DIR="$HOME/.swiftbox"
     ANOTHER_WD="/opt/swiftbox"
+    SCHEME="[global]"
     if hash sudo 2> /dev/null
     then
         SUDO_FLAG="sudo"
@@ -104,7 +106,7 @@ init-env() {
     mkdir $WORKING_DIR/temp
     mkdir $WORKING_DIR/toolchain
     mkdir $WORKING_DIR/download
-    echo "Created swiftbox working directory at $WORKING_DIR. "
+    echo "$SCHEME Created swiftbox working directory at $WORKING_DIR. "
     echo -e "if [ -f $WORKING_DIR/.swift-version ]\nthen\n\texport PATH=$WORKING_DIR/toolchain/swift-\`cat $WORKING_DIR/.swift-version\`/usr/bin:\$PATH\nfi" > $WORKING_DIR/env.sh
     if [ `id -u` = 0 ]
     then
@@ -125,7 +127,7 @@ init-env() {
     ;;
     esac
     wget -q -O - https://swift.org/keys/all-keys.asc | $SUDO_FLAG gpg --import -
-    echo "swiftbox has been successfully set up. "
+    echo "$SCHEME swiftbox has been successfully set up. "
 }
 
 format-version() {
@@ -184,7 +186,7 @@ nightly-version() {
 remove-swift() {
     if [ ! -d $WORKING_DIR/toolchain/swift-$1 ]
     then
-        echo "Swift $1 has not been kept, you can get it with: $0 get $1"
+        echo "$SCHEME Swift $1 has not been kept, you can get it with: $0 get $1"
         return 4
     else
         rm -rf $WORKING_DIR/toolchain/swift-$1
@@ -192,7 +194,7 @@ remove-swift() {
         then
             disable-swift
         fi
-        echo "Successfully removed Swift $1. "
+        echo "$SCHEME Successfully removed Swift $1. "
     fi
 }
 
@@ -202,7 +204,7 @@ disable-swift() {
     ensure-env
     if [ ! $SWIFT_VERSION ]
     then
-        echo "Swift $SWIFT_VERSION is now disabled. "
+        echo "$SCHEME Swift $SWIFT_VERSION is now disabled. "
     fi
 }
 
@@ -285,9 +287,9 @@ use-version() {
     then
         echo $1 > $WORKING_DIR/.swift-version
         ensure-env
-        echo "Now using Swift $1"
+        echo "$SCHEME Now using Swift $1"
     else
-        echo "Swift $1 has not been installed yet. "
+        echo "$SCHEME Swift $1 has not been installed yet. "
         return 20
     fi
 }
@@ -304,7 +306,7 @@ is-kept() {
 ensure-env() {
     if [ ! -d $WORKING_DIR ]
     then
-        echo "It seems you're using swiftbox for the very first time. Let's set up the supporting environment. "
+        echo "$SCHEME It seems you're using swiftbox for the very first time. Let's set up the supporting environment. "
         init-env
     else
         if [ E`default-version` != E ]
@@ -342,11 +344,11 @@ get)
     fi
     if [ E$NEW_VERSION = E`default-version` ]
     then
-        echo "Swift $NEW_VERSION is kept locally and set to default. "
+        echo "$SCHEME Swift $NEW_VERSION is kept locally and set to default. "
         exit 34
     elif [ `is-kept $NEW_VERSION` ]
     then
-        echo "Swift $NEW_VERSION is kept locally, you can enable it with: $0 use $NEW_VERSION"
+        echo "$SCHEME Swift $NEW_VERSION is kept locally, you can enable it with: $0 use $NEW_VERSION"
         exit 33
     else
         get-$TOOLCHAIN_TYPE $NEW_VERSION
@@ -354,9 +356,11 @@ get)
         if [ $GET_RESULT != 0 ]
         then
             exit $GET_RESULT
-        elif [ ! -f .swift-version ]
+        fi
+        echo "$SCHEME Swift $NEW_VERSION is ready for use!"
+        if [ ! -f .swift-version ]
         then
-            echo "Automatically set Swift $NEW_VERSION as default. "
+            echo "$SCHEME Automatically set Swift $NEW_VERSION as default. "
             use-version $NEW_VERSION
         fi
     fi
@@ -378,7 +382,7 @@ clean)
     ensure-env
     rm -rf $WORKING_DIR/temp/*
     rm -rf $WORKING_DIR/download/*
-    echo "Successfully cleaned the cache. "
+    echo "$SCHEME Successfully cleaned the cache. "
 ;;
 version)
     echo $SWIFTBOX_VERSION
