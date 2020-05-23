@@ -34,7 +34,7 @@ else
 fi
 
 if [ "$UNSUPPORTED_SYSTEM" ]
-then 
+then
     echo "This program only supports Ubuntu, CentOS(RHEL) and Amazon Linux."
     echo "$UNSUPPORTED_SYSTEM is unsupported."
     exit 255

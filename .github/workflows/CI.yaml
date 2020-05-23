@@ -348,7 +348,7 @@ jobs:
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh version
-    
+
     - name: Test swiftbox lookup nightly
       run: ./swiftbox.sh lookup nightly
 
@@ -388,7 +388,7 @@ jobs:
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh version
-    
+
     - name: Test swiftbox lookup nightly
       run: ./swiftbox.sh lookup nightly
 

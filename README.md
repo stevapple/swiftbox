@@ -2,13 +2,13 @@
 
 ![Release](https://img.shields.io/github/v/release/stevapple/swiftbox?logo=github) ![CI Status](https://github.com/stevapple/swiftbox/workflows/CI/badge.svg)
 
-Inspired by [pyenv](https://github.com/pyenv/pyenv) and [rbenv](https://github.com/rbenv/rbenv), and having different APIs. 
+Inspired by [pyenv](https://github.com/pyenv/pyenv) and [rbenv](https://github.com/rbenv/rbenv), and having different APIs.
 
 ## Installation
 
-By default, `swiftbox` will be installed at `/usr/bin`. The working directory will be set to `/opt/swiftbox` for `root` and `~/.swiftbox` for other users. 
+By default, `swiftbox` will be installed at `/usr/bin`. The working directory will be set to `/opt/swiftbox` for `root` and `~/.swiftbox` for other users.
 
-There will be two sets of Swift environments if you use both. The local one is in favor by default unless you access `swiftbox` with `sudo`. Toolchains installed by `root` can be used by all users. 
+There will be two sets of Swift environments if you use both. The local one is in favor by default unless you access `swiftbox` with `sudo`. Toolchains installed by `root` can be used by all users.
 
 ```bash
 # With curl (Recommended)
@@ -21,7 +21,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-Or if you'd like to use it as a script (do not support `update` yet):
+Or if you'd like to use it as a script (doesn't support `update` yet):
 
 ```bash
 # With wget
@@ -40,7 +40,7 @@ chmod +x swiftbox.sh
 ./swiftbox.sh version
 ```
 
-You can designate a release version by using jsDelivr or git, which also has wider availability:
+You can specify release version by using jsDelivr or git, which also has wider availability:
 
 ```bash
 # With wget
@@ -62,7 +62,7 @@ chmod +x swiftbox.sh
 
 You can later install it to `/usr/bin`:
 
-```shell
+```console
 $ sudo ./swiftbox.sh install
 Successfully installed swiftbox at /usr/bin
 $ which swiftbox
@@ -73,27 +73,27 @@ $ which swiftbox
 
 ### Lookup `swiftbox` version
 
-```shell
+```console
 $ swiftbox version
 0.9
 ```
 
 ### Check the availability of Swift versions
 
-```shell
+```console
 $ swiftbox lookup 5.1
 Swift 5.1 is available for Ubuntu 18.04
 $ swiftbox lookup nightly
-Swift nightly build 2020-05-11-a is available for Ubuntu 18.04
+Swift nightly build 2020-05-11-a is available for Amazon Linux 2
 $ swiftbox lookup 2.1
-Swift 2.1 does not exist or does not support your Ubuntu version. 
+Swift 2.1 does not exist or does not support your CentOS Linux version.
 ```
 
 ### Manage Swift versions
 
-Both release builds and the latest nightly build are available. 
+Both release builds and the latest nightly build are available.
 
-```shell
+```console
 $ swiftbox get 5.2.2
 $ swiftbox get nightly
 $ swiftbox remove 5.0
@@ -101,23 +101,25 @@ $ swiftbox remove 5.0
 
 ### Switch to a Swift version
 
-```shell
+```console
 $ swiftbox use 5.2.2
-Now using Swift 5.2.2 
+[user] Now using Swift 5.2.2
 ```
+
+You may notice a `[user]` or `[global]` prefix, which indicates the scope of swiftbox operations.
 
 ### Disable Swift
 
-```shell
-$ swiftbox close
-Swift 5.2.2 is now disabled. 
+```console
+$ sudo swiftbox close
+[global] Swift 5.2.2 is now disabled.
 ```
 
 ### Lookup installed Swift versions
 
-The active one is marked with `*`. 
+The active one is marked with `*`.
 
-```shell
+```console
 $ swiftbox list
 - 2020-05-10-a
 - 4.2.1
@@ -126,16 +128,16 @@ $ swiftbox list
 
 ### Clear download cache
 
-```shell
+```console
 $ swiftbox clean
-Successfully cleaned the cache. 
+[user] Successfully cleaned the cache.
 ```
 
 ### Update `swiftbox`
 
-Update to the latest version if `swiftbox` is installed in `/usr/bin`. 
+Update to the latest version if `swiftbox` is installed in `/usr/bin`.
 
-```shell
+```console
 $ swiftbox update
-Successfully upgraded swiftbox from 0.6.2 to 0.9
+Successfully upgraded swiftbox from 0.9 to 0.10.6
 ```

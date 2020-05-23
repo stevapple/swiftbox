@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.10.6"
+SWIFTBOX_VERSION="0.10.7"
 
 if [ `id -u` = 0 ]
 then
@@ -56,7 +56,7 @@ else
 fi
 
 if [ "$UNSUPPORTED_SYSTEM" ]
-then 
+then
     echo "This program only supports Ubuntu, CentOS(RHEL) and Amazon Linux."
     echo "$UNSUPPORTED_SYSTEM is unsupported."
     exit 255
@@ -210,7 +210,7 @@ disable-swift() {
 
 default-version() {
     if [ ! -f $WORKING_DIR/.swift-version ]
-    then 
+    then
         echo ""
     else
         cat $WORKING_DIR/.swift-version
