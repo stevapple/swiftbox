@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.10.4"
+SWIFTBOX_VERSION="0.10.5"
 
 if [ `id -u` = 0 ]
 then
@@ -263,6 +263,13 @@ install-toolchain() {
     else
         if [ -f download/$FILE_NAME.tar.gz ]
         then
+            echo "Download cache found in $WORKING_DIR/download, resume."
+            wget -c -t 0 -P download $DOWNLOAD_URL
+        elif [ -f $ANOTHER_WD/download/$FILE_NAME.tar.gz ]
+        then
+            cp $ANOTHER_WD/download/$FILE_NAME.tar.gz download/
+            chown $(whoami) download/$FILE_NAME.tar.gz
+            echo "Download cache found in $ANOTHER_WD/download, copy and resume."
             wget -c -t 0 -P download $DOWNLOAD_URL
         else
             wget -t 5 -P download $DOWNLOAD_URL
