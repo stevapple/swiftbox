@@ -57,8 +57,8 @@ fi
 
 if [ "$UNSUPPORTED_SYSTEM" ]
 then 
-    echo "This program only supports Ubuntu, CentOS(RHEL) and Amazon Linux. "
-    echo "$UNSUPPORTED_SYSTEM is unsupported. "
+    echo "This program only supports Ubuntu, CentOS(RHEL) and Amazon Linux."
+    echo "$UNSUPPORTED_SYSTEM is unsupported."
     exit 255
 else
     INSTALL_DIR=`realpath /usr/bin`
@@ -106,7 +106,7 @@ init-env() {
     mkdir $WORKING_DIR/temp
     mkdir $WORKING_DIR/toolchain
     mkdir $WORKING_DIR/download
-    echo "$SCHEME Created swiftbox working directory at $WORKING_DIR. "
+    echo "$SCHEME Created swiftbox working directory at $WORKING_DIR"
     echo -e "if [ -f $WORKING_DIR/.swift-version ]\nthen\n\texport PATH=$WORKING_DIR/toolchain/swift-\`cat $WORKING_DIR/.swift-version\`/usr/bin:\$PATH\nfi" > $WORKING_DIR/env.sh
     if [ `id -u` = 0 ]
     then
@@ -127,13 +127,13 @@ init-env() {
     ;;
     esac
     wget -q -O - https://swift.org/keys/all-keys.asc | $SUDO_FLAG gpg --import -
-    echo "$SCHEME swiftbox has been successfully set up. "
+    echo "$SCHEME swiftbox has been successfully set up."
 }
 
 format-version() {
     if [ ! $1 ]
     then
-        echo "Please specify Swift version. "
+        echo "Please specify Swift version."
         return 12
     fi
     local VERSION_ARRAY=(${1//./ })
@@ -141,7 +141,7 @@ format-version() {
     do
         if [ `echo $var | sed 's/[0-9]//g'` ]
         then
-            echo "Invalid Swift version, try x.x.x, x.x or nightly. "
+            echo "Invalid Swift version, try x.x.x, x.x or nightly."
             return 1
         fi
     done
@@ -158,7 +158,7 @@ format-version() {
         fi
     ;;
     *)
-        echo "Invalid Swift version, try x.x.x or x.x or nightly. "
+        echo "Invalid Swift version, try x.x.x or x.x or nightly."
         return 1
     ;;
     esac
@@ -169,15 +169,15 @@ nightly-version() {
     local WGET_RESULT=$?
     if [ $WGET_RESULT = 8 ]
     then
-        echo "Current nightly builds don't support your $SYSTEM_NICENAME version. "
+        echo "Current nightly builds don't support your $SYSTEM_NICENAME version."
         return 2
     elif [ $WGET_RESULT -ge 4 ]
     then
-        echo "Network error. Please check your Internet connection and proxy settings. "
+        echo "Network error. Please check your Internet connection and proxy settings."
         return 5
     elif [ $WGET_RESULT -ge 1 ]
     then
-        echo "Please check your wget config. "
+        echo "Please check your wget config."
         return 255
     fi
     curl -s https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}/latest-build.yml | grep 'download:' | sed 's/download:[^:\/\/]//g' | sed 's/swift-DEVELOPMENT-SNAPSHOT-//' | sed "s/-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz//"
@@ -194,7 +194,7 @@ remove-swift() {
         then
             disable-swift
         fi
-        echo "$SCHEME Successfully removed Swift $1. "
+        echo "$SCHEME Successfully removed Swift $1"
     fi
 }
 
@@ -204,7 +204,7 @@ disable-swift() {
     ensure-env
     if [ ! $SWIFT_VERSION ]
     then
-        echo "$SCHEME Swift $SWIFT_VERSION is now disabled. "
+        echo "$SCHEME Swift $SWIFT_VERSION is now disabled."
     fi
 }
 
@@ -223,15 +223,15 @@ check-version() {
     local WGET_RESULT=$?
     if [ $WGET_RESULT = 8 ]
     then
-        echo "Swift $NEW_VERSION does not exist or does not support your $SYSTEM_NICENAME version. "
+        echo "Swift $NEW_VERSION does not exist or does not support your $SYSTEM_NICENAME version."
         return 2
     elif [ $WGET_RESULT -ge 4 ]
     then
-        echo "Network error. Please check your Internet connection and proxy settings. "
+        echo "Network error. Please check your Internet connection and proxy settings."
         return 5
     elif [ $WGET_RESULT -ge 1 ]
     then
-        echo "Please check your wget config. "
+        echo "Please check your wget config."
         return 255
     fi
 }
@@ -280,7 +280,7 @@ install-toolchain() {
     $SUDO_FLAG gpg --verify download/$FILE_NAME.tar.gz.sig
     if [ $? != 0 ]
     then
-        echo "Signature check failed, please try again. "
+        echo "Signature check failed, please try again."
         echo "If it always fails, clear the cache with: $0 clean"
         exit 100
     fi
@@ -296,7 +296,7 @@ use-version() {
         ensure-env
         echo "$SCHEME Now using Swift $1"
     else
-        echo "$SCHEME Swift $1 has not been installed yet. "
+        echo "$SCHEME Swift $1 has not been installed yet."
         return 20
     fi
 }
@@ -313,7 +313,7 @@ is-kept() {
 ensure-env() {
     if [ ! -d $WORKING_DIR ]
     then
-        echo "$SCHEME It seems you're using swiftbox for the very first time. Let's set up the supporting environment. "
+        echo "$SCHEME It seems you're using swiftbox for the very first time. Let's set up the supporting environment."
         init-env
     else
         if [ E`default-version` != E ]
@@ -327,7 +327,7 @@ ensure-env() {
 
 if [ $# = 0 ]
 then
-    echo "Please specify a command. "
+    echo "Please specify a command."
     exit 240
 fi
 
@@ -351,7 +351,7 @@ get)
     fi
     if [ E$NEW_VERSION = E`default-version` ]
     then
-        echo "$SCHEME Swift $NEW_VERSION is kept locally and set to default. "
+        echo "$SCHEME Swift $NEW_VERSION is kept locally and set to default."
         exit 34
     elif [ `is-kept $NEW_VERSION` ]
     then
@@ -367,7 +367,7 @@ get)
         echo "$SCHEME Swift $NEW_VERSION is ready for use!"
         if [ ! -f .swift-version ]
         then
-            echo "$SCHEME Automatically set Swift $NEW_VERSION as default. "
+            echo "$SCHEME Automatically set Swift $NEW_VERSION as default."
             use-version $NEW_VERSION
         fi
     fi
@@ -389,7 +389,7 @@ clean)
     ensure-env
     rm -rf $WORKING_DIR/temp/*
     rm -rf $WORKING_DIR/download/*
-    echo "$SCHEME Successfully cleaned the cache. "
+    echo "$SCHEME Successfully cleaned the cache."
 ;;
 version)
     echo $SWIFTBOX_VERSION
@@ -423,7 +423,7 @@ lookup)
 update)
     if [ $(realpath `dirname $0`) != $INSTALL_DIR ]
     then
-        echo "swiftbox is not installed to system, update is unavailable. "
+        echo "swiftbox is not installed to system, update is unavailable."
         echo "You can install it with: $0 install"
         exit 254
     fi
