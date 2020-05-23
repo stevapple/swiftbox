@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.10.5"
+SWIFTBOX_VERSION="0.10.6"
 
 if [ `id -u` = 0 ]
 then
@@ -259,7 +259,7 @@ get-snapshot() {
 install-toolchain() {
     if [ -f download/$FILE_NAME.tar.gz.sig ]
     then
-        wget -t 5 -P download $DOWNLOAD_URL.sig
+        wget -t 5 -P download $DOWNLOAD_URL.sig -O download/$FILE_NAME.tar.gz.sig
     else
         if [ -f download/$FILE_NAME.tar.gz ]
         then
