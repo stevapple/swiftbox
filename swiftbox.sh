@@ -1,6 +1,8 @@
 #!/bin/bash
 
-SWIFTBOX_VERSION="0.10.7"
+## Set environment properties
+
+SWIFTBOX_VERSION="0.10.8"
 
 if [ `id -u` = 0 ]
 then
@@ -16,6 +18,8 @@ else
         SUDO_FLAG="sudo"
     fi
 fi
+
+## Judge OS and install dependencies
 
 if [ -f /etc/os-release ]
 then
@@ -64,10 +68,50 @@ else
     INSTALL_DIR=`realpath /usr/bin`
 fi
 
-reinit-env() {
-    sed -i "#$WORKING_DIR\/env.sh#d;#$ANOTHER_WD\/env.sh#d" $1
-    echo "source /opt/swiftbox/env.sh" >> $1
-    echo "source $HOME/.swiftbox/env.sh" >> $1
+## Configure the environment
+
+init-env() {
+    mkdir $WORKING_DIR
+    mkdir $WORKING_DIR/temp
+    mkdir $WORKING_DIR/toolchain
+    mkdir $WORKING_DIR/download
+    echo "$SCHEME Created swiftbox working directory at $WORKING_DIR"
+    echo -e "if [ -f $WORKING_DIR/.swift-version ]\nthen\n\texport PATH=$WORKING_DIR/toolchain/swift-\`cat $WORKING_DIR/.swift-version\`/usr/bin:\$PATH\nfi" > $WORKING_DIR/env.sh
+    if [ `id -u` = 0 ]
+    then
+        $SUDO_FLAG ln -s $WORKING_DIR/env.sh /etc/profile.d/swiftbox.sh
+    fi
+    enable-swiftbox
+    case $SYSTEM_NAME in
+    ubuntu)
+        $SUDO_FLAG apt-get update
+        $SUDO_FLAG apt-get install gnupg git libpython2.7 binutils tzdata libxml2 clang libicu-dev pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
+    ;;
+    centos)
+        $SUDO_FLAG yum install epel-release -y
+        $SUDO_FLAG yum install --enablerepo=PowerTools binutils gcc git glibc-static libbsd-devel libedit libedit-devel libicu-devel libstdc++-static pkg-config python2 sqlite -y
+    ;;
+    amazonlinux)
+        $SUDO_FLAG yum install binutils gcc git glibc-static gzip libbsd libcurl libedit libicu sqlite libstdc++-static libuuid libxml2 tar -y
+    ;;
+    esac
+    wget -q -O - https://swift.org/keys/all-keys.asc | $SUDO_FLAG gpg --import -
+    echo "$SCHEME swiftbox has been successfully set up."
+}
+
+ensure-env() {
+    if [ ! -d $WORKING_DIR ]
+    then
+        echo "$SCHEME It seems you're using swiftbox for the very first time. Let's set up the supporting environment."
+        init-env
+    else
+        if [ E`default-version` != E ]
+        then
+            hash swift 2> /dev/null || enable-swiftbox
+        fi
+        hash -r
+        rm -rf $WORKING_DIR/temp/*
+    fi
 }
 
 enable-swiftbox() {
@@ -101,34 +145,13 @@ enable-swiftbox() {
     fi
 }
 
-init-env() {
-    mkdir $WORKING_DIR
-    mkdir $WORKING_DIR/temp
-    mkdir $WORKING_DIR/toolchain
-    mkdir $WORKING_DIR/download
-    echo "$SCHEME Created swiftbox working directory at $WORKING_DIR"
-    echo -e "if [ -f $WORKING_DIR/.swift-version ]\nthen\n\texport PATH=$WORKING_DIR/toolchain/swift-\`cat $WORKING_DIR/.swift-version\`/usr/bin:\$PATH\nfi" > $WORKING_DIR/env.sh
-    if [ `id -u` = 0 ]
-    then
-        $SUDO_FLAG ln -s $WORKING_DIR/env.sh /etc/profile.d/swiftbox.sh
-    fi
-    enable-swiftbox
-    case $SYSTEM_NAME in
-    ubuntu)
-        $SUDO_FLAG apt-get update
-        $SUDO_FLAG apt-get install gnupg git libpython2.7 binutils tzdata libxml2 clang libicu-dev pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
-    ;;
-    centos)
-        $SUDO_FLAG yum install epel-release -y
-        $SUDO_FLAG yum install --enablerepo=PowerTools binutils gcc git glibc-static libbsd-devel libedit libedit-devel libicu-devel libstdc++-static pkg-config python2 sqlite -y
-    ;;
-    amazonlinux)
-        $SUDO_FLAG yum install binutils gcc git glibc-static gzip libbsd libcurl libedit libicu sqlite libstdc++-static libuuid libxml2 tar -y
-    ;;
-    esac
-    wget -q -O - https://swift.org/keys/all-keys.asc | $SUDO_FLAG gpg --import -
-    echo "$SCHEME swiftbox has been successfully set up."
+reinit-env() {
+    sed -i "#$WORKING_DIR\/env.sh#d;#$ANOTHER_WD\/env.sh#d" $1
+    echo "source /opt/swiftbox/env.sh" >> $1
+    echo "source $HOME/.swiftbox/env.sh" >> $1
 }
+
+## Parse and check Swift version
 
 format-version() {
     if [ ! $1 ]
@@ -164,6 +187,25 @@ format-version() {
     esac
 }
 
+check-version() {
+    local DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$NEW_VERSION-RELEASE/swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz"
+    wget --no-check-certificate -q --spider $DOWNLOAD_URL
+    local WGET_RESULT=$?
+    if [ $WGET_RESULT = 8 ]
+    then
+        echo "Swift $NEW_VERSION does not exist or does not support your $SYSTEM_NICENAME version."
+        return 2
+    elif [ $WGET_RESULT -ge 4 ]
+    then
+        echo "Network error. Please check your Internet connection and proxy settings."
+        return 5
+    elif [ $WGET_RESULT -ge 1 ]
+    then
+        echo "Please check your wget config."
+        return 255
+    fi
+}
+
 nightly-version() {
     wget --no-check-certificate -q --spider https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}/latest-build.yml
     local WGET_RESULT=$?
@@ -183,58 +225,7 @@ nightly-version() {
     curl -s https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}/latest-build.yml | grep 'download:' | sed 's/download:[^:\/\/]//g' | sed 's/swift-DEVELOPMENT-SNAPSHOT-//' | sed "s/-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz//"
 }
 
-remove-swift() {
-    if [ ! -d $WORKING_DIR/toolchain/swift-$1 ]
-    then
-        echo "$SCHEME Swift $1 has not been kept, you can get it with: $0 get $1"
-        return 4
-    else
-        rm -rf $WORKING_DIR/toolchain/swift-$1
-        if [ E`default-version` = E$1 ]
-        then
-            disable-swift
-        fi
-        echo "$SCHEME Successfully removed Swift $1"
-    fi
-}
-
-disable-swift() {
-    local SWIFT_VERSION=`default-version`
-    rm -f $WORKING_DIR/.swift-version
-    ensure-env
-    if [ ! $SWIFT_VERSION ]
-    then
-        echo "$SCHEME Swift $SWIFT_VERSION is now disabled."
-    fi
-}
-
-default-version() {
-    if [ ! -f $WORKING_DIR/.swift-version ]
-    then
-        echo ""
-    else
-        cat $WORKING_DIR/.swift-version
-    fi
-}
-
-check-version() {
-    local DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$NEW_VERSION-RELEASE/swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz"
-    wget --no-check-certificate -q --spider $DOWNLOAD_URL
-    local WGET_RESULT=$?
-    if [ $WGET_RESULT = 8 ]
-    then
-        echo "Swift $NEW_VERSION does not exist or does not support your $SYSTEM_NICENAME version."
-        return 2
-    elif [ $WGET_RESULT -ge 4 ]
-    then
-        echo "Network error. Please check your Internet connection and proxy settings."
-        return 5
-    elif [ $WGET_RESULT -ge 1 ]
-    then
-        echo "Please check your wget config."
-        return 255
-    fi
-}
+## Install Swift toolchains
 
 get-release() {
     cd $WORKING_DIR
@@ -288,6 +279,26 @@ install-toolchain() {
     mv temp/$FILE_NAME toolchain/swift-$NEW_VERSION
 }
 
+## Manage local toolchains
+
+is-kept() {
+    if [ -d $WORKING_DIR/toolchain/swift-$1 ]
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
+default-version() {
+    if [ ! -f $WORKING_DIR/.swift-version ]
+    then
+        echo ""
+    else
+        cat $WORKING_DIR/.swift-version
+    fi
+}
+
 use-version() {
     is-kept $1
     if [ $? = 0 ]
@@ -301,29 +312,32 @@ use-version() {
     fi
 }
 
-is-kept() {
-    if [ -d $WORKING_DIR/toolchain/swift-$1 ]
+remove-swift() {
+    if [ ! -d $WORKING_DIR/toolchain/swift-$1 ]
     then
-        return 0
+        echo "$SCHEME Swift $1 has not been kept, you can get it with: $0 get $1"
+        return 4
     else
-        return 1
+        rm -rf $WORKING_DIR/toolchain/swift-$1
+        if [ E`default-version` = E$1 ]
+        then
+            disable-swift
+        fi
+        echo "$SCHEME Successfully removed Swift $1"
     fi
 }
 
-ensure-env() {
-    if [ ! -d $WORKING_DIR ]
+disable-swift() {
+    local SWIFT_VERSION=`default-version`
+    rm -f $WORKING_DIR/.swift-version
+    ensure-env
+    if [ ! $SWIFT_VERSION ]
     then
-        echo "$SCHEME It seems you're using swiftbox for the very first time. Let's set up the supporting environment."
-        init-env
-    else
-        if [ E`default-version` != E ]
-        then
-            hash swift 2> /dev/null || enable-swiftbox
-        fi
-        hash -r
-        rm -rf $WORKING_DIR/temp/*
+        echo "$SCHEME Swift $SWIFT_VERSION is now disabled."
     fi
 }
+
+## Main entry
 
 if [ $# = 0 ]
 then
@@ -332,6 +346,32 @@ then
 fi
 
 case $1 in
+lookup)
+    if [ E$2 = "Enightly" ]
+    then
+        NEW_VERSION=`nightly-version`
+    else
+        NEW_VERSION=`format-version $2`
+    fi
+    FORMAT_RESULT=$?
+    if [ $FORMAT_RESULT != 0 ]
+    then
+        echo $NEW_VERSION
+        exit $FORMAT_RESULT
+    fi
+    if [ E$2 = "Enightly" ]
+    then
+        echo "Swift nightly build $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
+    else
+        check-version
+        VERSION_AVAILABILITY=$?
+        if [ $VERSION_AVAILABILITY != 0 ]
+        then
+            exit $VERSION_AVAILABILITY
+        fi
+        echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
+    fi
+;;
 get)
     ensure-env
     if [ E$2 = "Enightly" ]
@@ -372,13 +412,28 @@ get)
         fi
     fi
 ;;
-remove)
+list)
     ensure-env
-    remove-swift $2
-    exit $?
+    for file in `ls -1 $WORKING_DIR/toolchain`
+    do
+        if [ -d $WORKING_DIR/toolchain/$file ]
+        then
+            if [ $file = swift-`default-version` ]
+            then
+                echo "* ${file#swift\-}"
+            else
+                echo "- ${file#swift\-}"
+            fi
+        fi
+    done
 ;;
 use)
     use-version $2
+    exit $?
+;;
+remove)
+    ensure-env
+    remove-swift $2
     exit $?
 ;;
 close)
@@ -390,35 +445,6 @@ clean)
     rm -rf $WORKING_DIR/temp/*
     rm -rf $WORKING_DIR/download/*
     echo "$SCHEME Successfully cleaned the cache."
-;;
-version)
-    echo $SWIFTBOX_VERSION
-;;
-lookup)
-    if [ E$2 = "Enightly" ]
-    then
-        NEW_VERSION=`nightly-version`
-    else
-        NEW_VERSION=`format-version $2`
-    fi
-    FORMAT_RESULT=$?
-    if [ $FORMAT_RESULT != 0 ]
-    then
-        echo $NEW_VERSION
-        exit $FORMAT_RESULT
-    fi
-    if [ E$2 = "Enightly" ]
-    then
-        echo "Swift nightly build $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
-    else
-        check-version
-        VERSION_AVAILABILITY=$?
-        if [ $VERSION_AVAILABILITY != 0 ]
-        then
-            exit $VERSION_AVAILABILITY
-        fi
-        echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
-    fi
 ;;
 update)
     if [ $(realpath `dirname $0`) != $INSTALL_DIR ]
@@ -445,20 +471,8 @@ install)
     $SUDO_FLAG cp $0 $INSTALL_DIR/swiftbox
     echo "Successfully installed swiftbox at $INSTALL_DIR"
 ;;
-list)
-    ensure-env
-    for file in `ls -1 $WORKING_DIR/toolchain`
-    do
-        if [ -d $WORKING_DIR/toolchain/$file ]
-        then
-            if [ $file = swift-`default-version` ]
-            then
-                echo "* ${file#swift\-}"
-            else
-                echo "- ${file#swift\-}"
-            fi
-        fi
-    done
+version)
+    echo $SWIFTBOX_VERSION
 ;;
 *)
     echo "Unsupported command: $1"
