@@ -15,7 +15,7 @@ jobs:
       name: Test swiftbox
       run: |
         chmod +x swiftbox.sh
-        VERSION=`./swiftbox.sh version`
+        VERSION=`./swiftbox.sh -v`
         echo "::set-env name=version::$VERSION"
         if [ $? = 0 ]
         then
@@ -59,7 +59,7 @@ jobs:
     - name: Test swiftbox install and update
       run: |
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
-        swiftbox version
+        swiftbox -v
         sudo swiftbox update
 
     - name: Test swiftbox setup
@@ -82,7 +82,7 @@ jobs:
     - name: Test swiftbox install and update
       run: |
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
-        swiftbox version
+        swiftbox -v
         sudo swiftbox update
 
     - name: Test swiftbox setup
@@ -102,7 +102,7 @@ jobs:
     - name: Test swiftbox install and update
       run: |
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
-        swiftbox version
+        swiftbox -v
         sudo swiftbox update
 
     - name: Test swiftbox setup

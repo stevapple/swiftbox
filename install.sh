@@ -59,7 +59,11 @@ then
     then
         $SUDO_FLAG chmod +x $INSTALL_DIR/swiftbox
     fi
-    SWIFTBOX_VERSION=`$INSTALL_DIR/swiftbox version`
+    SWIFTBOX_VERSION=`$INSTALL_DIR/swiftbox -v`
+    if [ $? != 0 ]
+    then
+        SWIFTBOX_VERSION=`$INSTALL_DIR/swiftbox version`
+    fi
     if [ "E$SWIFTBOX_VERSION" = "E$LATEST_VERSION" ]
     then
         echo "Already installed the latest version $SWIFTBOX_VERSION at $INSTALL_DIR"

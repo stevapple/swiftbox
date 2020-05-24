@@ -479,11 +479,11 @@ install)
     $SUDO_FLAG cp $0 $INSTALL_DIR/swiftbox
     echo "Successfully installed swiftbox at $INSTALL_DIR"
 ;;
-version)
+-v)
     echo $SWIFTBOX_VERSION
 ;;
 *)
-    echo "Unsupported command: $1"
+    echo "Illegal command: $1"
     exit 3
 ;;
 esac

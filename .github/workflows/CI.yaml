@@ -15,10 +15,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Test swiftbox version
+    - name: Test swiftbox -v
       run: |
         chmod +x swiftbox.sh
-        ./swiftbox.sh version
+        ./swiftbox.sh -v
 
     - name: Test swiftbox install
       run: ./swiftbox.sh install
@@ -123,10 +123,10 @@ jobs:
         mv ./* /home/swifter
         chown -R swifter /home/swifter
 
-    - name: Test swiftbox version
+    - name: Test swiftbox -v
       run: |
         chmod +x swiftbox.sh
-        ./swiftbox.sh version
+        ./swiftbox.sh -v
 
     - name: Test swiftbox install
       run: ./swiftbox.sh install
@@ -225,10 +225,10 @@ jobs:
         mv ./* /home/swifter
         chown -R swifter /home/swifter
 
-    - name: Test swiftbox version
+    - name: Test swiftbox -v
       run: |
         chmod +x swiftbox.sh
-        ./swiftbox.sh version
+        ./swiftbox.sh -v
 
     - name: Test swiftbox install
       run: ./swiftbox.sh install
@@ -307,10 +307,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Test swiftbox version
+    - name: Test swiftbox -v
       run: |
         chmod +x swiftbox.sh
-        ./swiftbox.sh version
+        ./swiftbox.sh -v
 
     - name: Test swiftbox lookup nightly
       run: ./swiftbox.sh lookup nightly
@@ -344,10 +344,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Test swiftbox version
+    - name: Test swiftbox -v
       run: |
         chmod +x swiftbox.sh
-        ./swiftbox.sh version
+        ./swiftbox.sh -v
 
     - name: Test swiftbox lookup nightly
       run: ./swiftbox.sh lookup nightly
@@ -384,10 +384,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Test swiftbox version
+    - name: Test swiftbox -v
       run: |
         chmod +x swiftbox.sh
-        ./swiftbox.sh version
+        ./swiftbox.sh -v
 
     - name: Test swiftbox lookup nightly
       run: ./swiftbox.sh lookup nightly

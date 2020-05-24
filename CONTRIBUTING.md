@@ -33,7 +33,7 @@ Here are some suggested verbs to use:
 
 `swiftbox` currently provides an unstable cli. When you design a new API, you simply need to:
 
-- **Use a verb** instead of a noun (The `version` command is a counter-example which I'm going to refine).
+- **Use a verb** instead of a noun.
 - Use a simple verb, and **imagine you're doing this with a magic box**.
 
 ## Coding Style
