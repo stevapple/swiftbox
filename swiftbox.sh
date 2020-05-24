@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.11.1"
+SWIFTBOX_VERSION="0.12"
 
 if [ `id -u` = 0 ]
 then
@@ -64,6 +64,17 @@ then
     echo "This program only supports Ubuntu, CentOS(RHEL) and Amazon Linux."
     echo "$UNSUPPORTED_SYSTEM is unsupported."
     exit 255
+else
+    INSTALL_DIR=`dirname $0`
+    PATHS=(${PATH//:/ })
+    PROGRAM=$0
+    for PATH_DIR in $PATHS
+    do
+        if [ $PATH_DIR = $INSTALL_DIR ]
+        then
+            PROGRAM=`basename $0`
+        fi
+    done
 fi
 
 ## Configure the environment
@@ -270,7 +281,7 @@ install-toolchain() {
     if [ $? != 0 ]
     then
         echo "Signature check failed, please try again."
-        echo "If it always fails, clear the cache with: $0 cleanup"
+        echo "If it always fails, clear the cache with: $PROGRAM cleanup"
         exit 100
     fi
     tar -xzf download/$FILE_NAME.tar.gz -C temp
@@ -305,7 +316,7 @@ select-version() {
         ensure-env
         echo "$SCHEME Now using Swift $1"
     else
-        echo "$SCHEME Swift $1 has not been kept, you can get it with: $0 get $1"
+        echo "$SCHEME Swift $1 has not been kept, you can get it with: $PROGRAM get $1"
         return 20
     fi
 }
@@ -313,7 +324,7 @@ select-version() {
 remove-swift() {
     if [ ! -d $WORKING_DIR/toolchain/swift-$1 ]
     then
-        echo "$SCHEME Swift $1 has not been kept, you can get it with: $0 get $1"
+        echo "$SCHEME Swift $1 has not been kept, you can get it with: $PROGRAM get $1"
         return 4
     else
         rm -rf $WORKING_DIR/toolchain/swift-$1
@@ -350,7 +361,7 @@ check)
         echo "$SCHEME Swift $2 is kept locally and set to default."
     elif [ `is-kept $2` ]
     then
-        echo "$SCHEME Swift $2 is kept locally, you can enable it with: $0 use $2"
+        echo "$SCHEME Swift $2 is kept locally, you can enable it with: $PROGRAM use $2"
     else
         if [ E$2 = "Enightly" ]
         then
@@ -366,7 +377,7 @@ check)
         fi
         if [ E$2 = "Enightly" ]
         then
-            echo "Swift nightly build $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION, you can get it with: $0 get nightly"
+            echo "Swift nightly build $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION, you can get it with: $PROGRAM get nightly"
         else
             check-version
             VERSION_AVAILABILITY=$?
@@ -374,7 +385,7 @@ check)
             then
                 exit $VERSION_AVAILABILITY
             fi
-            echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION, you can get it with: $0 get $NEW_VERSION"
+            echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION, you can get it with: $PROGRAM get $NEW_VERSION"
         fi
     fi
 ;;
@@ -401,7 +412,7 @@ get)
         exit 34
     elif [ `is-kept $NEW_VERSION` ]
     then
-        echo "$SCHEME Swift $NEW_VERSION is kept locally, you can enable it with: $0 use $NEW_VERSION"
+        echo "$SCHEME Swift $NEW_VERSION is kept locally, you can enable it with: $PROGRAM use $NEW_VERSION"
         exit 33
     else
         fetch-$TOOLCHAIN_TYPE $NEW_VERSION
@@ -512,7 +523,7 @@ EOF
     else
         echo "Illegal command: $1"
     fi
-    echo "Use '$0 -h' for help."
+    echo "Use '$PROGRAM -h' for help."
     exit 3
 ;;
 esac
