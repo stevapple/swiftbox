@@ -347,29 +347,37 @@ fi
 
 case $1 in
 lookup)
-    if [ E$2 = "Enightly" ]
+    if [ E$2 = E`default-version` ]
     then
-        NEW_VERSION=`nightly-version`
+        echo "$SCHEME Swift $2 is kept locally and set to default."
+    elif [ `is-kept $2` ]
+    then
+        echo "$SCHEME Swift $2 is kept locally, you can enable it with: $0 use $2"
     else
-        NEW_VERSION=`format-version $2`
-    fi
-    FORMAT_RESULT=$?
-    if [ $FORMAT_RESULT != 0 ]
-    then
-        echo $NEW_VERSION
-        exit $FORMAT_RESULT
-    fi
-    if [ E$2 = "Enightly" ]
-    then
-        echo "Swift nightly build $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
-    else
-        check-version
-        VERSION_AVAILABILITY=$?
-        if [ $VERSION_AVAILABILITY != 0 ]
+        if [ E$2 = "Enightly" ]
         then
-            exit $VERSION_AVAILABILITY
+            NEW_VERSION=`nightly-version`
+        else
+            NEW_VERSION=`format-version $2`
         fi
-        echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
+        FORMAT_RESULT=$?
+        if [ $FORMAT_RESULT != 0 ]
+        then
+            echo $NEW_VERSION
+            exit $FORMAT_RESULT
+        fi
+        if [ E$2 = "Enightly" ]
+        then
+            echo "Swift nightly build $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION, you can get it with: $0 get nightly"
+        else
+            check-version
+            VERSION_AVAILABILITY=$?
+            if [ $VERSION_AVAILABILITY != 0 ]
+            then
+                exit $VERSION_AVAILABILITY
+            fi
+            echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION, you can get it with: $0 get $NEW_VERSION"
+        fi
     fi
 ;;
 get)

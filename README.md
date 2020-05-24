@@ -71,7 +71,7 @@ $ which swiftbox
 
 ## Example Usage
 
-### Lookup `swiftbox` version
+You may notice a `[user]` or `[global]` prefix in the output, which indicates the scope of swiftbox operations and Swift versions.
 
 ```console
 $ swiftbox version
@@ -81,10 +81,12 @@ $ swiftbox version
 ### Check the availability of Swift versions
 
 ```console
+$ swiftbox lookup 5.2.4
+[global] Swift 5.2.4 is kept locally and set to default.
 $ swiftbox lookup 5.1
-Swift 5.1 is available for Ubuntu 18.04
+Swift 5.1 is available for Ubuntu 18.04, you can get it with: swiftbox get 5.1
 $ swiftbox lookup nightly
-Swift nightly build 2020-05-11-a is available for Amazon Linux 2
+Swift nightly build 2020-05-11-a is available for Amazon Linux 2, you can get it with: swiftbox get nightly
 $ swiftbox lookup 2.1
 Swift 2.1 does not exist or does not support your CentOS Linux version.
 ```
@@ -105,8 +107,6 @@ $ swiftbox remove 5.0
 $ swiftbox use 5.2.2
 [user] Now using Swift 5.2.2
 ```
-
-You may notice a `[user]` or `[global]` prefix, which indicates the scope of swiftbox operations.
 
 ### Disable Swift
 
