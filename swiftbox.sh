@@ -482,8 +482,39 @@ install)
 -v)
     echo $SWIFTBOX_VERSION
 ;;
+-h)
+    cat <<EOF
+swiftbox: Use Swift out of the Box on Ubuntu, CentOS(RHEL) and Amazon Linux
+
+Usage: swiftbox [option]
+       swiftbox [command] ...
+
+Options:
+  -v                        Show swiftbox version
+  -h                        Show help page
+
+Commands:
+  check <version>           Check the availability of Swift <version>
+        nightly             Check the availability of Swift nightly builds
+  get <version>             Get Swift <version> from swift.org
+      nightly               Get the latest nightly build from swift.org
+  list                      List Swift versions on the computer
+  use <version>             Select Swift <version> as default
+  remove <version>          Remove swift <version> from the computer
+  close                     Disable Swift managed by swiftbox
+  cleanup                   Clear swiftbox download cache
+  upgrade                   Upgrade swiftbox to the latest version
+  install                   Install swiftbox to /usr/bin
+EOF
+;;
 *)
-    echo "Illegal command: $1"
+    if [[ $1 == -* ]]
+    then
+        echo "Invalid option: $1"
+    else
+        echo "Illegal command: $1"
+    fi
+    echo "Use '$0 -h' for help."
     exit 3
 ;;
 esac

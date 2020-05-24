@@ -143,3 +143,34 @@ Upgrade to the latest version if `swiftbox` is installed in `/usr/bin`.
 $ swiftbox upgrade
 Successfully upgraded swiftbox from 0.9 to 0.11
 ```
+
+### Show help page
+
+```console
+$ swiftbox -h
+```
+
+And you'll see an output as follow:
+```
+swiftbox: Use Swift out of the Box on Ubuntu, CentOS(RHEL) and Amazon Linux
+
+Usage: swiftbox [option]
+       swiftbox [command] ...
+
+Options:
+  -v                        Show swiftbox version
+  -h                        Show help page
+
+Commands:
+  check <version>           Check the availability of Swift <version>
+        nightly             Check the availability of Swift nightly builds
+  get <version>             Get Swift <version> from swift.org
+      nightly               Get the latest nightly build from swift.org
+  list                      List Swift versions on the computer
+  use <version>             Select Swift <version> as default
+  remove <version>          Remove swift <version> from the computer
+  close                     Disable Swift managed by swiftbox
+  cleanup                   Clear swiftbox download cache
+  upgrade                   Upgrade swiftbox to the latest version
+  install                   Install swiftbox to /usr/bin
+```
