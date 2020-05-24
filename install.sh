@@ -10,16 +10,16 @@ then
     ID=`cat /etc/os-release | grep '^ID=' | sed 's/ID=//g' | sed 's/"//g'`
     case $ID in
     ubuntu)
-        if hash curl 2> /dev/null || ! hash realpath 2> /dev/null || ! hash jq 2> /dev/null
+        if hash curl 2> /dev/null || ! hash jq 2> /dev/null
         then
             $SUDO_FLAG apt-get update -q=2
-            $SUDO_FLAG apt-get install coreutils curl jq -q=2
+            $SUDO_FLAG apt-get install curl jq -q=2
         fi
     ;;
     rhel | centos | amzn)
-        if ! hash curl 2> /dev/null || ! hash jq 2> /dev/null
+        if ! hash curl 2> /dev/null || ! hash jq 2> /dev/null || ! hash which 2> /dev/null
         then
-            $SUDO_FLAG yum install curl jq -q -y
+            $SUDO_FLAG yum install curl jq which -q -y
         fi
     ;;
     *)
@@ -41,7 +41,7 @@ then
 fi
 
 LATEST_VERSION=`curl -fsSL https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/v//" | sed "s/\"//g"`
-INSTALL_DIR=`realpath /usr/bin`
+INSTALL_PATH="/usr/bin/swiftbox"
 
 if [ ! "$LATEST_VERSION" ]
 then
@@ -49,39 +49,41 @@ then
     exit 4
 fi
 
-if [ -d $INSTALL_DIR/swiftbox ]
+if hash swiftbox 2> /dev/null
 then
-    echo "Unexpected directory at $INSTALL_DIR/swiftbox"
-    exit 254
-elif [ -f $INSTALL_DIR/swiftbox ]
-then
-    if [ ! -x $INSTALL_DIR/swiftbox ]
-    then
-        $SUDO_FLAG chmod +x $INSTALL_DIR/swiftbox
-    fi
-    SWIFTBOX_VERSION=`$INSTALL_DIR/swiftbox -v`
+    UPGRADE_COMMAND="upgrade"
+    SWIFTBOX_VERSION=`swiftbox -v`
     if [ $? != 0 ]
     then
-        SWIFTBOX_VERSION=`$INSTALL_DIR/swiftbox version`
+        UPGRADE_COMMAND="update"
+        SWIFTBOX_VERSION=`swiftbox version`
     fi
-    if [ "E$SWIFTBOX_VERSION" = "E$LATEST_VERSION" ]
-    then
-        echo "Already installed the latest version $SWIFTBOX_VERSION in $INSTALL_DIR"
+    echo "swiftbox $SWIFTBOX_VERSION is already installed in $(dirname `which swiftbox`)"
+    read -p "Input 'yes' or 'y' to upgrade, anything else to do a fresh installation: " PROMPT
+    case $PROMPT in
+    [yY][eE][sS] | [yY])
+        swiftbox $UPGRADE_COMMAND
         exit
-    fi
-    if [ "$SWIFTBOX_VERSION" ]
-    then
-        SUCCESS_MESSAGE="Successfully upgraded swiftbox from $SWIFTBOX_VERSION to $LATEST_VERSION"
-    else
-        SUCCESS_MESSAGE="Successfully installed swiftbox $LATEST_VERSION in $INSTALL_DIR"
-    fi
-else
-    SUCCESS_MESSAGE="Successfully installed swiftbox $LATEST_VERSION in $INSTALL_DIR"
+    ;;
+    esac
 fi
 
-URL="https://cdn.jsdelivr.net/gh/stevapple/swiftbox@$LATEST_VERSION/swiftbox.sh"
-echo "Downloading swiftbox $LATEST_VERSION from $URL"
-$SUDO_FLAG curl -o $INSTALL_DIR/swiftbox $URL -#
-$SUDO_FLAG chmod +x $INSTALL_DIR/swiftbox
-hash -r
-echo $SUCCESS_MESSAGE
+if [ -d $INSTALL_PATH ]
+then
+    echo "Unexpected directory at $INSTALL_PATH"
+    exit 254
+fi
+
+SWIFTBOX_URL="https://cdn.jsdelivr.net/gh/stevapple/swiftbox@$LATEST_VERSION/swiftbox.sh"
+echo "Downloading swiftbox $LATEST_VERSION from $SWIFTBOX_URL"
+$SUDO_FLAG curl -o $INSTALL_PATH $SWIFTBOX_URL -#
+
+CURL_RESULT=$?
+if [ $CURL_RESULT != 0 ]
+then
+    echo "Download failed, please check your Internet connection."
+    exit $CURL_RESULT
+fi
+
+$SUDO_FLAG chmod +x $INSTALL_PATH
+echo "Successfully installed swiftbox $LATEST_VERSION in `dirname $INSTALL_PATH`"
