@@ -26,8 +26,10 @@ jobs:
         ./swiftbox.sh -h
         ./swiftbox.sh --help
 
-    - name: Test swiftbox install
-      run: ./swiftbox.sh install
+    - name: Install swiftbox
+      run: |
+        sudo cp swiftbox.sh /usr/local/bin/swiftbox
+        swiftbox -v
 
     - name: Test swiftbox check
       run: swiftbox check $MAINVER
@@ -140,8 +142,10 @@ jobs:
         ./swiftbox.sh -h
         ./swiftbox.sh --help
 
-    - name: Test swiftbox install
-      run: ./swiftbox.sh install
+    - name: Install swiftbox
+      run: |
+        sudo cp swiftbox.sh /usr/local/bin/swiftbox
+        swiftbox -v
 
     - name: Test swiftbox check
       run: swiftbox check $MAINVER
@@ -248,8 +252,10 @@ jobs:
         ./swiftbox.sh -h
         ./swiftbox.sh --help
 
-    - name: Test swiftbox install
-      run: ./swiftbox.sh install
+    - name: Install swiftbox
+      run: |
+        sudo cp swiftbox.sh /usr/local/bin/swiftbox
+        swiftbox -v
 
     - name: Test swiftbox check
       run: swiftbox check $MAINVER
