@@ -28,7 +28,7 @@ jobs:
 
     - name: Install swiftbox
       run: |
-        sudo cp swiftbox.sh /usr/local/bin/swiftbox
+        sudo cp swiftbox.sh /usr/bin/swiftbox
         swiftbox -v
 
     - name: Test swiftbox check
@@ -144,7 +144,7 @@ jobs:
 
     - name: Install swiftbox
       run: |
-        sudo cp swiftbox.sh /usr/local/bin/swiftbox
+        sudo cp swiftbox.sh /usr/bin/swiftbox
         swiftbox -v
 
     - name: Test swiftbox check
@@ -254,7 +254,7 @@ jobs:
 
     - name: Install swiftbox
       run: |
-        sudo cp swiftbox.sh /usr/local/bin/swiftbox
+        sudo cp swiftbox.sh /usr/bin/swiftbox
         swiftbox -v
 
     - name: Test swiftbox check
