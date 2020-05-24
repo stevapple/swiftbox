@@ -60,13 +60,12 @@ chmod +x swiftbox.sh
 ./swiftbox.sh -v
 ```
 
-You can later install it to `/usr/bin`:
+You can later install it to system by copying it to any directory in PATH:
 
 ```console
-$ sudo ./swiftbox.sh install
-Successfully installed swiftbox at /usr/bin
+$ sudo cp swiftbox.sh /usr/local/bin
 $ which swiftbox
-/usr/bin/swiftbox
+/usr/local/bin/swiftbox
 ```
 
 ## Example Usage
@@ -137,7 +136,7 @@ $ swiftbox cleanup
 
 ### Upgrade `swiftbox`
 
-Upgrade to the latest version if `swiftbox` is installed in `/usr/bin`.
+Upgrade the current copy of `swiftbox` to the latest version.
 
 ```console
 $ swiftbox upgrade
@@ -172,5 +171,4 @@ Commands:
   close                     Disable Swift managed by swiftbox
   cleanup                   Clear swiftbox download cache
   upgrade                   Upgrade swiftbox to the latest version
-  install                   Install swiftbox to /usr/bin
 ```

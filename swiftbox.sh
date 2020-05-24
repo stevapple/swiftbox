@@ -64,8 +64,6 @@ then
     echo "This program only supports Ubuntu, CentOS(RHEL) and Amazon Linux."
     echo "$UNSUPPORTED_SYSTEM is unsupported."
     exit 255
-else
-    INSTALL_DIR=`realpath /usr/bin`
 fi
 
 ## Configure the environment
@@ -455,29 +453,30 @@ cleanup)
     echo "$SCHEME Successfully cleaned the cache."
 ;;
 upgrade)
-    if [ $(realpath `dirname $0`) != $INSTALL_DIR ]
-    then
-        echo "swiftbox is not installed to system, upgrade is unavailable."
-        echo "You can install it with: $0 install"
-        exit 254
-    fi
+    SWIFTBOX_PATH=`realpath $0`
     LATEST_VERSION=`curl -fsSL https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/v//" | sed "s/\"//g"`
     if [ ! "$LATEST_VERSION" ]
     then
         echo "Please check your Internet connection, especially GitHub availability."
         exit 4
-    fi
-    sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@$LATEST_VERSION/install.sh)"
-    exit $?
-;;
-install)
-    if [ $(realpath `dirname $0`) = $INSTALL_DIR ]
+    elif [ $SWIFTBOX_VERSION = $LATEST_VERSION ]
     then
-        echo "swiftbox is already installed in $INSTALL_DIR"
-        exit 1
+        echo "swiftbox $SWIFTBOX_VERSION is up to date."
+        exit
     fi
-    $SUDO_FLAG cp $0 $INSTALL_DIR/swiftbox
-    echo "Successfully installed swiftbox in $INSTALL_DIR"
+    SWIFTBOX_URL="https://cdn.jsdelivr.net/gh/stevapple/swiftbox@$LATEST_VERSION/swiftbox.sh"
+    echo "Downloading swiftbox $LATEST_VERSION from $SWIFTBOX_URL"
+    $SUDO_FLAG curl -o "$SWIFTBOX_PATH.downloading" $SWIFTBOX_URL -#
+    CURL_RESULT=$?
+    if [ $CURL_RESULT != 0 ]
+    then
+        echo "Download failed, please check your Internet connection."
+    else
+        $SUDO_FLAG cat $SWIFTBOX_PATH.downloading > $SWIFTBOX_PATH
+        echo "Successfully upgraded swiftbox from $SWIFTBOX_VERSION to $LATEST_VERSION"
+    fi
+    $SUDO_FLAG rm $SWIFTBOX_PATH.downloading
+    exit $CURL_RESULT
 ;;
 -v | --version)
     echo $SWIFTBOX_VERSION
@@ -504,7 +503,6 @@ Commands:
   close                     Disable Swift managed by swiftbox
   cleanup                   Clear swiftbox download cache
   upgrade                   Upgrade swiftbox to the latest version
-  install                   Install swiftbox to /usr/bin
 EOF
 ;;
 *)
