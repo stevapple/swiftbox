@@ -63,7 +63,7 @@ chmod +x swiftbox.sh
 You can later install it to system by copying it to any directory in PATH:
 
 ```console
-$ sudo cp swiftbox.sh /usr/local/bin
+$ sudo cp swiftbox.sh /usr/local/bin/swiftbox
 $ which swiftbox
 /usr/local/bin/swiftbox
 ```
