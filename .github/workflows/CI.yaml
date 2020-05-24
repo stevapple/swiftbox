@@ -8,6 +8,7 @@ jobs:
     env:
       MAINVER: "5.2.4"
       ALTVER: "5.1.5"
+      OLDVER: "2.2"
     defaults:
       run:
         shell: bash --login -eo pipefail {0}
@@ -32,7 +33,10 @@ jobs:
         swiftbox -v
 
     - name: Test swiftbox check
-      run: swiftbox check $MAINVER
+      run: |
+        swiftbox check $MAINVER
+        swiftbox check $ALTVER
+        swiftbox check $OLDVER
 
     - name: Test swiftbox get with sudo
       run: |
@@ -110,6 +114,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MAINVER: "5.2.4"
+      ALTVER: "5.1.5"
+      OLDVER: "2.2"
     defaults:
       run:
         shell: su - swifter -c "/bin/bash --login -eo pipefail {0}"
@@ -121,6 +127,8 @@ jobs:
         useradd swifter
         echo "swifter ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
         echo "export MAINVER=$MAINVER" >> /home/swifter/.bash_profile
+        echo "export ALTVER=$ALTVER" >> /home/swifter/.bash_profile
+        echo "export OLDVER=$OLDVER" >> /home/swifter/.bash_profile
 
     - name: Checkout
       uses: actions/checkout@v2
@@ -148,7 +156,10 @@ jobs:
         swiftbox -v
 
     - name: Test swiftbox check
-      run: swiftbox check $MAINVER
+      run: |
+        swiftbox check $MAINVER
+        swiftbox check $ALTVER
+        swiftbox check $OLDVER
 
     - name: Install which
       run: sudo yum install which -y
@@ -216,6 +227,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MAINVER: "5.2.4"
+      ALTVER: "5.1.5"
+      OLDVER: "2.2"
     defaults:
       run:
         shell: su - swifter -c "/bin/bash --login -eo pipefail {0}"
@@ -227,6 +240,8 @@ jobs:
         useradd swifter
         echo "swifter ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
         echo "export MAINVER=$MAINVER" >> /home/swifter/.bash_profile
+        echo "export ALTVER=$ALTVER" >> /home/swifter/.bash_profile
+        echo "export OLDVER=$OLDVER" >> /home/swifter/.bash_profile
 
     - name: Install tar and gzip
       shell: bash
@@ -258,7 +273,10 @@ jobs:
         swiftbox -v
 
     - name: Test swiftbox check
-      run: swiftbox check $MAINVER
+      run: |
+        swiftbox check $MAINVER
+        swiftbox check $ALTVER
+        swiftbox check $OLDVER
 
     - name: Install which
       run: sudo yum install which -y

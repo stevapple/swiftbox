@@ -383,7 +383,7 @@ check)
             VERSION_AVAILABILITY=$?
             if [ $VERSION_AVAILABILITY != 0 ]
             then
-                exit $VERSION_AVAILABILITY
+                exit
             fi
             echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION, you can get it with: $PROGRAM get $NEW_VERSION"
         fi
