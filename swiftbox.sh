@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.11"
+SWIFTBOX_VERSION="0.11.1"
 
 if [ `id -u` = 0 ]
 then
@@ -479,10 +479,10 @@ install)
     $SUDO_FLAG cp $0 $INSTALL_DIR/swiftbox
     echo "Successfully installed swiftbox in $INSTALL_DIR"
 ;;
--v)
+-v | --version)
     echo $SWIFTBOX_VERSION
 ;;
--h)
+-h | --help)
     cat <<EOF
 swiftbox: Use Swift out of the Box on Ubuntu, CentOS(RHEL) and Amazon Linux
 
@@ -490,8 +490,8 @@ Usage: swiftbox [option]
        swiftbox [command] ...
 
 Options:
-  -v                        Show swiftbox version
-  -h                        Show help page
+  -v, --version             Show swiftbox version
+  -h, --help                Show help page
 
 Commands:
   check <version>           Check the availability of Swift <version>
