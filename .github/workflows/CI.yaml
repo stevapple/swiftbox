@@ -15,10 +15,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Test swiftbox -v
+    - name: Test swiftbox version
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
+        ./swiftbox.sh --version
+
+    - name: Test swiftbox help
+      run: |
+        ./swiftbox.sh -h
+        ./swiftbox.sh --help
 
     - name: Test swiftbox install
       run: ./swiftbox.sh install
@@ -123,10 +129,16 @@ jobs:
         mv ./* /home/swifter
         chown -R swifter /home/swifter
 
-    - name: Test swiftbox -v
+    - name: Test swiftbox version
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
+        ./swiftbox.sh --version
+
+    - name: Test swiftbox help
+      run: |
+        ./swiftbox.sh -h
+        ./swiftbox.sh --help
 
     - name: Test swiftbox install
       run: ./swiftbox.sh install
@@ -225,10 +237,16 @@ jobs:
         mv ./* /home/swifter
         chown -R swifter /home/swifter
 
-    - name: Test swiftbox -v
+    - name: Test swiftbox version
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
+        ./swiftbox.sh --version
+
+    - name: Test swiftbox help
+      run: |
+        ./swiftbox.sh -h
+        ./swiftbox.sh --help
 
     - name: Test swiftbox install
       run: ./swiftbox.sh install
@@ -307,10 +325,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Test swiftbox -v
+    - name: Test swiftbox version
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
+        ./swiftbox.sh --version
 
     - name: Test swiftbox check nightly
       run: ./swiftbox.sh check nightly
@@ -344,10 +363,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Test swiftbox -v
+    - name: Test swiftbox version
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
+        ./swiftbox.sh --version
 
     - name: Test swiftbox check nightly
       run: ./swiftbox.sh check nightly
@@ -384,10 +404,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Test swiftbox -v
+    - name: Test swiftbox version
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
+        ./swiftbox.sh --version
 
     - name: Test swiftbox check nightly
       run: ./swiftbox.sh check nightly
