@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.10.8"
+SWIFTBOX_VERSION="0.11"
 
 if [ `id -u` = 0 ]
 then
@@ -227,7 +227,7 @@ nightly-version() {
 
 ## Install Swift toolchains
 
-get-release() {
+fetch-release() {
     cd $WORKING_DIR
     FILE_NAME="swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION"
     DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$NEW_VERSION-RELEASE/$FILE_NAME.tar.gz"
@@ -240,7 +240,7 @@ get-release() {
     install-toolchain
 }
 
-get-snapshot() {
+fetch-snapshot() {
     cd $WORKING_DIR
     FILE_NAME="swift-DEVELOPMENT-SNAPSHOT-$NEW_VERSION-$SYSTEM_NAME$SYSTEM_VERSION"
     DOWNLOAD_URL="https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-DEVELOPMENT-SNAPSHOT-$NEW_VERSION/$FILE_NAME.tar.gz"
@@ -272,7 +272,7 @@ install-toolchain() {
     if [ $? != 0 ]
     then
         echo "Signature check failed, please try again."
-        echo "If it always fails, clear the cache with: $0 clean"
+        echo "If it always fails, clear the cache with: $0 cleanup"
         exit 100
     fi
     tar -xzf download/$FILE_NAME.tar.gz -C temp
@@ -299,7 +299,7 @@ default-version() {
     fi
 }
 
-use-version() {
+select-version() {
     is-kept $1
     if [ $? = 0 ]
     then
@@ -307,7 +307,7 @@ use-version() {
         ensure-env
         echo "$SCHEME Now using Swift $1"
     else
-        echo "$SCHEME Swift $1 has not been installed yet."
+        echo "$SCHEME Swift $1 has not been kept, you can get it with: $0 get $1"
         return 20
     fi
 }
@@ -346,7 +346,7 @@ then
 fi
 
 case $1 in
-lookup)
+check)
     if [ E$2 = E`default-version` ]
     then
         echo "$SCHEME Swift $2 is kept locally and set to default."
@@ -406,17 +406,17 @@ get)
         echo "$SCHEME Swift $NEW_VERSION is kept locally, you can enable it with: $0 use $NEW_VERSION"
         exit 33
     else
-        get-$TOOLCHAIN_TYPE $NEW_VERSION
-        GET_RESULT=$?
-        if [ $GET_RESULT != 0 ]
+        fetch-$TOOLCHAIN_TYPE $NEW_VERSION
+        FETCH_RESULT=$?
+        if [ $FETCH_RESULT != 0 ]
         then
-            exit $GET_RESULT
+            exit $FETCH_RESULT
         fi
         echo "$SCHEME Swift $NEW_VERSION is ready for use!"
         if [ ! -f .swift-version ]
         then
             echo "$SCHEME Automatically set Swift $NEW_VERSION as default."
-            use-version $NEW_VERSION
+            select-version $NEW_VERSION
         fi
     fi
 ;;
@@ -436,7 +436,7 @@ list)
     done
 ;;
 use)
-    use-version $2
+    select-version $2
     exit $?
 ;;
 remove)
@@ -448,16 +448,16 @@ close)
     disable-swift
     exit $?
 ;;
-clean)
+cleanup)
     ensure-env
     rm -rf $WORKING_DIR/temp/*
     rm -rf $WORKING_DIR/download/*
     echo "$SCHEME Successfully cleaned the cache."
 ;;
-update)
+upgrade)
     if [ $(realpath `dirname $0`) != $INSTALL_DIR ]
     then
-        echo "swiftbox is not installed to system, update is unavailable."
+        echo "swiftbox is not installed to system, upgrade is unavailable."
         echo "You can install it with: $0 install"
         exit 254
     fi

@@ -21,7 +21,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-Or if you'd like to use it as a script (doesn't support `update` yet):
+Or if you'd like to use it as a script (doesn't support `upgrade` yet):
 
 ```bash
 # With wget
@@ -77,23 +77,23 @@ You may notice a `[user]` or `[global]` prefix in the output, which indicates th
 
 ```console
 $ swiftbox -v
-0.9
+0.11
 ```
 
 ### Check the availability of Swift versions
 
 ```console
-$ swiftbox lookup 5.2.4
+$ swiftbox check 5.2.4
 [global] Swift 5.2.4 is kept locally and set to default.
-$ swiftbox lookup 5.1
+$ swiftbox check 5.1
 Swift 5.1 is available for Ubuntu 18.04, you can get it with: swiftbox get 5.1
-$ swiftbox lookup nightly
+$ swiftbox check nightly
 Swift nightly build 2020-05-11-a is available for Amazon Linux 2, you can get it with: swiftbox get nightly
-$ swiftbox lookup 2.1
+$ swiftbox check 2.1
 Swift 2.1 does not exist or does not support your CentOS Linux version.
 ```
 
-### Manage Swift versions
+### Manage Swift toolchains
 
 Both release builds and the latest nightly build are available.
 
@@ -103,7 +103,7 @@ $ swiftbox get nightly
 $ swiftbox remove 5.0
 ```
 
-### Switch to a Swift version
+### Select a Swift version
 
 ```console
 $ swiftbox use 5.2.2
@@ -117,7 +117,7 @@ $ sudo swiftbox close
 [global] Swift 5.2.2 is now disabled.
 ```
 
-### Lookup installed Swift versions
+### List local toolchain versions
 
 The active one is marked with `*`.
 
@@ -131,15 +131,15 @@ $ swiftbox list
 ### Clear download cache
 
 ```console
-$ swiftbox clean
+$ swiftbox cleanup
 [user] Successfully cleaned the cache.
 ```
 
-### Update `swiftbox`
+### Upgrade `swiftbox`
 
-Update to the latest version if `swiftbox` is installed in `/usr/bin`.
+Upgrade to the latest version if `swiftbox` is installed in `/usr/bin`.
 
 ```console
-$ swiftbox update
-Successfully upgraded swiftbox from 0.9 to 0.10.6
+$ swiftbox upgrade
+Successfully upgraded swiftbox from 0.9 to 0.11
 ```

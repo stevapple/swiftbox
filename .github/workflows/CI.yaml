@@ -23,8 +23,8 @@ jobs:
     - name: Test swiftbox install
       run: ./swiftbox.sh install
 
-    - name: Test swiftbox lookup
-      run: swiftbox lookup $MAINVER
+    - name: Test swiftbox check
+      run: swiftbox check $MAINVER
 
     - name: Test swiftbox get with sudo
       run: |
@@ -61,10 +61,10 @@ jobs:
         fi
         swiftc -v
 
-    - name: Test swiftbox clean
+    - name: Test swiftbox cleanup
       run: |
-        swiftbox clean
-        sudo swiftbox clean
+        swiftbox cleanup
+        sudo swiftbox cleanup
 
     - name: Test swiftbox remove
       run: |
@@ -131,8 +131,8 @@ jobs:
     - name: Test swiftbox install
       run: ./swiftbox.sh install
 
-    - name: Test swiftbox lookup
-      run: swiftbox lookup $MAINVER
+    - name: Test swiftbox check
+      run: swiftbox check $MAINVER
 
     - name: Install which
       run: sudo yum install which -y
@@ -162,10 +162,10 @@ jobs:
         swiftbox list
         sudo swiftbox list
 
-    - name: Test swiftbox clean
+    - name: Test swiftbox cleanup
       run: |
-        swiftbox clean
-        sudo swiftbox clean
+        swiftbox cleanup
+        sudo swiftbox cleanup
 
     - name: Test swiftbox remove
       run: sudo swiftbox remove $MAINVER
@@ -233,8 +233,8 @@ jobs:
     - name: Test swiftbox install
       run: ./swiftbox.sh install
 
-    - name: Test swiftbox lookup
-      run: swiftbox lookup $MAINVER
+    - name: Test swiftbox check
+      run: swiftbox check $MAINVER
 
     - name: Install which
       run: sudo yum install which -y
@@ -264,10 +264,10 @@ jobs:
         swiftbox list
         sudo swiftbox list
 
-    - name: Test swiftbox clean
+    - name: Test swiftbox cleanup
       run: |
-        swiftbox clean
-        sudo swiftbox clean
+        swiftbox cleanup
+        sudo swiftbox cleanup
 
     - name: Test swiftbox remove
       run: sudo swiftbox remove $MAINVER
@@ -312,8 +312,8 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
 
-    - name: Test swiftbox lookup nightly
-      run: ./swiftbox.sh lookup nightly
+    - name: Test swiftbox check nightly
+      run: ./swiftbox.sh check nightly
 
     - name: Test swiftbox get nightly
       env:
@@ -349,8 +349,8 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
 
-    - name: Test swiftbox lookup nightly
-      run: ./swiftbox.sh lookup nightly
+    - name: Test swiftbox check nightly
+      run: ./swiftbox.sh check nightly
 
     - name: Test swiftbox get nightly
       run: ./swiftbox.sh get nightly
@@ -389,8 +389,8 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
 
-    - name: Test swiftbox lookup nightly
-      run: ./swiftbox.sh lookup nightly
+    - name: Test swiftbox check nightly
+      run: ./swiftbox.sh check nightly
 
     - name: Test swiftbox get nightly
       run: ./swiftbox.sh get nightly

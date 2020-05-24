@@ -56,11 +56,11 @@ jobs:
         apt-get update
         apt-get install sudo curl -y
 
-    - name: Test swiftbox install and update
+    - name: Test swiftbox install and upgrade
       run: |
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
         swiftbox -v
-        sudo swiftbox update
+        sudo swiftbox upgrade
 
     - name: Test swiftbox setup
       env:
@@ -79,11 +79,11 @@ jobs:
     - name: Install sudo
       run: yum install sudo -y
 
-    - name: Test swiftbox install and update
+    - name: Test swiftbox install and upgrade
       run: |
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
         swiftbox -v
-        sudo swiftbox update
+        sudo swiftbox upgrade
 
     - name: Test swiftbox setup
       run: |
@@ -99,11 +99,11 @@ jobs:
     - name: Install sudo
       run: yum install sudo -y
 
-    - name: Test swiftbox install and update
+    - name: Test swiftbox install and upgrade
       run: |
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
         swiftbox -v
-        sudo swiftbox update
+        sudo swiftbox upgrade
 
     - name: Test swiftbox setup
       run: |
