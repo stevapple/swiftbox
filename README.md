@@ -175,9 +175,11 @@ Commands:
   upgrade                   Upgrade swiftbox to the latest version
 ```
 
-## Known issues for current users
+## Known issues with upgrading
 
-Users of versions under 0.12 should do a fresh installation for the upgrade.
+## Version < 0.11
+
+Users of these versions should do a fresh installation for the upgrade.
 
 You can use one of the following ways:
 
@@ -193,7 +195,46 @@ $ sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/maste
 ```
 
 ```console
-$ sudo curl -o /usr/bin/swiftbox https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.12/swiftbox.sh
+$ sudo curl -o /usr/bin/swiftbox https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.12.2/swiftbox.sh
+$ sudo chmod +x /usr/bin/swiftbox
+$ swiftbox upgrade
+```
+
+## Version = 0.11 | 0.11.1
+
+Users of these versions should do a fresh installation for the upgrade.
+
+You can use one of the following ways:
+
+```console
+$ swiftbox upgrade
+swiftbox 0.11.1 is already installed in /usr/bin
+Input 'yes' or 'y' to upgrade, anything else to do a fresh installation: n
+```
+
+```console
+$ sudo rm /usr/bin/swiftbox
+$ sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
+```
+
+```console
+$ sudo curl -o /usr/bin/swiftbox https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.12.2/swiftbox.sh
+$ sudo chmod +x /usr/bin/swiftbox
+$ swiftbox upgrade
+```
+
+## Version = 0.12 | 0.12.1
+
+Users of these versions should upgrade manually or with `sudo` if the installation path belongs to `root`.
+
+You can use one of the following ways:
+
+```console
+$ sudo swiftbox upgrade
+```
+
+```console
+$ sudo curl -o /usr/bin/swiftbox https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.12.2/swiftbox.sh
 $ sudo chmod +x /usr/bin/swiftbox
 $ swiftbox upgrade
 ```
