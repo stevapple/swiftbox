@@ -85,9 +85,11 @@ $ swiftbox -v
 $ swiftbox check 5.2.4
 [global] Swift 5.2.4 is kept locally and set to default.
 $ swiftbox check 5.1
-Swift 5.1 is available for Ubuntu 18.04, you can get it with: swiftbox get 5.1
+Swift 5.1 is available for Ubuntu 18.04
+You can get it with: swiftbox get 5.1
 $ swiftbox check nightly
-Swift nightly build 2020-05-11-a is available for Amazon Linux 2, you can get it with: swiftbox get nightly
+Swift nightly build 2020-05-11-a is available for Amazon Linux 2
+You can get it with: swiftbox get nightly
 $ swiftbox check 2.1
 Swift 2.1 does not exist or does not support your CentOS Linux version.
 ```
@@ -180,7 +182,7 @@ Users of versions under 0.12 should do a fresh installation for the upgrade.
 You can use one of the following ways:
 
 ```console
-$ swiftbox upgrade
+$ swiftbox update
 swiftbox 0.9 is already installed in /usr/bin
 Input 'yes' or 'y' to upgrade, anything else to do a fresh installation: n
 ```

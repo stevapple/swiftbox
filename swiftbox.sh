@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.12"
+SWIFTBOX_VERSION="0.12.1"
 
 if [ `id -u` = 0 ]
 then
@@ -316,7 +316,8 @@ select-version() {
         ensure-env
         echo "$SCHEME Now using Swift $1"
     else
-        echo "$SCHEME Swift $1 has not been kept, you can get it with: $PROGRAM get $1"
+        echo "$SCHEME Swift $1 has not been kept."
+        echo "You can get it with: $PROGRAM get $1"
         return 20
     fi
 }
@@ -324,7 +325,8 @@ select-version() {
 remove-swift() {
     if [ ! -d $WORKING_DIR/toolchain/swift-$1 ]
     then
-        echo "$SCHEME Swift $1 has not been kept, you can get it with: $PROGRAM get $1"
+        echo "$SCHEME Swift $1 has not been kept."
+        echo "You can get it with: $PROGRAM get $1"
         return 4
     else
         rm -rf $WORKING_DIR/toolchain/swift-$1
@@ -361,7 +363,8 @@ check)
         echo "$SCHEME Swift $2 is kept locally and already set to default."
     elif [ `is-kept $2` ]
     then
-        echo "$SCHEME Swift $2 is kept locally, you can enable it with: $PROGRAM use $2"
+        echo "$SCHEME Swift $2 is kept locally."
+        echo "You can enable it with: $PROGRAM use $2"
     else
         if [ E$2 = "Enightly" ]
         then
@@ -377,7 +380,8 @@ check)
         fi
         if [ E$2 = "Enightly" ]
         then
-            echo "Swift nightly build $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION, you can get it with: $PROGRAM get nightly"
+            echo "Swift nightly build $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
+            echo "You can get it with: $PROGRAM get nightly"
         else
             check-version
             VERSION_AVAILABILITY=$?
@@ -385,7 +389,8 @@ check)
             then
                 exit
             fi
-            echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION, you can get it with: $PROGRAM get $NEW_VERSION"
+            echo "Swift $NEW_VERSION is available for $SYSTEM_NICENAME $SYSTEM_VERSION"
+            echo "You can get it with: $PROGRAM get $NEW_VERSION"
         fi
     fi
 ;;
@@ -412,7 +417,8 @@ get)
         exit 34
     elif [ `is-kept $NEW_VERSION` ]
     then
-        echo "$SCHEME Swift $NEW_VERSION is kept locally, you can enable it with: $PROGRAM use $NEW_VERSION"
+        echo "$SCHEME Swift $NEW_VERSION is kept locally."
+        echo "You can enable it with: $PROGRAM use $NEW_VERSION"
         exit 33
     else
         fetch-$TOOLCHAIN_TYPE $NEW_VERSION
