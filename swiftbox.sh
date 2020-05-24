@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.12.1"
+SWIFTBOX_VERSION="0.12.2"
 
 if [ `id -u` = 0 ]
 then
@@ -489,7 +489,7 @@ upgrade)
     then
         echo "Download failed, please check your Internet connection."
     else
-        $SUDO_FLAG cat $SWIFTBOX_PATH.downloading > $SWIFTBOX_PATH
+        $SUDO_FLAG sh -c "cat $SWIFTBOX_PATH.downloading > $SWIFTBOX_PATH"
         echo "Successfully upgraded swiftbox from $SWIFTBOX_VERSION to $LATEST_VERSION"
     fi
     $SUDO_FLAG rm -f $SWIFTBOX_PATH.downloading
