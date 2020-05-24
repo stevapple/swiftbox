@@ -68,7 +68,7 @@ else
     INSTALL_DIR=`dirname $0`
     PATHS=(${PATH//:/ })
     PROGRAM=$0
-    for PATH_DIR in $PATHS
+    for PATH_DIR in ${PATHS[@]}
     do
         if [ $PATH_DIR = $INSTALL_DIR ]
         then
@@ -268,7 +268,7 @@ install-toolchain() {
         elif [ -f $ANOTHER_WD/download/$FILE_NAME.tar.gz ]
         then
             cp $ANOTHER_WD/download/$FILE_NAME.tar.gz download/
-            chown $(whoami) download/$FILE_NAME.tar.gz
+            chown `whoami` download/$FILE_NAME.tar.gz
             echo "Download cache found in $ANOTHER_WD/download, copy and resume."
             wget -c -t 0 -P download $DOWNLOAD_URL
         else
@@ -358,7 +358,7 @@ case $1 in
 check)
     if [ E$2 = E`default-version` ]
     then
-        echo "$SCHEME Swift $2 is kept locally and set to default."
+        echo "$SCHEME Swift $2 is kept locally and already set to default."
     elif [ `is-kept $2` ]
     then
         echo "$SCHEME Swift $2 is kept locally, you can enable it with: $PROGRAM use $2"
@@ -408,7 +408,7 @@ get)
     fi
     if [ E$NEW_VERSION = E`default-version` ]
     then
-        echo "$SCHEME Swift $NEW_VERSION is kept locally and set to default."
+        echo "$SCHEME Swift $NEW_VERSION is kept locally and already set to default."
         exit 34
     elif [ `is-kept $NEW_VERSION` ]
     then
@@ -486,7 +486,7 @@ upgrade)
         $SUDO_FLAG cat $SWIFTBOX_PATH.downloading > $SWIFTBOX_PATH
         echo "Successfully upgraded swiftbox from $SWIFTBOX_VERSION to $LATEST_VERSION"
     fi
-    $SUDO_FLAG rm $SWIFTBOX_PATH.downloading
+    $SUDO_FLAG rm -f $SWIFTBOX_PATH.downloading
     exit $CURL_RESULT
 ;;
 -v | --version)

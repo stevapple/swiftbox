@@ -51,24 +51,22 @@ jobs:
       image: ubuntu:20.04
     runs-on: ubuntu-latest
     steps:
-    - name: Install sudo and curl
+    - name: Install curl
       run: |
         apt-get update
-        apt-get install sudo curl -y
+        apt-get install curl -y
 
     - name: Test swiftbox install and upgrade
       run: |
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
         swiftbox -v
-        sudo swiftbox upgrade
+        swiftbox upgrade
 
     - name: Test swiftbox setup
       env:
         DEBIAN_FRONTEND: noninteractive
         DEBCONF_NONINTERACTIVE_SEEN: true
-      run: |
-        swiftbox list
-        sudo swiftbox list
+      run: swiftbox list
 
   test-centos-install:
     needs: wait-for-cdn
@@ -76,19 +74,14 @@ jobs:
       image: centos:8
     runs-on: ubuntu-latest
     steps:
-    - name: Install sudo
-      run: yum install sudo -y
-
     - name: Test swiftbox install and upgrade
       run: |
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
         swiftbox -v
-        sudo swiftbox upgrade
+        swiftbox upgrade
 
     - name: Test swiftbox setup
-      run: |
-        swiftbox list
-        sudo swiftbox list
+      run: swiftbox list
 
   test-amzn-install:
     needs: wait-for-cdn
@@ -96,16 +89,11 @@ jobs:
       image: amazonlinux:2
     runs-on: ubuntu-latest
     steps:
-    - name: Install sudo
-      run: yum install sudo -y
-
     - name: Test swiftbox install and upgrade
       run: |
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
         swiftbox -v
-        sudo swiftbox upgrade
+        swiftbox upgrade
 
     - name: Test swiftbox setup
-      run: |
-        swiftbox list
-        sudo swiftbox list
+      run: swiftbox list
