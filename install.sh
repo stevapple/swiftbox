@@ -51,7 +51,7 @@ fi
 
 if [ -d $INSTALL_DIR/swiftbox ]
 then
-    echo "Unexpected directory in $INSTALL_DIR/swiftbox"
+    echo "Unexpected directory at $INSTALL_DIR/swiftbox"
     exit 254
 elif [ -f $INSTALL_DIR/swiftbox ]
 then
@@ -66,17 +66,17 @@ then
     fi
     if [ "E$SWIFTBOX_VERSION" = "E$LATEST_VERSION" ]
     then
-        echo "Already installed the latest version $SWIFTBOX_VERSION at $INSTALL_DIR"
+        echo "Already installed the latest version $SWIFTBOX_VERSION in $INSTALL_DIR"
         exit
     fi
     if [ "$SWIFTBOX_VERSION" ]
     then
         SUCCESS_MESSAGE="Successfully upgraded swiftbox from $SWIFTBOX_VERSION to $LATEST_VERSION"
     else
-        SUCCESS_MESSAGE="Successfully installed swiftbox $LATEST_VERSION at $INSTALL_DIR"
+        SUCCESS_MESSAGE="Successfully installed swiftbox $LATEST_VERSION in $INSTALL_DIR"
     fi
 else
-    SUCCESS_MESSAGE="Successfully installed swiftbox $LATEST_VERSION at $INSTALL_DIR"
+    SUCCESS_MESSAGE="Successfully installed swiftbox $LATEST_VERSION in $INSTALL_DIR"
 fi
 
 URL="https://cdn.jsdelivr.net/gh/stevapple/swiftbox@$LATEST_VERSION/swiftbox.sh"

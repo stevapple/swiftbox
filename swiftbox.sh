@@ -473,11 +473,11 @@ upgrade)
 install)
     if [ $(realpath `dirname $0`) = $INSTALL_DIR ]
     then
-        echo "swiftbox is already installed at $INSTALL_DIR"
+        echo "swiftbox is already installed in $INSTALL_DIR"
         exit 1
     fi
     $SUDO_FLAG cp $0 $INSTALL_DIR/swiftbox
-    echo "Successfully installed swiftbox at $INSTALL_DIR"
+    echo "Successfully installed swiftbox in $INSTALL_DIR"
 ;;
 -v)
     echo $SWIFTBOX_VERSION
