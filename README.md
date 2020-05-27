@@ -21,46 +21,44 @@ chmod +x install.sh
 ./install.sh
 ```
 
-Or if you'd like to use it as a script (doesn't support `upgrade` yet):
+If you encounter network error, you may consider using jsDelivr:
+
+```bash
+# Auto installation
+sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/install.sh)"
+swiftbox -v
+
+# Manual installation
+sudo curl -o /usr/bin/swiftbox https://cdn.jsdelivr.net/gh/stevapple/swiftbox@latest/swiftbox.sh
+sudo chmod +x /usr/bin/swiftbox
+swiftbox -v
+```
+
+Or if you'd like to use it as a script:
 
 ```bash
 # With wget
 wget https://raw.githubusercontent.com/stevapple/swiftbox/master/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh -v
-
-# With curl
-curl -o swiftbox.sh https://raw.githubusercontent.com/stevapple/swiftbox/master/swiftbox.sh
-chmod +x swiftbox.sh
-./swiftbox.sh -v
-
-# With git
-git clone https://github.com/stevapple/swiftbox && cd swiftbox
-chmod +x swiftbox.sh
-./swiftbox.sh -v
 ```
 
-You can specify release version by using jsDelivr or git, which also has wider availability:
+You can specify release version by using jsDelivr or git:
 
 ```bash
 # With wget
-wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.10/swiftbox.sh
-chmod +x swiftbox.sh
-./swiftbox.sh -v
-
-# With curl
-curl -o swiftbox.sh https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.10/swiftbox.sh
+wget https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.12.2/swiftbox.sh
 chmod +x swiftbox.sh
 ./swiftbox.sh -v
 
 # With git
 git clone https://github.com/stevapple/swiftbox && cd swiftbox
-git checkout v0.10
+git checkout v0.12.2
 chmod +x swiftbox.sh
 ./swiftbox.sh -v
 ```
 
-You can later install it to system by copying it to any directory in PATH:
+You can later install it to system by copying it to any directory in `PATH`:
 
 ```console
 $ sudo cp swiftbox.sh /usr/bin/swiftbox
@@ -76,7 +74,7 @@ You may notice a `[user]` or `[global]` prefix in the output, which indicates th
 
 ```console
 $ swiftbox -v
-0.11
+0.12.2
 ```
 
 ### Check the availability of Swift versions
@@ -142,7 +140,7 @@ Upgrade the current copy of `swiftbox` to the latest version.
 
 ```console
 $ swiftbox upgrade
-Successfully upgraded swiftbox from 0.9 to 0.11
+Successfully upgraded swiftbox from 0.12 to 0.12.2
 ```
 
 ### Show help page
