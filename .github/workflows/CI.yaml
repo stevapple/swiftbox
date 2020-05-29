@@ -160,6 +160,14 @@ jobs:
         sudo cp swiftbox.sh /usr/bin/swiftbox
         swiftbox -v
 
+    - name: Init swiftbox
+      env:
+        DEBIAN_FRONTEND: noninteractive
+        DEBCONF_NONINTERACTIVE_SEEN: true
+      run: |
+        swiftbox list
+        sudo swiftbox list
+
     - name: Test swiftbox alias
       run: |
         sudo sh -c 'echo "20.04" > /opt/swiftbox/.system-alias'
@@ -175,9 +183,6 @@ jobs:
         swiftbox check nightly
 
     - name: Test swiftbox get with sudo
-      env:
-        DEBIAN_FRONTEND: noninteractive
-        DEBCONF_NONINTERACTIVE_SEEN: true
       run: |
         sudo swiftbox get $MAINVER
         source /etc/environment && source /opt/swiftbox/env.sh
