@@ -52,7 +52,7 @@ fi
 if hash swiftbox 2> /dev/null
 then
     UPGRADE_COMMAND="upgrade"
-    SWIFTBOX_VERSION=`swiftbox -v`
+    SWIFTBOX_VERSION=`swiftbox -v -s`
     if [ $? != 0 ]
     then
         UPGRADE_COMMAND="update"

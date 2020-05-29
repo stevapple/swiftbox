@@ -125,6 +125,7 @@ jobs:
     - name: Create a new user
       shell: bash
       run: |
+        apt-get update
         apt-get install sudo usermode -y
         useradd swifter
         echo "swifter ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
