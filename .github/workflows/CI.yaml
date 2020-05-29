@@ -127,7 +127,7 @@ jobs:
       run: |
         apt-get update
         apt-get install sudo usermode -y
-        useradd swifter
+        useradd swifter --create-home -s /bin/bash
         echo "swifter ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
         echo "export MAINVER=$MAINVER" >> /home/swifter/.bash_profile
         echo "export ALTVER=$ALTVER" >> /home/swifter/.bash_profile
@@ -250,7 +250,7 @@ jobs:
       shell: bash
       run: |
         yum install sudo usermode -y
-        useradd swifter
+        useradd swifter --create-home -s /bin/bash
         echo "swifter ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
         echo "export MAINVER=$MAINVER" >> /home/swifter/.bash_profile
         echo "export ALTVER=$ALTVER" >> /home/swifter/.bash_profile
@@ -365,7 +365,7 @@ jobs:
       shell: bash
       run: |
         yum install sudo usermode -y
-        useradd swifter
+        useradd swifter --create-home -s /bin/bash
         echo "swifter ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
         echo "export MAINVER=$MAINVER" >> /home/swifter/.bash_profile
         echo "export ALTVER=$ALTVER" >> /home/swifter/.bash_profile
