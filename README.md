@@ -72,13 +72,13 @@ You may notice a `[user]` or `[global]` prefix in the output, which indicates th
 
 ### Show `swiftbox` version
 
-Both `swiftbox` amd system (or alias) version will be shown with `-v` or `--version`. Add `-s` or `--short` to omit system version.
+`swiftbox` (and system alias) version will be shown with `-v` or `--version`. 
 
 ```console
 $ swiftbox --version
-0.12.3 (Ubuntu 20.04)
-$ swiftbox -v -s
 0.12.3
+$ swiftbox -v
+0.12.3 (Ubuntu 20.04)
 ```
 
 ### Check the availability of Swift versions
@@ -122,14 +122,14 @@ $ sudo swiftbox close
 
 ### List local toolchain versions
 
-The active one is marked with `*`. System versions will also be shown, and you can use `-s` or `--short` to omit. 
+The active one is marked with `*`. If the toolchain version does not match your system version, its platform version will also be shown. 
 
 ```console
 $ swiftbox list
-- 2020-05-10-a (Ubuntu 20.04)
+- 2020-05-10-a
 - 4.2.1 (Ubuntu 18.04)
-* 5.2.2 (Ubuntu 20.04)
-$ sudo swiftbox list -s
+* 5.2.2
+$ sudo swiftbox list
 - 2020-04-03-a
 - 4.3
 ```
@@ -184,17 +184,22 @@ Commands:
 
 ### Alias your system version in `swiftbox`
 
-Since Ubuntu has non-LTS versions and they may be (partially) compatible with toolchains built for LTS versions, `swiftbox` allows aliases (See #1) by specifying the version in `.system-alias` file in its working directory.
+Since Ubuntu has non-LTS versions and they may be (partially) compatible with toolchains built for LTS versions, `swiftbox` allows long-term aliases (See #1) by specifying the version in `.system-alias` file in its working directory.
 
 ```console
-$ swiftbox -v
-0.12.3 (Ubuntu 19.10)
 $ echo "20.04" > ~/.swiftbox/.system-alias
 $ swiftbox -v
 0.12.3 (Ubuntu 20.04)
 $ swiftbox check 5.2.4
 Swift 5.2.4 is available for Ubuntu 20.04
 You can get it with: swiftbox get 5.2.4
+```
+
+For one-time alias, use environmental variable `$SWIFTBOX_SYSALIAS` instead:
+
+```console
+$ export SWIFTBOX_SYSALIAS="20.04"
+$ swiftbox get 5.2.4
 ```
 
 ## Known issues with upgrading

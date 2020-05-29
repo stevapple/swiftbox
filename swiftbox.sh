@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.12.3"
+SWIFTBOX_VERSION="0.12.4"
 
 if [ `id -u` = 0 ]
 then
@@ -25,7 +25,10 @@ if [ -f /etc/os-release ]
 then
     source /etc/os-release
     SYSTEM_NICENAME=$NAME
-    if [ -f $WORKING_DIR/.system-alias ]
+    if [ E$SWIFTBOX_SYSALIAS != E ]
+    then
+        SYSTEM_VERSION=$SWIFTBOX_SYSALIAS
+    elif [ -f $WORKING_DIR/.system-alias ]
     then
         SYSTEM_VERSION=`cat $WORKING_DIR/.system-alias`
     else
@@ -302,7 +305,7 @@ install-toolchain() {
     fi
     tar -xzf download/$FILE_NAME.tar.gz -C temp
     mv temp/$FILE_NAME toolchain/swift-$NEW_VERSION
-    echo $VERSION > $WORKING_DIR/toolchain/$file/.system-version
+    echo $SYSTEM_VERSION > $WORKING_DIR/toolchain/$file/.system-version
 }
 
 ## Manage local toolchains
@@ -460,16 +463,15 @@ list)
         then
             if [ ! -f $WORKING_DIR/toolchain/$file/.system-version ]
             then
-                echo $SYSTEM_VERSION > $WORKING_DIR/toolchain/$file/.system-version
+                echo $VERSION_ID > $WORKING_DIR/toolchain/$file/.system-version
             fi
             version=`cat $WORKING_DIR/toolchain/$file/.system-version`
-            case $2 in
-            -s | --short)
-            ;;
-            *)
+            if [ $version = $VERSION_ID ]
+            then
+                SUFFIX=""
+            else
                 SUFFIX=" ($SYSTEM_NICENAME $version)"
-            ;;
-            esac
+            fi
             if [ $file = swift-`default-version` ]
             then
                 echo "* ${file#swift\-}$SUFFIX"
@@ -525,14 +527,12 @@ upgrade)
     exit $CURL_RESULT
 ;;
 -v | --version)
-    case $2 in
-    -s | --short)
+    if [ $VERSION_ID = $SYSTEM_VERSION ]
+    then
         echo $SWIFTBOX_VERSION
-    ;;
-    *)
+    else
         echo "$SWIFTBOX_VERSION ($SYSTEM_NICENAME $SYSTEM_VERSION)"
-    ;;
-    esac
+    fi
 ;;
 -h | --help)
     cat <<EOF

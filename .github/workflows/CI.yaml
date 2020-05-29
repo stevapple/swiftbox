@@ -21,8 +21,6 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
         ./swiftbox.sh --version
-        ./swiftbox.sh -v --short
-        ./swiftbox.sh --version -s
 
     - name: Test swiftbox help
       run: |
@@ -147,8 +145,6 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
         ./swiftbox.sh --version
-        ./swiftbox.sh -v --short
-        ./swiftbox.sh --version -s
 
     - name: Test swiftbox help
       run: |
@@ -167,7 +163,15 @@ jobs:
       shell: bash
       run: swiftbox list
 
-    - name: Test swiftbox alias
+    - name: Test swiftbox short-term alias and check
+      env:
+        SWIFTBOX_SYSALIAS: 18.04
+      shell: bash
+      run: |
+        swiftbox check $MAINVER
+        swiftbox check nightly
+
+    - name: Test swiftbox long-term alias
       run: |
         swiftbox list
         sudo sh -c 'echo "20.04" > /opt/swiftbox/.system-alias'
@@ -275,8 +279,7 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
         ./swiftbox.sh --version
-        ./swiftbox.sh -v --short
-        ./swiftbox.sh --version -s
+
 
     - name: Test swiftbox help
       run: |
@@ -394,8 +397,6 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
         ./swiftbox.sh --version
-        ./swiftbox.sh -v --short
-        ./swiftbox.sh --version -s
 
     - name: Test swiftbox help
       run: |
