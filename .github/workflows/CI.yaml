@@ -164,12 +164,12 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
         DEBCONF_NONINTERACTIVE_SEEN: true
-      run: |
-        swiftbox list
-        sudo swiftbox list
+      shell: bash
+      run: swiftbox list
 
     - name: Test swiftbox alias
       run: |
+        swiftbox list
         sudo sh -c 'echo "20.04" > /opt/swiftbox/.system-alias'
         echo "20.04" > .swiftbox/.system-alias
         swiftbox -v
