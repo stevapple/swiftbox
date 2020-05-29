@@ -72,7 +72,7 @@ You may notice a `[user]` or `[global]` prefix in the output, which indicates th
 
 ### Show `swiftbox` version
 
-`swiftbox` (and system alias) version will be shown with `-v` or `--version`. 
+`swiftbox` (and [system alias](#alias-your-system-version-in-swiftbox)) version will be shown with `-v` or `--version`. 
 
 ```console
 $ swiftbox --version
@@ -184,7 +184,9 @@ Commands:
 
 ### Alias your system version in `swiftbox`
 
-Since Ubuntu has non-LTS versions and they may be (partially) compatible with toolchains built for LTS versions, `swiftbox` allows long-term aliases (See #1) by specifying the version in `.system-alias` file in its working directory.
+Since Ubuntu has non-LTS versions and they may be (partially) compatible with toolchains built for LTS versions, `swiftbox` provides built-in system version alias support from version 0.12.3 (see [#1](https://github.com/stevapple/swiftbox/pull/1)).
+
+`swiftbox` allows long-term alias by specifying the version in `.system-alias` file in its working directory. The aliased version will be displayed in `swiftbox -v`` output.
 
 ```console
 $ echo "20.04" > ~/.swiftbox/.system-alias
@@ -202,7 +204,7 @@ $ export SWIFTBOX_SYSALIAS="20.04"
 $ swiftbox get 5.2.4
 ```
 
-## Known issues with upgrading
+## Known Issues of Upgrading
 
 ### Version < 0.11
 
