@@ -94,7 +94,18 @@ init-env() {
     case $SYSTEM_NAME in
     ubuntu)
         $SUDO_FLAG apt-get update
-        $SUDO_FLAG apt-get install gnupg git libpython2.7 binutils tzdata libxml2 clang libicu-dev pkg-config zlib1g-dev libedit2 libsqlite3-0 -y
+        $SUDO_FLAG apt-get install gnupg git libpython2.7 binutils tzdata libxml2 clang libicu-dev pkg-config zlib1g-dev libedit2 libsqlite3-0 libz3-dev -y
+        case $SYSTEM_VERSION in
+        16.04 | 18.04)
+            $SUDO_FLAG apt-get install libgcc-5-dev libstdc++-5-dev -y
+        ;;
+        20.04)
+            $SUDO_FLAG apt-get install libgcc-9-dev libstdc++-9-dev -y
+        ;;
+        *)
+            echo "You should install the corresponding version of libgcc-dev and libstdc++-dev manually to enable full functionalities of Swift."
+        ;;
+        esac
     ;;
     centos)
         $SUDO_FLAG yum install epel-release -y
