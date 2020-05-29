@@ -25,7 +25,12 @@ if [ -f /etc/os-release ]
 then
     source /etc/os-release
     SYSTEM_NICENAME=$NAME
-    SYSTEM_VERSION=$VERSION_ID
+    if [ -f $WORKING_DIR/.system-alias ]
+    then
+        SYSTEM_VERSION=`cat $WORKING_DIR/.system-alias`
+    else
+        SYSTEM_VERSION=$VERSION_ID
+    fi
     case $ID in
     ubuntu)
         SYSTEM_NAME="ubuntu"
@@ -297,6 +302,7 @@ install-toolchain() {
     fi
     tar -xzf download/$FILE_NAME.tar.gz -C temp
     mv temp/$FILE_NAME toolchain/swift-$NEW_VERSION
+    echo $VERSION > $WORKING_DIR/toolchain/$file/.system-version
 }
 
 ## Manage local toolchains
@@ -452,11 +458,23 @@ list)
     do
         if [ -d $WORKING_DIR/toolchain/$file ]
         then
+            if [ ! -f $WORKING_DIR/toolchain/$file/.system-version ]
+            then
+                echo $SYSTEM_VERSION > $WORKING_DIR/toolchain/$file/.system-version
+            fi
+            version=`cat $WORKING_DIR/toolchain/$file/.system-version`
+            case $2 in
+            -s | --short)
+            ;;
+            *)
+                SUFFIX=" ($SYSTEM_NICENAME $version)"
+            ;;
+            esac
             if [ $file = swift-`default-version` ]
             then
-                echo "* ${file#swift\-}"
+                echo "* ${file#swift\-}$SUFFIX"
             else
-                echo "- ${file#swift\-}"
+                echo "- ${file#swift\-}$SUFFIX"
             fi
         fi
     done
@@ -507,7 +525,14 @@ upgrade)
     exit $CURL_RESULT
 ;;
 -v | --version)
-    echo $SWIFTBOX_VERSION
+    case $2 in
+    -s | --short)
+        echo $SWIFTBOX_VERSION
+    ;;
+    *)
+        echo "$SWIFTBOX_VERSION ($SYSTEM_NICENAME $SYSTEM_VERSION)"
+    ;;
+    esac
 ;;
 -h | --help)
     cat <<EOF
@@ -517,20 +542,21 @@ Usage: swiftbox [option]
        swiftbox [command] ...
 
 Options:
-  -v, --version             Show swiftbox version
-  -h, --help                Show help page
+  -v, --version      Show swiftbox and system (alias) version
+    -s, --short      Show only swiftbox version
+  -h, --help         Show help page
 
 Commands:
-  check <version>           Check the availability of Swift <version>
-        nightly             Check the availability of Swift nightly builds
-  get <version>             Get Swift <version> from swift.org
-      nightly               Get the latest nightly build from swift.org
-  list                      List Swift versions on the computer
-  use <version>             Select Swift <version> as default
-  remove <version>          Remove swift <version> from the computer
-  close                     Disable Swift managed by swiftbox
-  cleanup                   Clear swiftbox download cache
-  upgrade                   Upgrade swiftbox to the latest version
+  check <version>    Check the availability of Swift <version>
+        nightly      Check the availability of Swift nightly builds
+  get <version>      Get Swift <version> from swift.org
+      nightly        Get the latest nightly build from swift.org
+  list               List Swift versions on the computer
+  use <version>      Select Swift <version> as default
+  remove <version>   Remove swift <version> from the computer
+  close              Disable Swift managed by swiftbox
+  cleanup            Clear swiftbox download cache
+  upgrade            Upgrade swiftbox to the latest version
 EOF
 ;;
 *)

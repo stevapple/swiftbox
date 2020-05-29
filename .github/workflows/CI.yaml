@@ -21,6 +21,8 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
         ./swiftbox.sh --version
+        ./swiftbox.sh -v --short
+        ./swiftbox.sh --version -s
 
     - name: Test swiftbox help
       run: |
@@ -63,7 +65,7 @@ jobs:
     - name: Test swiftbox list and use
       run: |
         swiftbox list
-        sudo swiftbox list
+        sudo swiftbox list --short
         swiftbox use $ALTVER
         source /etc/environment && source /opt/swiftbox/env.sh && source $HOME/.swiftbox/env.sh
         swiftbox list
@@ -108,6 +110,129 @@ jobs:
           echo "::error::swiftbox is not closed correctly."
         fi
 
+  test-ubuntu-alias:
+    container:
+      image: ubuntu:19.10
+    runs-on: ubuntu-latest
+    env:
+      MAINVER: "5.2.4"
+      ALTVER: "5.1.5"
+      OLDVER: "2.2"
+    defaults:
+      run:
+        shell: su - swifter -c "/bin/bash --login -eo pipefail {0}"
+    steps:
+    - name: Create a new user
+      shell: bash
+      run: |
+        apt-get install sudo usermode -y
+        useradd swifter
+        echo "swifter ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+        echo "export MAINVER=$MAINVER" >> /home/swifter/.bash_profile
+        echo "export ALTVER=$ALTVER" >> /home/swifter/.bash_profile
+        echo "export OLDVER=$OLDVER" >> /home/swifter/.bash_profile
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Move repo
+      shell: bash
+      run: |
+        mv ./* /home/swifter
+        chown -R swifter /home/swifter
+
+    - name: Test swiftbox version
+      run: |
+        chmod +x swiftbox.sh
+        ./swiftbox.sh -v
+        ./swiftbox.sh --version
+        ./swiftbox.sh -v --short
+        ./swiftbox.sh --version -s
+
+    - name: Test swiftbox help
+      run: |
+        ./swiftbox.sh -h
+        ./swiftbox.sh --help
+
+    - name: Install swiftbox
+      run: |
+        sudo cp swiftbox.sh /usr/bin/swiftbox
+        swiftbox -v
+
+    - name: Test swiftbox alias
+      run: |
+        sudo sh -c 'echo "20.04" > /opt/swiftbox/.system-alias'
+        echo "20.04" > .swiftbox/.system-alias
+        swiftbox -v
+        sudo swiftbox -v
+
+    - name: Test swiftbox check
+      run: |
+        swiftbox check $MAINVER
+        swiftbox check $ALTVER
+        swiftbox check $OLDVER
+        swiftbox check nightly
+
+    - name: Test swiftbox get with sudo
+      env:
+        DEBIAN_FRONTEND: noninteractive
+        DEBCONF_NONINTERACTIVE_SEEN: true
+      run: |
+        sudo swiftbox get $MAINVER
+        source /etc/environment && source /opt/swiftbox/env.sh
+        if [ `which swift` != "/opt/swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
+        then
+          echo "::error::Swift $MAINVER is not installed correctly."
+        fi
+        swiftc -v
+
+    - name: Test swiftbox get
+      run: |
+        swiftbox get $MAINVER
+        source /etc/environment && source /opt/swiftbox/env.sh && source $HOME/.swiftbox/env.sh
+        if [ `which swift` != "$HOME/.swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
+        then
+          echo "::error::Swift $MAINVER is not installed correctly."
+        fi
+        swiftc -v
+
+    - name: Test swiftbox list
+      run: |
+        swiftbox list
+        sudo swiftbox list --short
+
+    - name: Test swiftbox cleanup
+      run: |
+        swiftbox cleanup
+        sudo swiftbox cleanup
+
+    - name: Test swiftbox remove
+      run: sudo swiftbox remove $MAINVER
+
+    - name: Test Swift status
+      run: |
+        echo "\$PATH=$PATH"
+        if [ `which swift` != "$HOME/.swiftbox/toolchain/swift-$MAINVER/usr/bin/swift" ]
+        then
+          echo "::error::Swift $ALTVER is not removed correctly."
+        fi
+        swiftc -v
+
+    - name: Test Swift compiler
+      run: |
+        swift test.swift
+        swiftc test.swift -o test && ./test
+
+    - name: Test swiftbox close
+      run: swiftbox close
+
+    - name: Test Swift disabled
+      run: |
+        if hash swift 2> /dev/null
+        then
+          echo "::error::swiftbox is not closed correctly."
+        fi
+
   test-centos:
     container:
       image: centos:8
@@ -144,6 +269,8 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
         ./swiftbox.sh --version
+        ./swiftbox.sh -v --short
+        ./swiftbox.sh --version -s
 
     - name: Test swiftbox help
       run: |
@@ -187,7 +314,7 @@ jobs:
     - name: Test swiftbox list
       run: |
         swiftbox list
-        sudo swiftbox list
+        sudo swiftbox list --short
 
     - name: Test swiftbox cleanup
       run: |
@@ -261,6 +388,8 @@ jobs:
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
         ./swiftbox.sh --version
+        ./swiftbox.sh -v --short
+        ./swiftbox.sh --version -s
 
     - name: Test swiftbox help
       run: |
@@ -304,7 +433,7 @@ jobs:
     - name: Test swiftbox list
       run: |
         swiftbox list
-        sudo swiftbox list
+        sudo swiftbox list --short
 
     - name: Test swiftbox cleanup
       run: |
@@ -353,7 +482,6 @@ jobs:
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
-        ./swiftbox.sh --version
 
     - name: Test swiftbox check nightly
       run: ./swiftbox.sh check nightly
@@ -391,7 +519,6 @@ jobs:
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
-        ./swiftbox.sh --version
 
     - name: Test swiftbox check nightly
       run: ./swiftbox.sh check nightly
@@ -432,7 +559,6 @@ jobs:
       run: |
         chmod +x swiftbox.sh
         ./swiftbox.sh -v
-        ./swiftbox.sh --version
 
     - name: Test swiftbox check nightly
       run: ./swiftbox.sh check nightly

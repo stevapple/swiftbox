@@ -15,7 +15,7 @@ jobs:
       name: Test swiftbox
       run: |
         chmod +x swiftbox.sh
-        VERSION=`./swiftbox.sh -v`
+        VERSION=`./swiftbox.sh -v -s`
         echo "::set-env name=version::$VERSION"
         if [ $? = 0 ]
         then

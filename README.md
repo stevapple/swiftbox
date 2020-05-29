@@ -66,15 +66,19 @@ $ which swiftbox
 /usr/bin/swiftbox
 ```
 
-## Example Usage
+## Basic Usage
 
 You may notice a `[user]` or `[global]` prefix in the output, which indicates the scope of swiftbox operations and Swift versions.
 
 ### Show `swiftbox` version
 
+Both `swiftbox` amd system (or alias) version will be shown with `-v` or `--version`. Add `-s` or `--short` to omit system version.
+
 ```console
-$ swiftbox -v
-0.12.2
+$ swiftbox --version
+0.12.3 (Ubuntu 20.04)
+$ swiftbox -v -s
+0.12.3
 ```
 
 ### Check the availability of Swift versions
@@ -118,13 +122,16 @@ $ sudo swiftbox close
 
 ### List local toolchain versions
 
-The active one is marked with `*`.
+The active one is marked with `*`. System versions will also be shown, and you can use `-s` or `--short` to omit. 
 
 ```console
 $ swiftbox list
-- 2020-05-10-a
-- 4.2.1
-* 5.2.2
+- 2020-05-10-a (Ubuntu 20.04)
+- 4.2.1 (Ubuntu 18.04)
+* 5.2.2 (Ubuntu 20.04)
+$ sudo swiftbox list -s
+- 2020-04-03-a
+- 4.3
 ```
 
 ### Clear download cache
@@ -173,9 +180,26 @@ Commands:
   upgrade                   Upgrade swiftbox to the latest version
 ```
 
+## Advanced Usage
+
+### Alias your system version in `swiftbox`
+
+Since Ubuntu has non-LTS versions and they may be (partially) compatible with toolchains built for LTS versions, `swiftbox` allows aliases (See #1) by specifying the version in `.system-alias` file in its working directory.
+
+```console
+$ swiftbox -v
+0.12.3 (Ubuntu 19.10)
+$ echo "20.04" > ~/.swiftbox/.system-alias
+$ swiftbox -v
+0.12.3 (Ubuntu 20.04)
+$ swiftbox check 5.2.4
+Swift 5.2.4 is available for Ubuntu 20.04
+You can get it with: swiftbox get 5.2.4
+```
+
 ## Known issues with upgrading
 
-## Version < 0.11
+### Version < 0.11
 
 Users of these versions should do a fresh installation for the upgrade.
 
@@ -198,7 +222,7 @@ $ sudo chmod +x /usr/bin/swiftbox
 $ swiftbox upgrade
 ```
 
-## Version = 0.11 | 0.11.1
+### Version = 0.11 | 0.11.1
 
 Users of these versions should do a fresh installation for the upgrade.
 
@@ -221,7 +245,7 @@ $ sudo chmod +x /usr/bin/swiftbox
 $ swiftbox upgrade
 ```
 
-## Version = 0.12 | 0.12.1
+### Version = 0.12 | 0.12.1
 
 Users of these versions should upgrade manually or with `sudo` if the installation path belongs to `root`.
 
