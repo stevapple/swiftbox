@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.12.4"
+SWIFTBOX_VERSION="0.12.5"
 
 if [ `id -u` = 0 ]
 then
