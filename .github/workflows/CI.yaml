@@ -511,9 +511,46 @@ jobs:
         swift test.swift
         swiftc test.swift -o test && ./test
 
-  test-centos-nightly:
+  test-centos8-nightly:
     container:
       image: centos:8
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash --login -eo pipefail {0}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Test swiftbox version
+      run: |
+        chmod +x swiftbox.sh
+        ./swiftbox.sh -v
+
+    - name: Test swiftbox check nightly
+      run: ./swiftbox.sh check nightly
+
+    - name: Test swiftbox get nightly
+      run: ./swiftbox.sh get nightly
+
+    - name: Install which
+      run: yum install which -y
+
+    - name: Test Swift status
+      run: |
+        echo "\$PATH=$PATH"
+        ./swiftbox.sh list
+        which swift
+        swiftc -v
+
+    - name: Test Swift compiler
+      run: |
+        swift test.swift
+        swiftc test.swift -o test && ./test
+
+  test-centos7-nightly:
+    container:
+      image: centos:7
     runs-on: ubuntu-latest
     defaults:
       run:

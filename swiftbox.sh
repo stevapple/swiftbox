@@ -116,8 +116,17 @@ init-env() {
         esac
     ;;
     centos)
-        $SUDO_FLAG yum install epel-release -y
-        $SUDO_FLAG yum install --enablerepo=PowerTools binutils gcc git glibc-static libbsd-devel libedit libedit-devel libicu-devel libstdc++-static pkg-config python2 sqlite -y
+        $SUDO_FLAG yum install binutils gcc git libedit libicu-devel pkg-config python2 sqlite zlib-devel -y
+        case $SYSTEM_VERSION in
+        7)
+            $SUDO_FLAG yum install shadow-utils libbsd-devel glibc-static libstdc++-static libedit-devel -y
+            sed -i -e 's/\*__block/\*__libc_block/g' /usr/include/unistd.h
+        ;;
+        8)
+            $SUDO_FLAG yum install epel-release -y
+            $SUDO_FLAG yum install --enablerepo=PowerTools libbsd-devel glibc-static libstdc++-static libedit-devel -y
+        ;;
+        esac
     ;;
     amazonlinux)
         $SUDO_FLAG yum install binutils gcc git glibc-static gzip libbsd libcurl libedit libicu sqlite libstdc++-static libuuid libxml2 tar -y
