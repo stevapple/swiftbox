@@ -16,12 +16,12 @@ jobs:
       run: |
         chmod +x swiftbox.sh
         VERSION=`./swiftbox.sh -v`
-        echo "::set-env name=version::$VERSION"
+        echo "version=$VERSION" >> $GITHUB_ENV
         if [ $? = 0 ]
         then
           if [ v$VERSION != `curl -fsSL https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/\"//g"` ]
           then
-            echo "::set-env name=updated::true"
+            echo "updated=true" >> $GITHUB_ENV
             echo "::set-output name=updated::true"
           fi
         else
