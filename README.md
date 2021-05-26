@@ -186,7 +186,7 @@ Commands:
 
 Since Ubuntu has non-LTS versions and they may be (partially) compatible with toolchains built for LTS versions, `swiftbox` provides built-in system version alias support from version 0.12.3 (see [#1](https://github.com/stevapple/swiftbox/pull/1)).
 
-`swiftbox` allows long-term alias by specifying the version in `.system-alias` file in its working directory. The aliased version will be displayed in `swiftbox -v`` output.
+`swiftbox` allows long-term alias by specifying the version in `.system-alias` file in its working directory. The aliased version will be displayed in `swiftbox -v` output.
 
 ```console
 $ echo "20.04" > ~/.swiftbox/.system-alias
