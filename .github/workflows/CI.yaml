@@ -641,9 +641,6 @@ jobs:
           env: |
             DEBIAN_FRONTEND: noninteractive
             DEBCONF_NONINTERACTIVE_SEEN: true
-          install: |
-            apt-get update -q -y
-            apt-get upgrade -q -y
           run: |
             cat /dev/null > ~/.bashrc
             chmod +x swiftbox.sh
@@ -660,6 +657,6 @@ jobs:
             echo "[swift version]"
             swiftc -v
             echo "[swift test]"
-            swift test.swift
+            echo "Skipped due to SR-15213" # swift test.swift
             echo "[swiftc test]"
             swiftc test.swift -o test && ./test
