@@ -331,7 +331,13 @@ install-toolchain() {
         exit 100
     fi
     tar -xzf download/$FILE_NAME.tar.gz -C temp
-    mv temp/$FILE_NAME toolchain/swift-$NEW_VERSION
+    if [ -d temp/$FILE_NAME ]
+    then
+        mv temp/$FILE_NAME toolchain/swift-$NEW_VERSION
+    else
+        mv temp/* toolchain/swift-$NEW_VERSION
+    fi
+    chmod -R o+r toolchain/swift-$NEW_VERSION/usr/lib/swift
     echo $SYSTEM_VERSION > $WORKING_DIR/toolchain/$file/.system-version
 }
 
