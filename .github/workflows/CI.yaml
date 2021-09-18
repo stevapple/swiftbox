@@ -637,20 +637,25 @@ jobs:
         with:
           arch: aarch64
           distro: ubuntu20.04
+          githubToken: ${{ github.token }}
           env: |
             DEBIAN_FRONTEND: noninteractive
             DEBCONF_NONINTERACTIVE_SEEN: true
+          install: |
+            apt-get update -q -y
+            apt-get upgrade -q -y
           run: |
+            cat /dev/null > ~/.bashrc
             chmod +x swiftbox.sh
             ./swiftbox.sh -v
+            echo "[swiftbox get]"
             ./swiftbox.sh get nightly
-            source .bashrc
+            source ~/.bashrc
             echo "\$PATH=$PATH"
             echo "[swiftbox list]"
             ./swiftbox.sh list
 
-            echo "[which swift]"
-            which swift
+            ls -al /opt/swiftbox/toolchain/*/usr/bin
             echo "[swift version]"
             swiftc -v
             echo "[swift test]"
