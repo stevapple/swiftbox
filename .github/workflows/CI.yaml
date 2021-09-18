@@ -626,3 +626,34 @@ jobs:
         source /opt/swiftbox/env.sh
         swift test.swift
         swiftc test.swift -o test && ./test
+
+  test-ubuntu-aarch64-nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: uraimo/run-on-arch-action@v2.0.10
+        id: run
+        name: Install and test Swift
+        with:
+          arch: aarch64
+          distro: ubuntu20.04
+          env: |
+            DEBIAN_FRONTEND: noninteractive
+            DEBCONF_NONINTERACTIVE_SEEN: true
+          run: |
+            chmod +x swiftbox.sh
+            ./swiftbox.sh -v
+            ./swiftbox.sh get nightly
+            source .bashrc
+            echo "\$PATH=$PATH"
+            echo "[swiftbox list]"
+            ./swiftbox.sh list
+
+            echo "[which swift]"
+            which swift
+            echo "[swift version]"
+            swiftc -v
+            echo "[swift test]"
+            swift test.swift
+            echo "[swiftc test]"
+            swiftc test.swift -o test && ./test

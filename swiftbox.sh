@@ -72,18 +72,36 @@ then
     echo "This program only supports Ubuntu, CentOS(RHEL) and Amazon Linux."
     echo "$UNSUPPORTED_SYSTEM is unsupported."
     exit 255
-else
-    INSTALL_DIR=`dirname $0`
-    PATHS=(${PATH//:/ })
-    PROGRAM=$0
-    for PATH_DIR in ${PATHS[@]}
-    do
-        if [ $PATH_DIR = $INSTALL_DIR ]
-        then
-            PROGRAM=`basename $0`
-        fi
-    done
 fi
+
+# Check the environment
+
+if hash uname 2> /dev/null
+then
+    ARCH=`uname -i`
+elif hash arch 2> /dev/null
+then
+    ARCH=`arch`
+else
+    echo "warning: failed to detect CPU architecture, assuming x86_64"
+    ARCH="x86_64"
+fi
+
+if [ $ARCH != "x86_64" ]
+then
+    ARCH_SUFFIX="-$ARCH"
+fi
+
+INSTALL_DIR=`dirname $0`
+PATHS=(${PATH//:/ })
+PROGRAM=$0
+for PATH_DIR in ${PATHS[@]}
+do
+    if [ $PATH_DIR = $INSTALL_DIR ]
+    then
+        PROGRAM=`basename $0`
+    fi
+done
 
 ## Configure the environment
 
@@ -225,7 +243,7 @@ format-version() {
 }
 
 check-version() {
-    local DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$NEW_VERSION-RELEASE/swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz"
+    local DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX/swift-$NEW_VERSION-RELEASE/swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION$ARCH_SUFFIX.tar.gz"
     wget --no-check-certificate -q --spider $DOWNLOAD_URL
     local WGET_RESULT=$?
     if [ $WGET_RESULT = 8 ]
@@ -244,7 +262,7 @@ check-version() {
 }
 
 nightly-version() {
-    wget --no-check-certificate -q --spider https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}/latest-build.yml
+    wget --no-check-certificate -q --spider https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX/latest-build.yml
     local WGET_RESULT=$?
     if [ $WGET_RESULT = 8 ]
     then
@@ -259,14 +277,14 @@ nightly-version() {
         echo "Please check your wget config."
         return 255
     fi
-    curl -s https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}/latest-build.yml | grep 'download:' | sed 's/download:[^:\/\/]//g' | sed 's/swift-DEVELOPMENT-SNAPSHOT-//' | sed "s/-$SYSTEM_NAME$SYSTEM_VERSION.tar.gz//"
+    curl -s https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX/latest-build.yml | grep 'download:' | sed 's/download:[^:\/\/]//g' | sed 's/swift-DEVELOPMENT-SNAPSHOT-//' | sed "s/-$SYSTEM_NAME$SYSTEM_VERSION$ARCH_SUFFIX.tar.gz//"
 }
 
 ## Install Swift toolchains
 
 fetch-release() {
     cd $WORKING_DIR
-    FILE_NAME="swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION"
+    FILE_NAME="swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION$ARCH_SUFFIX"
     DOWNLOAD_URL="https://swift.org/builds/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$NEW_VERSION-RELEASE/$FILE_NAME.tar.gz"
     check-version
     local VERSION_AVAILABILITY=$?
@@ -279,8 +297,8 @@ fetch-release() {
 
 fetch-snapshot() {
     cd $WORKING_DIR
-    FILE_NAME="swift-DEVELOPMENT-SNAPSHOT-$NEW_VERSION-$SYSTEM_NAME$SYSTEM_VERSION"
-    DOWNLOAD_URL="https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-DEVELOPMENT-SNAPSHOT-$NEW_VERSION/$FILE_NAME.tar.gz"
+    FILE_NAME="swift-DEVELOPMENT-SNAPSHOT-$NEW_VERSION-$SYSTEM_NAME$SYSTEM_VERSION$ARCH_SUFFIX"
+    DOWNLOAD_URL="https://swift.org/builds/development/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX/swift-DEVELOPMENT-SNAPSHOT-$NEW_VERSION/$FILE_NAME.tar.gz"
     install-toolchain
 }
 
