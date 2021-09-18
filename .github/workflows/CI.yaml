@@ -631,7 +631,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: uraimo/run-on-arch-action@v2.0.10
+      - uses: uraimo/run-on-arch-action@v2.1.1
         id: run
         name: Install and test Swift
         with:
