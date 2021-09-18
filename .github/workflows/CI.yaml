@@ -655,7 +655,8 @@ jobs:
             echo "[swiftbox list]"
             ./swiftbox.sh list
 
-            ls -al /opt/swiftbox/toolchain/*/usr/bin
+            echo "[which swift]"
+            which swift
             echo "[swift version]"
             swiftc -v
             echo "[swift test]"

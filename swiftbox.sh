@@ -335,7 +335,8 @@ install-toolchain() {
     then
         mv temp/$FILE_NAME toolchain/swift-$NEW_VERSION
     else
-        mv temp/* toolchain/swift-$NEW_VERSION
+        mv temp toolchain/swift-$NEW_VERSION
+        mkdir temp
     fi
     chmod -R o+r toolchain/swift-$NEW_VERSION/usr/lib/swift
     echo $SYSTEM_VERSION > $WORKING_DIR/toolchain/$file/.system-version
