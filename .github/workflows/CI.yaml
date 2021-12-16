@@ -638,9 +638,6 @@ jobs:
           arch: aarch64
           distro: ubuntu20.04
           githubToken: ${{ github.token }}
-          env: |
-            DEBIAN_FRONTEND: noninteractive
-            DEBCONF_NONINTERACTIVE_SEEN: true
           run: |
             cat /dev/null > ~/.bashrc
             chmod +x swiftbox.sh
@@ -657,6 +654,6 @@ jobs:
             echo "[swift version]"
             swiftc -v
             echo "[swift test]"
-            echo "Skipped due to SR-15213" # swift test.swift
+            swift test.swift
             echo "[swiftc test]"
             swiftc test.swift -o test && ./test
