@@ -150,6 +150,14 @@ $ swiftbox upgrade
 Successfully upgraded swiftbox from 0.12 to 0.12.2
 ```
 
+> `swiftbox` doesn't have a stable upgrading interface until 0.12.2. Users running `swiftbox` 0.12.1 and earlier are recommended to do a fresh installation to receive latest updates:
+>
+> ```console
+> $ sudo curl -o /usr/bin/swiftbox https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.12.2/swiftbox.sh
+> $ sudo chmod +x /usr/bin/swiftbox
+> $ swiftbox upgrade
+> ```
+
 ### Show help page
 
 ```console
@@ -157,27 +165,26 @@ $ swiftbox -h
 ```
 
 And you'll see an output as follow:
+
 ```
 swiftbox: Use Swift out of the Box on Ubuntu, CentOS(RHEL) and Amazon Linux
-
 Usage: swiftbox [option]
        swiftbox [command] ...
-
 Options:
-  -v                        Show swiftbox version
-  -h                        Show help page
-
+  -v, --version      Show swiftbox and system (alias) version
+    -s, --short      Show only swiftbox version
+  -h, --help         Show help page
 Commands:
-  check <version>           Check the availability of Swift <version>
-        nightly             Check the availability of Swift nightly builds
-  get <version>             Get Swift <version> from swift.org
-      nightly               Get the latest nightly build from swift.org
-  list                      List Swift versions on the computer
-  use <version>             Select Swift <version> as default
-  remove <version>          Remove swift <version> from the computer
-  close                     Disable Swift managed by swiftbox
-  cleanup                   Clear swiftbox download cache
-  upgrade                   Upgrade swiftbox to the latest version
+  check <version>    Check the availability of Swift <version>
+        nightly      Check the availability of Swift nightly builds
+  get <version>      Get Swift <version> from swift.org
+      nightly        Get the latest nightly build from swift.org
+  list               List Swift versions on the computer
+  use <version>      Select Swift <version> as default
+  remove <version>   Remove swift <version> from the computer
+  close              Disable Swift managed by swiftbox
+  cleanup            Clear swiftbox download cache
+  upgrade            Upgrade swiftbox to the latest version
 ```
 
 ## Advanced Usage
@@ -186,7 +193,7 @@ Commands:
 
 Since Ubuntu has non-LTS versions and they may be (partially) compatible with toolchains built for LTS versions, `swiftbox` provides built-in system version alias support from version 0.12.3 (see [#1](https://github.com/stevapple/swiftbox/pull/1)).
 
-`swiftbox` allows long-term alias by specifying the version in `.system-alias` file in its working directory. The aliased version will be displayed in `swiftbox -v` output.
+`swiftbox` allows permanent alias by specifying the version in `.system-alias` file in its working directory. The aliased version will be displayed in `swiftbox -v` output.
 
 ```console
 $ echo "20.04" > ~/.swiftbox/.system-alias
@@ -197,73 +204,9 @@ Swift 5.2.4 is available for Ubuntu 20.04
 You can get it with: swiftbox get 5.2.4
 ```
 
-For one-time alias, use environmental variable `$SWIFTBOX_SYSALIAS` instead:
+For temporary alias, use environmental variable `$SWIFTBOX_SYSALIAS` instead:
 
 ```console
 $ export SWIFTBOX_SYSALIAS="20.04"
 $ swiftbox get 5.2.4
-```
-
-## Known Issues of Upgrading
-
-### Version < 0.11
-
-Users of these versions should do a fresh installation for the upgrade.
-
-You can use one of the following ways:
-
-```console
-$ swiftbox update
-swiftbox 0.9 is already installed in /usr/bin
-Input 'yes' or 'y' to upgrade, anything else to do a fresh installation: n
-```
-
-```console
-$ sudo rm /usr/bin/swiftbox
-$ sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
-```
-
-```console
-$ sudo curl -o /usr/bin/swiftbox https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.12.2/swiftbox.sh
-$ sudo chmod +x /usr/bin/swiftbox
-$ swiftbox upgrade
-```
-
-### Version = 0.11 | 0.11.1
-
-Users of these versions should do a fresh installation for the upgrade.
-
-You can use one of the following ways:
-
-```console
-$ swiftbox upgrade
-swiftbox 0.11.1 is already installed in /usr/bin
-Input 'yes' or 'y' to upgrade, anything else to do a fresh installation: n
-```
-
-```console
-$ sudo rm /usr/bin/swiftbox
-$ sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
-```
-
-```console
-$ sudo curl -o /usr/bin/swiftbox https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.12.2/swiftbox.sh
-$ sudo chmod +x /usr/bin/swiftbox
-$ swiftbox upgrade
-```
-
-### Version = 0.12 | 0.12.1
-
-Users of these versions should upgrade manually or with `sudo` if the installation path belongs to `root`.
-
-You can use one of the following ways:
-
-```console
-$ sudo swiftbox upgrade
-```
-
-```console
-$ sudo curl -o /usr/bin/swiftbox https://cdn.jsdelivr.net/gh/stevapple/swiftbox@0.12.2/swiftbox.sh
-$ sudo chmod +x /usr/bin/swiftbox
-$ swiftbox upgrade
 ```
