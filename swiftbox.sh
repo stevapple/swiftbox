@@ -330,7 +330,7 @@ install-toolchain() {
         fi
         wget -t 5 -P download $DOWNLOAD_URL.sig
     fi
-    $SUDO_FLAG gpg --keyserver hkp://pool.sks-keyservers.net --refresh-keys Swift
+    $SUDO_FLAG gpg --keyserver hkp://keyserver.ubuntu.com --refresh-keys Swift
     $SUDO_FLAG gpg --verify download/$FILE_NAME.tar.gz.sig
     if [ $? != 0 ]
     then
