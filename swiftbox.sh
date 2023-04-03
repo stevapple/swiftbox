@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.13.2"
+SWIFTBOX_VERSION="0.13.3"
 SWIFT_DOWNLOAD_SITE="https://download.swift.org"
 
 if [ `id -u` = 0 ]
@@ -127,18 +127,33 @@ init-env() {
     case $SYSTEM_NAME in
     ubuntu)
         $SUDO_FLAG apt-get update
-        $SUDO_FLAG apt-get install gnupg git libpython2.7 binutils tzdata libxml2 clang libicu-dev pkg-config zlib1g-dev libedit2 libsqlite3-0 libz3-dev -y
         case $SYSTEM_VERSION in
-        16.04 | 18.04)
-            $SUDO_FLAG apt-get install libgcc-5-dev libstdc++-5-dev -y
-        ;;
-        20.04)
-            $SUDO_FLAG apt-get install libgcc-9-dev libstdc++-9-dev -y
-        ;;
+        16.04 | 18.04 | 20.04 | 22.04) ;;
         *)
-            echo "You should install the corresponding version of libgcc-dev and libstdc++-dev manually to enable full functionalities of Swift."
+            echo "It seems you're using an unsupported Ubuntu version. Dependency installation might fail."
         ;;
         esac
+        COMMON_DEPS="binutils git gnupg2 libc6-dev libedit2 libsqlite3-0 pkg-config tzdata zlib1g-dev"
+        case $SYSTEM_VERSION in
+        16.04 | 18.04)
+            FOUNDATION_DEPS="libcurl4 libxml2 libicu-dev"
+            GCC_DEPS="libgcc-5-dev libstdc++-5-dev"
+            PYTHON_DEP="libpython2.7"
+        ;;
+        20.04)
+            FOUNDATION_DEPS="libcurl4 libxml2"
+            GCC_DEPS="libgcc-9-dev libstdc++-9-dev"
+            PYTHON_DEP="libpython2.7"
+            OTHER_DEPS="uuid-dev"
+        ;;
+        22.04 | *)
+            FOUNDATION_DEPS="libcurl4-openssl-dev libxml2-dev"
+            GCC_DEPS="libgcc-9-dev libstdc++-9-dev"
+            PYTHON_DEP="libpython3.8"
+            OTHER_DEPS="unzip"
+        ;;
+        esac
+        $SUDO_FLAG apt-get install $COMMON_DEPS $FOUNDATION_DEPS $GCC_DEPS $PYTHON_DEP $OTHER_DEPS -y
     ;;
     centos)
         $SUDO_FLAG yum install binutils gcc git libedit libicu-devel pkg-config python2 sqlite zlib-devel -y
@@ -154,7 +169,7 @@ init-env() {
         esac
     ;;
     amazonlinux)
-        $SUDO_FLAG yum install binutils gcc git glibc-static gzip libbsd libcurl libedit libicu sqlite libstdc++-static libuuid libxml2 tar -y
+        $SUDO_FLAG yum install binutils gcc git glibc-static gzip libbsd libcurl libedit libicu sqlite libstdc++-static libuuid libxml2 tar tzdata -y
     ;;
     esac
     wget -q -O - https://swift.org/keys/all-keys.asc | $SUDO_FLAG gpg --import -
