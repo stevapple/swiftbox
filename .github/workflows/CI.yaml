@@ -17,11 +17,22 @@ jobs:
           - ubuntu:22.04
           - centos:7
           - amazonlinux:2
+      fail-fast: false
     container:
       image: ${{ matrix.image }}
     steps:
+    - name: Install dependencies
+      if: ${{ startsWith(matrix.image, 'amazonlinux:') }}
+      run: yum install gzip tar -y
+
     - name: Checkout
       uses: actions/checkout@v3
+
+    - name: Set up environment
+      if: ${{ startsWith(matrix.image, 'ubuntu:') }}
+      run: |
+        echo "DEBIAN_FRONTEND=noninteractive" >> $GITHUB_ENV
+        echo "DEBCONF_NONINTERACTIVE_SEEN=true" >> $GITHUB_ENV
 
     - name: Test swiftbox setup
       run: ./swiftbox.sh list
