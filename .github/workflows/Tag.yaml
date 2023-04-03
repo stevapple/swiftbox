@@ -1,6 +1,9 @@
 name: Tag
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   release:
@@ -9,20 +12,19 @@ jobs:
       updated: ${{ steps.main.outputs.updated }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - id: main
       name: Test swiftbox
       run: |
         chmod +x swiftbox.sh
         VERSION=`./swiftbox.sh -v`
-        echo "version=$VERSION" >> $GITHUB_ENV
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
         if [ $? = 0 ]
         then
           if [ v$VERSION != `curl -fsSL https://api.github.com/repos/stevapple/swiftbox/releases/latest | jq .tag_name | sed "s/\"//g"` ]
           then
-            echo "updated=true" >> $GITHUB_ENV
-            echo "::set-output name=updated::true"
+            echo "updated=true" >> $GITHUB_OUTPUT
           fi
         else
           exit 1
@@ -30,12 +32,12 @@ jobs:
 
     - name: Tag and release
       uses: avakar/tag-and-release@v1
-      if: ${{ env.updated }}
+      if: ${{ steps.main.outputs.updated }}
       with:
-        release_name: Release ${{ env.version }}
-        tag_name: v${{ env.version }}
+        release_name: Release ${{ steps.main.outputs.version }}
+        tag_name: v${{ steps.main.outputs.version }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
 
   wait-for-cdn:
     runs-on: ubuntu-latest
@@ -71,7 +73,7 @@ jobs:
   test-centos-install:
     needs: wait-for-cdn
     container:
-      image: centos:8
+      image: centos:7
     runs-on: ubuntu-latest
     steps:
     - name: Test swiftbox install and upgrade

@@ -1,20 +1,24 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   test-ubuntu:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     env:
-      MAINVER: "5.4.1"
-      ALTVER: "5.2.4"
+      MAINVER: "5.6.3"
+      ALTVER: "5.3.3"
       OLDVER: "2.2"
     defaults:
       run:
         shell: bash --login -eo pipefail {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Test swiftbox version
       run: |
@@ -110,12 +114,12 @@ jobs:
 
   test-ubuntu-alias:
     container:
-      image: ubuntu:20.10
+      image: ubuntu:22.10
     runs-on: ubuntu-latest
     env:
-      MAINVER: "5.4.1"
-      ALTVER: "5.2.4"
-      OLDVER: "2.2"
+      MAINVER: "5.7.3"
+      ALTVER: "5.7"
+      OLDVER: "5.5.3"
     defaults:
       run:
         shell: su - swifter -c "/bin/bash --login -eo pipefail {0}"
@@ -132,7 +136,7 @@ jobs:
         echo "export OLDVER=$OLDVER" >> /home/swifter/.bash_profile
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Move repo
       shell: bash
@@ -165,7 +169,7 @@ jobs:
 
     - name: Test swiftbox short-term alias and check
       env:
-        SWIFTBOX_SYSALIAS: 20.04
+        SWIFTBOX_SYSALIAS: 22.04
       shell: bash
       run: |
         swiftbox check $MAINVER
@@ -243,13 +247,47 @@ jobs:
           echo "::error::swiftbox is not closed correctly."
         fi
 
+  test-ubuntu-aarch64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: uraimo/run-on-arch-action@v2.5.0
+        id: run
+        name: Check, install and test Swift
+        with:
+          arch: aarch64
+          distro: ubuntu20.04
+          githubToken: ${{ github.token }}
+          env: |
+            MAINVER: "5.7.3"
+            ALTVER: "5.6.3"
+            OLDVER: "5.5.3"
+          run: |
+            cat /dev/null > ~/.bashrc
+            chmod +x swiftbox.sh
+            ./swiftbox.sh -v
+            echo "[swiftbox check]"
+            ./swiftbox.sh check $MAINVER
+            ./swiftbox.sh check $ALTVER
+            ./swiftbox.sh check $OLDVER
+            echo "[swiftbox get]"
+            ./swiftbox.sh get $MAINVER
+            source ~/.bashrc
+            echo "\$PATH=$PATH"
+            echo "[swiftbox list]"
+            ./swiftbox.sh list
+            echo "[which swift]"
+            which swift
+            echo "[swift version]"
+            swiftc -v
+
   test-centos:
     container:
-      image: centos:8
+      image: centos:7
     runs-on: ubuntu-latest
     env:
-      MAINVER: "5.4.1"
-      ALTVER: "5.2.4"
+      MAINVER: "5.6.3"
+      ALTVER: "5.2.5"
       OLDVER: "2.2"
     defaults:
       run:
@@ -266,7 +304,7 @@ jobs:
         echo "export OLDVER=$OLDVER" >> /home/swifter/.bash_profile
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Move repo
       shell: bash
@@ -362,8 +400,8 @@ jobs:
       image: amazonlinux:2
     runs-on: ubuntu-latest
     env:
-      MAINVER: "5.4.1"
-      ALTVER: "5.2.4"
+      MAINVER: "5.6.3"
+      ALTVER: "5.2.5"
       OLDVER: "2.2"
     defaults:
       run:
@@ -384,7 +422,7 @@ jobs:
       run: yum install tar gzip -y
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Move repo
       shell: bash
@@ -474,117 +512,6 @@ jobs:
           echo "::error::swiftbox is not closed correctly."
         fi
 
-  test-ubuntu-nightly:
-    container:
-      image: ubuntu:20.04
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash --login -eo pipefail {0}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Test swiftbox version
-      run: |
-        chmod +x swiftbox.sh
-        ./swiftbox.sh -v
-
-    - name: Test swiftbox check nightly
-      run: ./swiftbox.sh check nightly
-
-    - name: Test swiftbox get nightly
-      env:
-        DEBIAN_FRONTEND: noninteractive
-        DEBCONF_NONINTERACTIVE_SEEN: true
-      run: ./swiftbox.sh get nightly
-
-    - name: Test Swift status
-      run: |
-        echo "\$PATH=$PATH"
-        ./swiftbox.sh list
-        which swift
-        swiftc -v
-
-    - name: Test Swift compiler
-      run: |
-        swift test.swift
-        swiftc test.swift -o test && ./test
-
-  test-centos8-nightly:
-    container:
-      image: centos:8
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash --login -eo pipefail {0}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Test swiftbox version
-      run: |
-        chmod +x swiftbox.sh
-        ./swiftbox.sh -v
-
-    - name: Test swiftbox check nightly
-      run: ./swiftbox.sh check nightly
-
-    - name: Test swiftbox get nightly
-      run: ./swiftbox.sh get nightly
-
-    - name: Install which
-      run: yum install which -y
-
-    - name: Test Swift status
-      run: |
-        echo "\$PATH=$PATH"
-        ./swiftbox.sh list
-        which swift
-        swiftc -v
-
-    - name: Test Swift compiler
-      run: |
-        swift test.swift
-        swiftc test.swift -o test && ./test
-
-  test-centos7-nightly:
-    container:
-      image: centos:7
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash --login -eo pipefail {0}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Test swiftbox version
-      run: |
-        chmod +x swiftbox.sh
-        ./swiftbox.sh -v
-
-    - name: Test swiftbox check nightly
-      run: ./swiftbox.sh check nightly
-
-    - name: Test swiftbox get nightly
-      run: ./swiftbox.sh get nightly
-
-    - name: Install which
-      run: yum install which -y
-
-    - name: Test Swift status
-      run: |
-        echo "\$PATH=$PATH"
-        ./swiftbox.sh list
-        which swift
-        swiftc -v
-
-    - name: Test Swift compiler
-      run: |
-        swift test.swift
-        swiftc test.swift -o test && ./test
-
   test-amzn-nightly:
     container:
       image: amazonlinux:2
@@ -597,7 +524,7 @@ jobs:
       run: yum install tar gzip -y
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Test swiftbox version
       run: |
@@ -630,8 +557,8 @@ jobs:
   test-ubuntu-aarch64-nightly:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: uraimo/run-on-arch-action@v2.1.1
+      - uses: actions/checkout@v3
+      - uses: uraimo/run-on-arch-action@v2.5.0
         id: run
         name: Install and test Swift
         with:
@@ -653,7 +580,3 @@ jobs:
             which swift
             echo "[swift version]"
             swiftc -v
-            echo "[swift test]"
-            swift test.swift
-            echo "[swiftc test]"
-            swiftc test.swift -o test && ./test
