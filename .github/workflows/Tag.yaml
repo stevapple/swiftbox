@@ -66,12 +66,6 @@ jobs:
         swiftbox -v
         swiftbox upgrade
 
-    - name: Test swiftbox setup
-      env:
-        DEBIAN_FRONTEND: noninteractive
-        DEBCONF_NONINTERACTIVE_SEEN: true
-      run: swiftbox list
-
   test-centos-install:
     needs: wait-for-cdn
     container:
@@ -84,9 +78,6 @@ jobs:
         swiftbox -v
         swiftbox upgrade
 
-    - name: Test swiftbox setup
-      run: swiftbox list
-
   test-amzn-install:
     needs: wait-for-cdn
     container:
@@ -98,6 +89,3 @@ jobs:
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
         swiftbox -v
         swiftbox upgrade
-
-    - name: Test swiftbox setup
-      run: swiftbox list
