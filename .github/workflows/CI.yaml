@@ -283,11 +283,11 @@ jobs:
 
   test-centos:
     container:
-      image: centos:8
+      image: centos:7
     runs-on: ubuntu-latest
     env:
-      MAINVER: "5.4.1"
-      ALTVER: "5.2.4"
+      MAINVER: "5.6.3"
+      ALTVER: "5.2.5"
       OLDVER: "2.2"
     defaults:
       run:
@@ -400,8 +400,8 @@ jobs:
       image: amazonlinux:2
     runs-on: ubuntu-latest
     env:
-      MAINVER: "5.4.1"
-      ALTVER: "5.2.4"
+      MAINVER: "5.6.3"
+      ALTVER: "5.2.5"
       OLDVER: "2.2"
     defaults:
       run:
