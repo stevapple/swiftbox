@@ -22,9 +22,9 @@ then
         then
             if [ $OS != 'amzn' ] && [ $VERSION -lt 8 ]
             then
-                $SUDO_FLAG yum install epel-release -q -y
+                $SUDO_FLAG yum install epel-release -y &> /dev/null
             fi
-            $SUDO_FLAG yum install curl jq which -q -y
+            $SUDO_FLAG yum install curl jq which -y &> /dev/null
         fi
     ;;
     *)
