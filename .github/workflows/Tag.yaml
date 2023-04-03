@@ -49,43 +49,25 @@ jobs:
       - name: Wait for CDN refreshment
         run: sleep 1m
 
-  test-ubuntu-install:
+  test-install:
     needs: wait-for-cdn
+    strategy:
+      matrix:
+        image:
+          - ubuntu:20.04
+          - ubuntu:22.04
+          - centos:7
+          - amazonlinux:2
     container:
-      image: ubuntu:20.04
+      image: ${{ matrix.image }}
     runs-on: ubuntu-latest
     steps:
-    - name: Install curl
-      run: |
-        apt-get update
-        apt-get install curl -y
-
-    - name: Test swiftbox install and upgrade
+    - name: Install cURL
+      if: ${{ startsWith(matrix.image, 'ubuntu:') }}
+      run: apt-get update && apt-get install curl -y
+    - name: Test swiftbox install
       run: |
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
         swiftbox -v
-        swiftbox upgrade
-
-  test-centos-install:
-    needs: wait-for-cdn
-    container:
-      image: centos:7
-    runs-on: ubuntu-latest
-    steps:
-    - name: Test swiftbox install and upgrade
-      run: |
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
-        swiftbox -v
-        swiftbox upgrade
-
-  test-amzn-install:
-    needs: wait-for-cdn
-    container:
-      image: amazonlinux:2
-    runs-on: ubuntu-latest
-    steps:
-    - name: Test swiftbox install and upgrade
-      run: |
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/stevapple/swiftbox/master/install.sh)"
-        swiftbox -v
-        swiftbox upgrade
+    - name: Test swiftbox upgrade
+      run: swiftbox upgrade
