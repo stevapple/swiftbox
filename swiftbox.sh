@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.13.3"
+SWIFTBOX_VERSION="0.13.4"
 SWIFT_DOWNLOAD_SITE="https://download.swift.org"
 
 if [ `id -u` = 0 ]
@@ -107,12 +107,6 @@ do
         PROGRAM=`basename $0`
     fi
 done
-
-## Download Base URL
-
-download-base() {
-    echo $SWIFT_DOWNLOAD_SITE/$1/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX
-}
 
 ## Configure the environment
 
@@ -233,6 +227,10 @@ reinit-env() {
 }
 
 ## Parse and check Swift version
+
+download-base() {
+    echo $SWIFT_DOWNLOAD_SITE/$1/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX
+}
 
 format-version() {
     if [ ! $1 ]
