@@ -114,12 +114,12 @@ jobs:
 
   test-ubuntu-alias:
     container:
-      image: ubuntu:20.10
+      image: ubuntu:22.10
     runs-on: ubuntu-latest
     env:
-      MAINVER: "5.4.1"
-      ALTVER: "5.2.4"
-      OLDVER: "2.2"
+      MAINVER: "5.7.3"
+      ALTVER: "5.7"
+      OLDVER: "5.5.3"
     defaults:
       run:
         shell: su - swifter -c "/bin/bash --login -eo pipefail {0}"
@@ -169,7 +169,7 @@ jobs:
 
     - name: Test swiftbox short-term alias and check
       env:
-        SWIFTBOX_SYSALIAS: 20.04
+        SWIFTBOX_SYSALIAS: 22.04
       shell: bash
       run: |
         swiftbox check $MAINVER
