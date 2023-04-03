@@ -18,7 +18,7 @@ jobs:
         shell: bash --login -eo pipefail {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Test swiftbox version
       run: |
@@ -136,7 +136,7 @@ jobs:
         echo "export OLDVER=$OLDVER" >> /home/swifter/.bash_profile
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Move repo
       shell: bash
@@ -247,6 +247,40 @@ jobs:
           echo "::error::swiftbox is not closed correctly."
         fi
 
+  test-ubuntu-aarch64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: uraimo/run-on-arch-action@v2.5.0
+        id: run
+        name: Check, install and test Swift
+        with:
+          arch: aarch64
+          distro: ubuntu20.04
+          githubToken: ${{ github.token }}
+          env: |
+            MAINVER: "5.7.3"
+            ALTVER: "5.6.3"
+            OLDVER: "5.5.3"
+          run: |
+            cat /dev/null > ~/.bashrc
+            chmod +x swiftbox.sh
+            ./swiftbox.sh -v
+            echo "[swiftbox check]"
+            ./swiftbox.sh check $MAINVER
+            ./swiftbox.sh check $ALTVER
+            ./swiftbox.sh check $OLDVER
+            echo "[swiftbox get]"
+            ./swiftbox.sh get $MAINVER
+            source ~/.bashrc
+            echo "\$PATH=$PATH"
+            echo "[swiftbox list]"
+            ./swiftbox.sh list
+            echo "[which swift]"
+            which swift
+            echo "[swift version]"
+            swiftc -v
+
   test-centos:
     container:
       image: centos:8
@@ -270,7 +304,7 @@ jobs:
         echo "export OLDVER=$OLDVER" >> /home/swifter/.bash_profile
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Move repo
       shell: bash
@@ -388,7 +422,7 @@ jobs:
       run: yum install tar gzip -y
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Move repo
       shell: bash
@@ -490,7 +524,7 @@ jobs:
       run: yum install tar gzip -y
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Test swiftbox version
       run: |
@@ -523,7 +557,7 @@ jobs:
   test-ubuntu-aarch64-nightly:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: uraimo/run-on-arch-action@v2.5.0
         id: run
         name: Install and test Swift
