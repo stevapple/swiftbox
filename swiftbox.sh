@@ -48,6 +48,10 @@ then
         SYSTEM_NAME="centos"
         if ! hash curl 2> /dev/null || ! hash wget 2> /dev/null || ! hash jq 2> /dev/null
         then
+            if [ $SYSTEM_VERSION -lt 8 ]
+            then
+                $SUDO_FLAG yum install epel-release -q -y
+            fi
             $SUDO_FLAG yum install curl wget jq -q -y
         fi
     ;;
