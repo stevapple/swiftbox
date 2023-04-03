@@ -7,6 +7,25 @@ on:
   pull_request:
 
 jobs:
+  test-setup:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - ubuntu:18.04
+          - ubuntu:20.04
+          - ubuntu:22.04
+          - centos:7
+          - amazonlinux:2
+    container:
+      image: ${{ matrix.image }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Test swiftbox setup
+      run: ./swiftbox.sh list
+
   test-ubuntu:
     runs-on: ubuntu-20.04
     env:
