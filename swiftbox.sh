@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.13.1"
+SWIFTBOX_VERSION="0.13.2"
 SWIFT_DOWNLOAD_SITE="https://download.swift.org"
 
 if [ `id -u` = 0 ]
@@ -103,6 +103,12 @@ do
         PROGRAM=`basename $0`
     fi
 done
+
+## Download Base URL
+
+download-base() {
+    echo $SWIFT_DOWNLOAD_SITE/$1/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX
+}
 
 ## Configure the environment
 
@@ -244,7 +250,7 @@ format-version() {
 }
 
 check-version() {
-    local DOWNLOAD_URL="$SWIFT_DOWNLOAD_SITE/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX/swift-$NEW_VERSION-RELEASE/swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION$ARCH_SUFFIX.tar.gz"
+    local DOWNLOAD_URL=`download-base swift-$NEW_VERSION-release`/swift-$NEW_VERSION-RELEASE/swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION$ARCH_SUFFIX.tar.gz
     wget --no-check-certificate -q --spider $DOWNLOAD_URL
     local WGET_RESULT=$?
     if [ $WGET_RESULT = 8 ]
@@ -263,7 +269,8 @@ check-version() {
 }
 
 nightly-version() {
-    wget --no-check-certificate -q --spider $SWIFT_DOWNLOAD_SITE/development/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX/latest-build.yml
+    local YML_URL=`download-base development`/latest-build.yml
+    wget --no-check-certificate -q --spider $YML_URL
     local WGET_RESULT=$?
     if [ $WGET_RESULT = 8 ]
     then
@@ -278,7 +285,7 @@ nightly-version() {
         echo "Please check your wget config."
         return 255
     fi
-    curl -s $SWIFT_DOWNLOAD_SITE/development/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX/latest-build.yml | grep 'download:' | sed 's/download:[^:\/\/]//g' | sed 's/swift-DEVELOPMENT-SNAPSHOT-//' | sed "s/-$SYSTEM_NAME$SYSTEM_VERSION$ARCH_SUFFIX.tar.gz//"
+    curl -s $YML_URL | grep 'download:' | sed 's/download:[^:\/\/]//g' | sed 's/swift-DEVELOPMENT-SNAPSHOT-//' | sed "s/-$SYSTEM_NAME$SYSTEM_VERSION$ARCH_SUFFIX.tar.gz//"
 }
 
 ## Install Swift toolchains
@@ -286,7 +293,7 @@ nightly-version() {
 fetch-release() {
     cd $WORKING_DIR
     FILE_NAME="swift-$NEW_VERSION-RELEASE-$SYSTEM_NAME$SYSTEM_VERSION$ARCH_SUFFIX"
-    DOWNLOAD_URL="$SWIFT_DOWNLOAD_SITE/swift-$NEW_VERSION-release/$SYSTEM_NAME${SYSTEM_VERSION//./}/swift-$NEW_VERSION-RELEASE/$FILE_NAME.tar.gz"
+    DOWNLOAD_URL=`download-base swift-$NEW_VERSION-release`/swift-$NEW_VERSION-RELEASE/$FILE_NAME.tar.gz
     check-version
     local VERSION_AVAILABILITY=$?
     if [ $VERSION_AVAILABILITY != 0 ]
@@ -299,7 +306,7 @@ fetch-release() {
 fetch-snapshot() {
     cd $WORKING_DIR
     FILE_NAME="swift-DEVELOPMENT-SNAPSHOT-$NEW_VERSION-$SYSTEM_NAME$SYSTEM_VERSION$ARCH_SUFFIX"
-    DOWNLOAD_URL="$SWIFT_DOWNLOAD_SITE/development/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX/swift-DEVELOPMENT-SNAPSHOT-$NEW_VERSION/$FILE_NAME.tar.gz"
+    DOWNLOAD_URL=`download-base development`/swift-DEVELOPMENT-SNAPSHOT-$NEW_VERSION/$FILE_NAME.tar.gz
     install-toolchain
 }
 
