@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.13.2"
+SWIFTBOX_VERSION="0.13.3"
 SWIFT_DOWNLOAD_SITE="https://download.swift.org"
 
 if [ `id -u` = 0 ]
