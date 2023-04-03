@@ -2,7 +2,7 @@
 
 ## Set environment properties
 
-SWIFTBOX_VERSION="0.13.3"
+SWIFTBOX_VERSION="0.13.4"
 SWIFT_DOWNLOAD_SITE="https://download.swift.org"
 
 if [ `id -u` = 0 ]
@@ -48,14 +48,18 @@ then
         SYSTEM_NAME="centos"
         if ! hash curl 2> /dev/null || ! hash wget 2> /dev/null || ! hash jq 2> /dev/null
         then
-            $SUDO_FLAG yum install curl wget jq -q -y
+            if [ $SYSTEM_VERSION -lt 8 ]
+            then
+                $SUDO_FLAG yum install epel-release -y &> /dev/null
+            fi
+            $SUDO_FLAG yum install curl wget jq -y &> /dev/null
         fi
     ;;
     amzn)
         SYSTEM_NAME="amazonlinux"
         if ! hash curl 2> /dev/null || ! hash wget 2> /dev/null || ! hash jq 2> /dev/null
         then
-            $SUDO_FLAG yum install curl wget jq -y > /dev/null
+            $SUDO_FLAG yum install curl wget jq -y &> /dev/null
         fi
     ;;
     *)
@@ -103,12 +107,6 @@ do
         PROGRAM=`basename $0`
     fi
 done
-
-## Download Base URL
-
-download-base() {
-    echo $SWIFT_DOWNLOAD_SITE/$1/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX
-}
 
 ## Configure the environment
 
@@ -229,6 +227,10 @@ reinit-env() {
 }
 
 ## Parse and check Swift version
+
+download-base() {
+    echo $SWIFT_DOWNLOAD_SITE/$1/$SYSTEM_NAME${SYSTEM_VERSION//./}$ARCH_SUFFIX
+}
 
 format-version() {
     if [ ! $1 ]

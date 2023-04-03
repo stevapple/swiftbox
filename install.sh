@@ -7,8 +7,8 @@ fi
 
 if [ -f /etc/os-release ]
 then
-    ID=`cat /etc/os-release | grep '^ID=' | sed 's/ID=//g' | sed 's/"//g'`
-    case $ID in
+    OS=`cat /etc/os-release | grep '^ID=' | sed 's/ID=//g' | sed 's/"//g'`
+    case $OS in
     ubuntu)
         if hash curl 2> /dev/null || ! hash jq 2> /dev/null
         then
@@ -17,9 +17,14 @@ then
         fi
     ;;
     rhel | centos | amzn)
+        VERSION=`cat /etc/os-release | grep '^VERSION_ID=' | sed 's/VERSION_ID=//g' | sed 's/"//g'`
         if ! hash curl 2> /dev/null || ! hash jq 2> /dev/null || ! hash which 2> /dev/null
         then
-            $SUDO_FLAG yum install curl jq which -q -y
+            if [ $OS != 'amzn' ] && [ $VERSION -lt 8 ]
+            then
+                $SUDO_FLAG yum install epel-release -y &> /dev/null
+            fi
+            $SUDO_FLAG yum install curl jq which -y &> /dev/null
         fi
     ;;
     *)
