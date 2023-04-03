@@ -8,10 +8,10 @@ on:
 
 jobs:
   test-ubuntu:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     env:
-      MAINVER: "5.4.1"
-      ALTVER: "5.2.4"
+      MAINVER: "5.6.3"
+      ALTVER: "5.3.3"
       OLDVER: "2.2"
     defaults:
       run:
